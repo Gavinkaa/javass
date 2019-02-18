@@ -6,13 +6,10 @@ public final class Bits32 {
     public static int mask(int start, int size) {
         Preconditions.checkIndex(start, Integer.SIZE + 1 - size);
         Preconditions.checkIndex(size,  Integer.SIZE + 1 - start);
-        int acc = 0;
-        int insert = 1 << start;
-        for (int i = 0; i < size; ++i) {
-            acc <<= 1;
-            acc |= insert;
-        }
-        return acc;
+         if (size == 32) {
+             return -1;
+         }
+        return ((1 << size) - 1) << start;
     }
 
     public static int extract(int bits, int start, int size) {
