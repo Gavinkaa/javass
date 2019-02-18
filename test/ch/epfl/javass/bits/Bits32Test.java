@@ -10,6 +10,7 @@ import java.util.SplittableRandom;
 import org.junit.jupiter.api.Test;
 
 public final class Bits32Test {
+    /*
     @Test
     void maskProducesCorrectMasks() {
         for (int size = 0; size <= Integer.SIZE; ++size) {
@@ -248,4 +249,5 @@ public final class Bits32Test {
             Bits32.pack(0, 4, 0, 4, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5);
         });
     }
+    */
 }
