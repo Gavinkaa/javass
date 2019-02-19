@@ -31,14 +31,8 @@ public final class Bits32 {
     }
 
     public static int pack(int v1, int s1, int v2, int s2, int v3, int s3) {
-        int index = 0;
-        int ret = 0;
-
-        ret |= Bits32.packAt(v1, s1, index);
-        index += s1;
-
-        ret |= Bits32.packAt(v2, s2, index);
-        index += s2;
+        int index = s1 + s2;
+        int ret = Bits32.pack(v1, s1, v2 ,s2);
 
         ret |= Bits32.packAt(v3, s3, index);
 
@@ -50,17 +44,8 @@ public final class Bits32 {
             int v4, int s4, int v5, int s5, int v6, int s6,
             int v7, int s7
     ) {
-        int index = 0;
-        int ret = 0;
-
-        ret |= Bits32.packAt(v1, s1, index);
-        index += s1;
-
-        ret |= Bits32.packAt(v2, s2, index);
-        index += s2;
-
-        ret |= Bits32.packAt(v3, s3, index);
-        index += s3;
+        int index = s1 + s2 + s3 ;
+        int ret = Bits32.pack(v1, s1, v2, s2, v3, s3);
 
         ret |= Bits32.packAt(v4, s4, index);
         index += s4;
