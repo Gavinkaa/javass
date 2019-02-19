@@ -4,8 +4,8 @@ public final class Bits32 {
     private Bits32() {}
 
     public static int mask(int start, int size) {
-        Preconditions.checkIndex(start, Integer.SIZE + 1 - size);
-        Preconditions.checkIndex(size,  Integer.SIZE + 1 - start);
+        Preconditions.checkArgument(0 <= start && start <= Integer.SIZE - size);
+        Preconditions.checkArgument(0 <= size && size <= Integer.SIZE - start);
          if (size == 32) {
              return -1;
          }
@@ -13,7 +13,8 @@ public final class Bits32 {
     }
 
     public static int extract(int bits, int start, int size) {
-        return 0;
+        int m = Bits32.mask(start, size);
+        return (bits & m) >>> start;
     }
 
     public static int pack(int v1, int s1, int v2, int s2) {
