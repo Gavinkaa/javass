@@ -1,9 +1,18 @@
 package ch.epfl.javass;
 
+/**
+ * This class provides utility functions for working with bis.
+ */
 public final class Bits32 {
     private Bits32() {
     }
 
+    /**
+     * Create a bit mask with a range of bits set to 1, and the rest to 0
+     * @param start the index where the 1 field starts
+     * @param size the size of the 1 mask
+     * @return an integer with bits [start;start+size[ all 1, and the rest 0
+     */
     public static int mask(int start, int size) {
         Preconditions.checkArgument(0 <= start && start <= Integer.SIZE - size);
         Preconditions.checkArgument(0 <= size && size <= Integer.SIZE - start);
@@ -13,11 +22,27 @@ public final class Bits32 {
         return ((1 << size) - 1) << start;
     }
 
+    /**
+     * Extract out `size` bits from `bits`, starting from `start`
+     * @param bits the bits from which to extract a range
+     * @param start the index to start extracting from
+     * @param size the number of bits to extract
+     * @return a number whose first size bits correspond to the extracted range
+     */
     public static int extract(int bits, int start, int size) {
         int m = Bits32.mask(start, size);
         return (bits & m) >>> start;
     }
 
+    /**
+     * Pack multiple small numbers into a larger bitpattern
+     * @param v1 the first number to pack
+     * @param s1 the number of bits in this number to pack
+     * @param v2 the second number to pack
+     * @param s2 the number of bits in this second number to pack
+     * @return an integer corresponding to the concatenation of s1;s2
+     * @throws IllegalArgumentException if the packing would exceed the size of an integer
+     */
     public static int pack(int v1, int s1, int v2, int s2) {
         int index = 0;
         int ret = 0;
@@ -30,6 +55,9 @@ public final class Bits32 {
         return ret;
     }
 
+    /**
+     * See the other versions of `pack`
+     */
     public static int pack(int v1, int s1, int v2, int s2, int v3, int s3) {
         int index = s1 + s2;
         int ret = Bits32.pack(v1, s1, v2 ,s2);
@@ -39,6 +67,9 @@ public final class Bits32 {
         return ret;
     }
 
+    /**
+     * See the other versions of `pack`
+     */
     public static int pack(
             int v1, int s1, int v2, int s2, int v3, int s3,
             int v4, int s4, int v5, int s5, int v6, int s6,
