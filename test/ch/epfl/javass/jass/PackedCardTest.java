@@ -8,7 +8,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.SplittableRandom;
 
-import ch.epfl.javass.PackedCard;
 import org.junit.jupiter.api.Test;
 
 public final class PackedCardTest {

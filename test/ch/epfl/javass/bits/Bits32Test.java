@@ -7,7 +7,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.SplittableRandom;
 
-import ch.epfl.javass.Bits32;
 import org.junit.jupiter.api.Test;
 
 public final class Bits32Test {

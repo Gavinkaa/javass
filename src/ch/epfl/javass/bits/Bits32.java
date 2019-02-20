@@ -1,4 +1,6 @@
-package ch.epfl.javass;
+package ch.epfl.javass.bits;
+
+import ch.epfl.javass.Preconditions;
 
 /**
  * This class provides utility functions for working with bis.

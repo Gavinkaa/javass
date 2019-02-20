@@ -1,5 +1,6 @@
-package ch.epfl.javass;
+package ch.epfl.javass.jass;
 
+import ch.epfl.javass.bits.Bits32;
 import ch.epfl.javass.jass.Card;
 
 public final class PackedCard {

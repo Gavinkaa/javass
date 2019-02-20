@@ -1,7 +1,5 @@
 package ch.epfl.javass.jass;
 
-import ch.epfl.javass.PackedCard;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
