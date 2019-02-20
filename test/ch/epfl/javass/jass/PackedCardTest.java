@@ -8,10 +8,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.SplittableRandom;
 
+import ch.epfl.javass.PackedCard;
 import org.junit.jupiter.api.Test;
 
 public final class PackedCardTest {
-    /*
     private static Card.Color[] getAllColors() {
         return new Card.Color[] {
                 Card.Color.SPADE,
@@ -170,5 +170,4 @@ public final class PackedCardTest {
             assertEquals(152, s);
         }
     }
-    */
 }

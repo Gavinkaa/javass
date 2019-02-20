@@ -7,10 +7,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 
+import ch.epfl.javass.PackedCard;
 import org.junit.jupiter.api.Test;
 
 public final class CardTest {
-    /*
     private static Card.Color[] getAllColors() {
         return new Card.Color[] {
                 Card.Color.SPADE,
@@ -227,5 +227,4 @@ public final class CardTest {
         for (int i = 1; i < allHashCodes.length; ++i)
             assertTrue(allHashCodes[i] != allHashCodes[i - 1]);
     }
-    */
 }
