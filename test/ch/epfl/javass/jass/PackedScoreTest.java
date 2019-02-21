@@ -69,4 +69,22 @@ class PackedScoreTest {
             }
         }
     }
+
+    @Test
+    void withAdditionalTrickWorksWithTheRange() {
+         for (int turnTricks = 0; turnTricks <= 8; ++turnTricks) {
+            for (int points = 0; points <= 100; ++points) {
+                for (int total = 0; total <= 2000; ++total) {
+                    long pkScore = PackedScore.pack(turnTricks, points, total, turnTricks, points, total);
+                    int extra = turnTricks == 8 ? 100 : 0;
+                    long diff1 = PackedScore.pack(turnTricks + 1, points + extra + 10, total, turnTricks, points, total);
+                    long added1 = PackedScore.withAdditionalTrick(pkScore, TeamId.TEAM_1, 10);
+                    assertEquals(diff1, added1);
+                    long diff2 = PackedScore.pack(turnTricks, points, total, turnTricks + 1, points + extra + 10, total);
+                    long added2 = PackedScore.withAdditionalTrick(pkScore, TeamId.TEAM_2, 10);
+                    assertEquals(diff2, added2);
+                }
+            }
+        }
+    }
 }
