@@ -17,7 +17,7 @@ public final class Bits32 {
      */
     public static int mask(int start, int size) {
         Preconditions.checkArgument(0 <= start && 0 <= size && start + size <= Integer.SIZE);
-        if (size == 32) {
+        if (size == Integer.SIZE) {
             return -1;
         }
         return ((1 << size) - 1) << start;
