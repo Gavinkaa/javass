@@ -16,8 +16,7 @@ public final class Bits32 {
      * @return an integer with bits [start;start+size[ all 1, and the rest 0
      */
     public static int mask(int start, int size) {
-        Preconditions.checkArgument(0 <= start && start <= Integer.SIZE - size);
-        Preconditions.checkArgument(0 <= size && size <= Integer.SIZE - start);
+        Preconditions.checkArgument(0 <= start && 0 <= size && start + size <= Integer.SIZE);
         if (size == 32) {
             return -1;
         }
