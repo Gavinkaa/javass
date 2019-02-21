@@ -1,5 +1,6 @@
 package ch.epfl.javass.jass;
 
+import ch.epfl.javass.bits.Bits32;
 import ch.epfl.javass.bits.Bits64;
 
 public final class PackedScore {
@@ -26,23 +27,28 @@ public final class PackedScore {
     }
     
     public static long pack(int turnTricks1, int turnPoints1, int gamePoints1, int turnTricks2, int turnPoints2, int gamePoints2) {
-       return 0l; 
+        long fstHalf = Bits32.pack(turnTricks1, 4, turnPoints1, 9, gamePoints1, 11);
+        long sndHalf = Bits32.pack(turnTricks2, 4, turnPoints2, 9, gamePoints2, 11);
+        return Bits64.pack(fstHalf, 32, sndHalf, 32);
     }
     
     public static int turnTricks(long pkScore, TeamId t) {
-        return 0;
+        int shift = t == TeamId.TEAM_1 ? 0 : 32;
+        return (int)Bits64.extract(pkScore, shift, 4);
     }
     
-    int turnPoints(long pkScore, TeamId t) {
-        return 0;
+    public static int turnPoints(long pkScore, TeamId t) {
+        int shift = t == TeamId.TEAM_1 ? 0 : 32;
+        return (int)Bits64.extract(pkScore, shift + 4, 9);
     }
     
-    int gamePoints(long pkScore, TeamId t) {
-        return 0;
+    public static int gamePoints(long pkScore, TeamId t) {
+        int shift = t == TeamId.TEAM_1 ? 0 : 32;
+        return (int)Bits64.extract(pkScore, shift + 13, 11);
     }
     
     public static int totalPoints(long pkScore, TeamId t) {
-        return 0;
+        return PackedScore.turnPoints(pkScore, t) + PackedScore.gamePoints(pkScore, t);
     }
     
     public static long withAdditionalTrick(long pkScore, TeamId winningTeam, int trickPoints) {
