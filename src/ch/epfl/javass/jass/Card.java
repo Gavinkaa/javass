@@ -88,10 +88,6 @@ public final class Card {
 
     private final int packed;
 
-    private Card(Color c, Rank r) {
-        packed = PackedCard.pack(c, r);
-    }
-
     private Card(int packed) {
         this.packed = packed;
     }
@@ -103,7 +99,7 @@ public final class Card {
      * @return a new Card with the specified properties
      */
     public static Card of(Color c, Rank r) {
-        return new Card(c, r);
+        return new Card(PackedCard.pack(c, r));
     }
 
     /**
@@ -177,6 +173,6 @@ public final class Card {
 
     @Override
     public String toString() {
-        return PackedCard.toString(packed);
+        return "Card(" + PackedCard.toString(packed) + ")";
     }
 }
