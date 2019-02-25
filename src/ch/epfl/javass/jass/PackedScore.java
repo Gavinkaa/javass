@@ -4,6 +4,9 @@ import ch.epfl.javass.bits.Bits32;
 import ch.epfl.javass.bits.Bits64;
 
 
+/**
+ * Provides utility method for working with the binary representation of scores.
+ */
 public final class PackedScore {
     /**
      * The initial value of a packed Score
@@ -23,10 +26,24 @@ public final class PackedScore {
         return Bits64.extract(halfScore, start + 24, 8) == 0;
     }
 
+    /**
+     * Check of the binary representation of a score is valid.
+     * This method checks if bits are only present in the right fields, and if
+     * those fields are in the valid ranges.
+     * turnTricks must be <= 9, turnPoints must be <= 257 and gamePoints must be <= 2000
+     * @param pkScore the bit pattern to check
+     * @return true of the representation was valid, and false otherwise
+     */
     public static boolean isValid(long pkScore) {
         return isValidHalf(pkScore, 0) && isValidHalf(pkScore, 32);
     }
 
+    /**
+     * Pack the different components of a score into its binary representation.
+     * For each player, this method takes the tricks they've won that turn, the number of
+     * points they've earned that turn, and the total number of points they've earned over the game.
+     * @return the binary representation composed of these fields
+     */
     public static long pack(int turnTricks1, int turnPoints1, int gamePoints1, int turnTricks2, int turnPoints2, int gamePoints2) {
         long fstHalf = Bits32.pack(turnTricks1, 4, turnPoints1, 9, gamePoints1, 11);
         long sndHalf = Bits32.pack(turnTricks2, 4, turnPoints2, 9, gamePoints2, 11);
@@ -35,6 +52,12 @@ public final class PackedScore {
         return pkScore;
     }
 
+    /**
+     * Extract the turn tricks from the binary representation of a score
+     * @param pkScore the binary representation from which to extract
+     * @param t the team to extract from
+     * @return the number of tricks the team has won that turn
+     */
     public static int turnTricks(long pkScore, TeamId t) {
         assert isValid(pkScore);
 
@@ -42,6 +65,12 @@ public final class PackedScore {
         return (int) Bits64.extract(pkScore, shift, 4);
     }
 
+    /**
+     * Extract out the number of points a player has won so far in a turn
+     * @param pkScore the binary representation from which to extract
+     * @param t the team to look at
+     * @return the number of points that turn has won so far this turn
+     */
     public static int turnPoints(long pkScore, TeamId t) {
         assert isValid(pkScore);
 
@@ -49,6 +78,13 @@ public final class PackedScore {
         return (int) Bits64.extract(pkScore, shift + 4, 9);
     }
 
+    /**
+     * Extract out the number of points a team has won in the game so far,
+     * not taking into account the points they've won on this turn.
+     * @param pkScore the binary representation of the score
+     * @param t the team to look at
+     * @return the number of points that team had won before this turn
+     */
     public static int gamePoints(long pkScore, TeamId t) {
         assert isValid(pkScore);
 
@@ -56,12 +92,24 @@ public final class PackedScore {
         return (int) Bits64.extract(pkScore, shift + 13, 11);
     }
 
+    /**
+     * Return the sum of gamePoints and turnPoints for a given team
+     * @param pkScore the binary representation of the score
+     * @param t the team to look at
+     */
     public static int totalPoints(long pkScore, TeamId t) {
         assert isValid(pkScore);
 
         return PackedScore.turnPoints(pkScore, t) + PackedScore.gamePoints(pkScore, t);
     }
 
+    /**
+     * Add the points of winning a trick to a team's score this turn
+     * @param pkScore the score to operate on
+     * @param winningTeam the team that won this trick
+     * @param trickPoints the number of points this trick was worth
+     * @return the new score as a result of applying this win to a team
+     */
     public static long withAdditionalTrick(long pkScore, TeamId winningTeam, int trickPoints) {
         assert PackedScore.isValid(pkScore);
 

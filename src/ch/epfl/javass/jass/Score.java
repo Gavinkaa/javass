@@ -1,6 +1,5 @@
 package ch.epfl.javass.jass;
 
-import java.util.Objects;
 
 /**
  * Represents a Score in a match of Jass, with methods
@@ -17,6 +16,7 @@ public final class Score {
 
     /**
      * Construct a new Score from its packed representation
+     *
      * @param packed the binary representation to make a score from
      * @return a new score if the representation was valid
      * @throws IllegalArgumentException if the binary representation isn't valid
@@ -37,6 +37,7 @@ public final class Score {
 
     /**
      * Return the turnTricks associated with a given team.
+     *
      * @param t the team for which to fetch the turnTricks
      */
     public int turnTricks(TeamId t) {
@@ -45,6 +46,7 @@ public final class Score {
 
     /**
      * Return the turnPoints associated with a given team
+     *
      * @param t the team for which to fetch the turnPoints
      */
     public int turnPoints(TeamId t) {
@@ -53,6 +55,7 @@ public final class Score {
 
     /**
      * Return the gamePoints associated with a given team
+     *
      * @param t the team with which the gamePoints are associated.
      */
     public int gamePoints(TeamId t) {
@@ -62,6 +65,7 @@ public final class Score {
     /**
      * Return the total points, taking into account both the
      * turn points and the game points
+     *
      * @param t the team to look at
      */
     public int totalPoints(TeamId t) {
@@ -71,11 +75,12 @@ public final class Score {
     /**
      * This method should be used to add the points won by a team after
      * a trick.
+     *
      * @param winningTeam the team that won the trick
      * @param trickPoints the number of points that trick was worth
      * @return a new score representing the result of that win
      */
-    public Score withAdditionalTrick(TeamId winningTeam, int trickPoints)  {
+    public Score withAdditionalTrick(TeamId winningTeam, int trickPoints) {
         if (trickPoints < 0) {
             throw new IllegalArgumentException("trickPoints must be greater than 0");
         }
@@ -85,6 +90,7 @@ public final class Score {
     /**
      * Return the new score after taking the results of the current turn into account.
      * The current turn points are added to the total points.
+     *
      * @return the Score after this operation is applied
      */
     public Score nextTurn() {
