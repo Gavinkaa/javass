@@ -100,8 +100,15 @@ public final class PackedCardSet {
         return PackedCard.pack(Card.Color.ALL.get(zeroes / 16), Card.Rank.ALL.get(zeroes % 16));
     }
 
+    /**
+     * Insert a new card into this set
+     * @param pkCardSet the representation of the into which to insert
+     * @param pkCard the card to insert into the set
+     * @return a new set combining the old set and the new card
+     */
     public static long add(long pkCardSet, int pkCard) {
-        return 0;
+        assert isValid(pkCardSet);
+        return pkCardSet | PackedCardSet.singleton(pkCard);
     }
 
     public static long remove(long pkCardSet, int pkCard) {

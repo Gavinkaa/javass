@@ -94,4 +94,27 @@ class PackedCardSetTest {
             }
         }
     }
+
+    @Test
+    void addingToAnEmptySetIsSingleton() {
+         for (Card.Color color : Card.Color.ALL) {
+            for (Card.Rank rank : Card.Rank.ALL) {
+                int pkCard = Card.of(color, rank).packed();
+                long added = PackedCardSet.add(PackedCardSet.EMPTY, pkCard);
+                assertEquals(PackedCardSet.singleton(pkCard), added);
+            }
+        }
+    }
+
+    @Test
+    void addingTwiceIsTheSameAsOnce() {
+         for (Card.Color color : Card.Color.ALL) {
+            for (Card.Rank rank : Card.Rank.ALL) {
+                int pkCard = Card.of(color, rank).packed();
+                long added = PackedCardSet.add(PackedCardSet.EMPTY, pkCard);
+                long addedTwice = PackedCardSet.add(added, pkCard);
+                assertEquals(added, addedTwice);
+            }
+        }
+    }
 }
