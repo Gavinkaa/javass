@@ -30,7 +30,9 @@ public final class PackedScore {
     public static long pack(int turnTricks1, int turnPoints1, int gamePoints1, int turnTricks2, int turnPoints2, int gamePoints2) {
         long fstHalf = Bits32.pack(turnTricks1, 4, turnPoints1, 9, gamePoints1, 11);
         long sndHalf = Bits32.pack(turnTricks2, 4, turnPoints2, 9, gamePoints2, 11);
-        return Bits64.pack(fstHalf, 32, sndHalf, 32);
+        long pkScore = Bits64.pack(fstHalf, 32, sndHalf, 32);
+        assert PackedScore.isValid(pkScore);
+        return pkScore;
     }
 
     public static int turnTricks(long pkScore, TeamId t) {
@@ -61,6 +63,8 @@ public final class PackedScore {
     }
 
     public static long withAdditionalTrick(long pkScore, TeamId winningTeam, int trickPoints) {
+        assert PackedScore.isValid(pkScore);
+
         int shift = winningTeam == TeamId.TEAM_1 ? 0 : 32;
         long turnPoints = PackedScore.turnPoints(pkScore, winningTeam);
         long turnTricks = PackedScore.turnTricks(pkScore, winningTeam);
@@ -72,6 +76,8 @@ public final class PackedScore {
         pkScore &= ~Bits64.mask(shift, 13);
         pkScore |= (turnTricks << shift);
         pkScore |= (turnPoints << (shift + 4));
+
+        assert PackedScore.isValid(pkScore);
         return pkScore;
     }
 
@@ -84,6 +90,8 @@ public final class PackedScore {
      * @return the packed score after the tranformation
      */
     public static long nextTurn(long pkScore) {
+        assert PackedScore.isValid(pkScore);
+
         int points1 = PackedScore.totalPoints(pkScore, TeamId.TEAM_1);
         int points2 = PackedScore.totalPoints(pkScore, TeamId.TEAM_2);
         return PackedScore.pack(0, 0, points1, 0, 0, points2);
