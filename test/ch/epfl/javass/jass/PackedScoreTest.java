@@ -87,4 +87,28 @@ class PackedScoreTest {
             }
         }
     }
+
+    @Test
+    void nextTurnClearsOtherFields() {
+        long pkScore = PackedScore.pack(1, 1, 1, 2, 2, 2);
+        long result = PackedScore.nextTurn(pkScore);
+        assertEquals(0, PackedScore.turnTricks(result, TeamId.TEAM_1));
+        assertEquals(0, PackedScore.turnPoints(result, TeamId.TEAM_1));
+        assertEquals(0, PackedScore.turnTricks(result, TeamId.TEAM_2));
+        assertEquals(0, PackedScore.turnPoints(result, TeamId.TEAM_2));
+    }
+
+    @Test
+    void nextTurnAddsPointsToGamePoints() {
+        for (int turnTricks = 0; turnTricks <= 8; ++turnTricks) {
+            for (int points = 0; points <= 100; ++points) {
+                for (int total = 0; total <= 1000; ++total) {
+                    long pkScore = PackedScore.pack(turnTricks, points, total, turnTricks, points, total);
+                    long result = PackedScore.nextTurn(pkScore);
+                    assertEquals(points + total, PackedScore.gamePoints(result, TeamId.TEAM_1));
+                    assertEquals(points + total, PackedScore.gamePoints(result, TeamId.TEAM_2));
+                }
+            }
+        }
+    }
 }

@@ -3,7 +3,6 @@ package ch.epfl.javass.jass;
 import ch.epfl.javass.bits.Bits32;
 import ch.epfl.javass.bits.Bits64;
 
-import java.lang.reflect.WildcardType;
 
 public final class PackedScore {
     /**
@@ -76,11 +75,34 @@ public final class PackedScore {
         return pkScore;
     }
 
+    /**
+     * After each turn, the current points of that turn are
+     * added to total for each team, and the points are then reset
+     * to 0. This function applies this action to a packed score.
+     *
+     * @param pkScore the score on which to apply the transformation
+     * @return the packed score after the tranformation
+     */
     public static long nextTurn(long pkScore) {
-        return 0L;
+        int points1 = PackedScore.totalPoints(pkScore, TeamId.TEAM_1);
+        int points2 = PackedScore.totalPoints(pkScore, TeamId.TEAM_2);
+        return PackedScore.pack(0, 0, points1, 0, 0, points2);
     }
 
+    /**
+     * Return a string representation of a packed score
+     * @param pkScore the score to represent
+     * @return a string representing what the score looks like
+     */
     public static String toString(long pkScore) {
-        return "";
+        return String.format(
+                "Team 1 {tricks: %d, turnPoints: %d, points: %d } Team 2 {tricks: %d, turnPoints: %d points: %d}",
+                PackedScore.turnTricks(pkScore, TeamId.TEAM_1),
+                PackedScore.turnPoints(pkScore, TeamId.TEAM_1),
+                PackedScore.gamePoints(pkScore, TeamId.TEAM_1),
+                PackedScore.turnTricks(pkScore, TeamId.TEAM_2),
+                PackedScore.turnPoints(pkScore, TeamId.TEAM_2),
+                PackedScore.gamePoints(pkScore, TeamId.TEAM_2)
+        );
     }
 }
