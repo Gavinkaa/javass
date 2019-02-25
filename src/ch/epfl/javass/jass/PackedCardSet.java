@@ -132,8 +132,13 @@ public final class PackedCardSet {
         return (pkCardSet & PackedCardSet.singleton(pkCard)) != 0;
     }
 
+    /**
+     * Return the set containing everything but the elements contained in the current set.
+     * @param pkCardSet the set of which to take the complement
+     * @return the complement of that set
+     */
     public static long complement(long pkCardSet) {
-        return 0;
+        return PackedCardSet.ALL_CARDS ^ pkCardSet;
     }
 
     public static long union(long pkCardSet1, long pkCardSet2) {

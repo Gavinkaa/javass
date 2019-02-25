@@ -35,7 +35,7 @@ class PackedCardSetTest {
             for (Card.Rank rank : Card.Rank.ALL) {
                 Card us = Card.of(color, rank);
                 long pkSet = PackedCardSet.trumpAbove(us.packed());
-                int shift = (new int[]{ 0, 16, 32, 48 })[color.ordinal()];
+                int shift = (new int[]{0, 16, 32, 48})[color.ordinal()];
                 for (int i = 0; i < 16; ++i) {
                     if ((pkSet & (1L << (i + shift))) != 0) {
                         Card supposedlyBetter = Card.of(color, Card.Rank.ALL.get(i));
@@ -73,7 +73,7 @@ class PackedCardSetTest {
 
     @Test
     void singletonContainsOnlyASingle1() {
-         for (Card.Color color : Card.Color.ALL) {
+        for (Card.Color color : Card.Color.ALL) {
             for (Card.Rank rank : Card.Rank.ALL) {
                 long pkSet = PackedCardSet.singleton(Card.of(color, rank).packed());
                 assertEquals(Long.bitCount(pkSet), 1);
@@ -99,7 +99,7 @@ class PackedCardSetTest {
 
     @Test
     void addingToAnEmptySetIsSingleton() {
-         for (Card.Color color : Card.Color.ALL) {
+        for (Card.Color color : Card.Color.ALL) {
             for (Card.Rank rank : Card.Rank.ALL) {
                 int pkCard = Card.of(color, rank).packed();
                 long added = PackedCardSet.add(PackedCardSet.EMPTY, pkCard);
@@ -110,7 +110,7 @@ class PackedCardSetTest {
 
     @Test
     void addingTwiceIsTheSameAsOnce() {
-         for (Card.Color color : Card.Color.ALL) {
+        for (Card.Color color : Card.Color.ALL) {
             for (Card.Rank rank : Card.Rank.ALL) {
                 int pkCard = Card.of(color, rank).packed();
                 long added = PackedCardSet.add(PackedCardSet.EMPTY, pkCard);
@@ -122,7 +122,7 @@ class PackedCardSetTest {
 
     @Test
     void removingASingletonGivesEmpty() {
-         for (Card.Color color : Card.Color.ALL) {
+        for (Card.Color color : Card.Color.ALL) {
             for (Card.Rank rank : Card.Rank.ALL) {
                 int pkCard = Card.of(color, rank).packed();
                 long single = PackedCardSet.singleton(pkCard);
@@ -133,11 +133,35 @@ class PackedCardSetTest {
 
     @Test
     void singletonContainsItsCard() {
-         for (Card.Color color : Card.Color.ALL) {
+        for (Card.Color color : Card.Color.ALL) {
             for (Card.Rank rank : Card.Rank.ALL) {
                 int pkCard = Card.of(color, rank).packed();
                 long single = PackedCardSet.singleton(pkCard);
                 assertTrue(PackedCardSet.contains(single, pkCard));
+            }
+        }
+    }
+
+    @Test
+    void complementOfSingleTonContains35() {
+        for (Card.Color color : Card.Color.ALL) {
+            for (Card.Rank rank : Card.Rank.ALL) {
+                int pkCard = Card.of(color, rank).packed();
+                long single = PackedCardSet.singleton(pkCard);
+                long complement = PackedCardSet.complement(single);
+                assertEquals(35, PackedCardSet.size(complement));
+            }
+        }
+    }
+
+    @Test
+    void complementDoesntContainSingleton() {
+        for (Card.Color color : Card.Color.ALL) {
+            for (Card.Rank rank : Card.Rank.ALL) {
+                int pkCard = Card.of(color, rank).packed();
+                long single = PackedCardSet.singleton(pkCard);
+                long complement = PackedCardSet.complement(single);
+                assertFalse(PackedCardSet.contains(complement, pkCard));
             }
         }
     }
