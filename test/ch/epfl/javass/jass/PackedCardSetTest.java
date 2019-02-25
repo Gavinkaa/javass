@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 class PackedCardSetTest {
+
+
     @Test
     void isValidReturnsFalseWhenBitsAreStrownAround() {
         for (int i = 9; i < 16; ++i) {
@@ -114,6 +116,28 @@ class PackedCardSetTest {
                 long added = PackedCardSet.add(PackedCardSet.EMPTY, pkCard);
                 long addedTwice = PackedCardSet.add(added, pkCard);
                 assertEquals(added, addedTwice);
+            }
+        }
+    }
+
+    @Test
+    void removingASingletonGivesEmpty() {
+         for (Card.Color color : Card.Color.ALL) {
+            for (Card.Rank rank : Card.Rank.ALL) {
+                int pkCard = Card.of(color, rank).packed();
+                long single = PackedCardSet.singleton(pkCard);
+                assertEquals(PackedCardSet.EMPTY, PackedCardSet.remove(single, pkCard));
+            }
+        }
+    }
+
+    @Test
+    void singletonContainsItsCard() {
+         for (Card.Color color : Card.Color.ALL) {
+            for (Card.Rank rank : Card.Rank.ALL) {
+                int pkCard = Card.of(color, rank).packed();
+                long single = PackedCardSet.singleton(pkCard);
+                assertTrue(PackedCardSet.contains(single, pkCard));
             }
         }
     }

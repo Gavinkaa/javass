@@ -111,12 +111,25 @@ public final class PackedCardSet {
         return pkCardSet | PackedCardSet.singleton(pkCard);
     }
 
+    /**
+     * Remove a card from a given set.
+     * @param pkCardSet the binary representation of the set on which to operate
+     * @param pkCard the card to remove from the set
+     * @return a new set where the offending card is absent
+     */
     public static long remove(long pkCardSet, int pkCard) {
-        return 0;
+        assert isValid(pkCardSet);
+        return pkCardSet ^ PackedCardSet.singleton(pkCard);
     }
 
+    /**
+     * Check if a card is inside a set
+     * @param pkCardSet the binary representation of a set in which to check membership
+     * @param pkCard the card to check the membership of
+     * @return true if the card is in the set, false otherwise
+     */
     public static boolean contains(long pkCardSet, int pkCard) {
-        return false;
+        return (pkCardSet & PackedCardSet.singleton(pkCard)) != 0;
     }
 
     public static long complement(long pkCardSet) {
