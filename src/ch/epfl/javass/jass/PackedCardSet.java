@@ -67,12 +67,22 @@ public final class PackedCardSet {
         return pkSet;
     }
 
+    /**
+     * Returns true if this represents the empty set
+     * @param pkCardSet the representation to check for emptiness
+     * @return true if the representation corresponds to the empty set
+     */
     public static boolean isEmpty(long pkCardSet) {
-        return false;
+        return pkCardSet == PackedCardSet.EMPTY;
     }
 
+    /**
+     * Return the number of cards contained in this set
+     * @param pkCardSet the representation of the set to count the size of
+     */
     public static int size(long pkCardSet) {
-        return 0;
+        assert isValid(pkCardSet);
+        return Long.bitCount(pkCardSet);
     }
 
     public static int get(long pkCardSet, int index) {

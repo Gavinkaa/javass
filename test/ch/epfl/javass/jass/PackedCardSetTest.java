@@ -74,12 +74,13 @@ class PackedCardSetTest {
          for (Card.Color color : Card.Color.ALL) {
             for (Card.Rank rank : Card.Rank.ALL) {
                 long pkSet = PackedCardSet.singleton(Card.of(color, rank).packed());
-                int count = 0;
-                for (int i = 0; i < 64; ++i) {
-                    count += Bits64.extract(pkSet, i, 1);
-                }
-                assertEquals(count, 1);
+                assertEquals(Long.bitCount(pkSet), 1);
             }
         }
+    }
+
+    @Test
+    void sizeIsCorrectForAllCards() {
+        assertEquals(36, PackedCardSet.size(PackedCardSet.ALL_CARDS));
     }
 }
