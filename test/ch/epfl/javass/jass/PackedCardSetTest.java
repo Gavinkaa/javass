@@ -83,4 +83,15 @@ class PackedCardSetTest {
     void sizeIsCorrectForAllCards() {
         assertEquals(36, PackedCardSet.size(PackedCardSet.ALL_CARDS));
     }
+
+    @Test
+    void getReturnsTheSameCardForSingleton() {
+        for (Card.Color color : Card.Color.ALL) {
+            for (Card.Rank rank : Card.Rank.ALL) {
+                int pkCard = Card.of(color, rank).packed();
+                long pkSet = PackedCardSet.singleton(pkCard);
+                assertEquals(pkCard, PackedCardSet.get(pkSet, 0));
+            }
+        }
+    }
 }

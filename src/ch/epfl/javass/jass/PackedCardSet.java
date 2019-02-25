@@ -85,8 +85,19 @@ public final class PackedCardSet {
         return Long.bitCount(pkCardSet);
     }
 
+    /**
+     * Get the ith card, starting from the right, in this set
+     * @param pkCardSet the binary representation of the set
+     * @param index the ith card to get
+     * @return the packed representation of that card
+     */
     public static int get(long pkCardSet, int index) {
-        return 0;
+        assert index < size(pkCardSet);
+        for (int i = 0; i < index; ++i) {
+            pkCardSet = pkCardSet ^ Long.lowestOneBit(pkCardSet);
+        }
+        int zeroes = Long.numberOfTrailingZeros(pkCardSet);
+        return PackedCard.pack(Card.Color.ALL.get(zeroes / 16), Card.Rank.ALL.get(zeroes % 16));
     }
 
     public static long add(long pkCardSet, int pkCard) {
