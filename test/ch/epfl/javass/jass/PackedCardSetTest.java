@@ -56,4 +56,30 @@ class PackedCardSetTest {
             }
         }
     }
+
+    @Test
+    void eachSingletonIsBiggerThanTheLast() {
+        long last = PackedCardSet.EMPTY;
+        for (Card.Color color : Card.Color.ALL) {
+            for (Card.Rank rank : Card.Rank.ALL) {
+                long now = PackedCardSet.singleton(Card.of(color, rank).packed());
+                assertTrue(now > last);
+                last = now;
+            }
+        }
+    }
+
+    @Test
+    void singletonContainsOnlyASingle1() {
+         for (Card.Color color : Card.Color.ALL) {
+            for (Card.Rank rank : Card.Rank.ALL) {
+                long pkSet = PackedCardSet.singleton(Card.of(color, rank).packed());
+                int count = 0;
+                for (int i = 0; i < 64; ++i) {
+                    count += Bits64.extract(pkSet, i, 1);
+                }
+                assertEquals(count, 1);
+            }
+        }
+    }
 }

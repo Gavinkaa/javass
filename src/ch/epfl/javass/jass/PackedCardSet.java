@@ -47,22 +47,24 @@ public final class PackedCardSet {
      */
     public static long trumpAbove(int pkCard) {
         long pattern = betterPacked[PackedCard.rank(pkCard).ordinal()];
-        switch (PackedCard.color(pkCard)) {
-            case SPADE:
-                return pattern;
-            case HEART:
-                return pattern << 16;
-            case DIAMOND:
-                return pattern << 32;
-            case CLUB:
-                return pattern << 48;
-            default:
-                throw new RuntimeException("Unreachable Code: Unkown Color");
-        }
+        // A switch might be prettier, but this makes sure we have a jump table
+        return pattern << (PackedCard.color(pkCard).ordinal() * 16);
     }
 
+    /**
+     * Return the representation of a set containing just pkCard,
+     * and no other cards
+     * @param pkCard the lonely card in the set
+     * @return the set with just that card
+     */
     public static long singleton(int pkCard) {
-        return 0;
+        assert PackedCard.isValid(pkCard);
+
+        int colorShift = PackedCard.color(pkCard).ordinal() * 16;
+        int rankShift = PackedCard.rank(pkCard).ordinal();
+        long pkSet = 1L << (colorShift + rankShift);
+        assert isValid(pkSet);
+        return pkSet;
     }
 
     public static boolean isEmpty(long pkCardSet) {
