@@ -13,6 +13,9 @@ public final class PackedScore {
      */
     public static long INITIAL = 0;
 
+    private PackedScore() {
+    }
+
     private static boolean isValidHalf(long halfScore, int start) {
         if (Bits64.extract(halfScore, start, 4) > 9) {
             return false;
