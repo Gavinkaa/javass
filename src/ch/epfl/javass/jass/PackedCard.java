@@ -1,7 +1,6 @@
 package ch.epfl.javass.jass;
 
 import ch.epfl.javass.bits.Bits32;
-import ch.epfl.javass.jass.Card;
 
 /**
  * This class provides static utility methods to work
@@ -133,6 +132,6 @@ public final class PackedCard {
     public static String toString(int pkCard) {
         assert isValid(pkCard);
 
-        return color(pkCard).toString() + " " + rank(pkCard).toString();
+        return color(pkCard).toString()  + rank(pkCard).toString();
     }
 }

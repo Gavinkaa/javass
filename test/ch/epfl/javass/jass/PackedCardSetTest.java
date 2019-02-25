@@ -6,8 +6,6 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 class PackedCardSetTest {
-
-
     @Test
     void isValidReturnsFalseWhenBitsAreStrownAround() {
         for (int i = 9; i < 16; ++i) {
@@ -164,5 +162,63 @@ class PackedCardSetTest {
                 assertFalse(PackedCardSet.contains(complement, pkCard));
             }
         }
+    }
+
+    @Test
+    void unionOfSetAndComplementIsAll() {
+        for (Card.Color color : Card.Color.ALL) {
+            for (Card.Rank rank : Card.Rank.ALL) {
+                int pkCard = Card.of(color, rank).packed();
+                long single = PackedCardSet.singleton(pkCard);
+                long complement = PackedCardSet.complement(single);
+                assertEquals(PackedCardSet.ALL_CARDS, PackedCardSet.union(single, complement));
+            }
+        }
+    }
+
+    @Test
+    void intersectionOfSetAndComplementIsEmpty() {
+        for (Card.Color color : Card.Color.ALL) {
+            for (Card.Rank rank : Card.Rank.ALL) {
+                int pkCard = Card.of(color, rank).packed();
+                long single = PackedCardSet.singleton(pkCard);
+                long complement = PackedCardSet.complement(single);
+                assertEquals(PackedCardSet.EMPTY, PackedCardSet.intersection(single, complement));
+            }
+        }
+    }
+
+    @Test
+    void differenceBetweenSetAndItselfIsEmpty() {
+        for (Card.Color color : Card.Color.ALL) {
+            for (Card.Rank rank : Card.Rank.ALL) {
+                int pkCard = Card.of(color, rank).packed();
+                long single = PackedCardSet.singleton(pkCard);
+                assertEquals(PackedCardSet.EMPTY, PackedCardSet.difference(single, single));
+            }
+        }
+    }
+
+    @Test
+    void subsetOfColorIsTheSameForSingletonOfSameColor() {
+        for (Card.Color color : Card.Color.ALL) {
+            for (Card.Rank rank : Card.Rank.ALL) {
+                int pkCard = Card.of(color, rank).packed();
+                long single = PackedCardSet.singleton(pkCard);
+                assertEquals(single, PackedCardSet.subsetOfColor(single, color));
+            }
+        }
+    }
+
+    @Test
+    void toStringReturnsTheRightThing() {
+        long s = PackedCardSet.EMPTY;
+        int c1 = PackedCard.pack(Card.Color.HEART, Card.Rank.SIX);
+        int c2 = PackedCard.pack(Card.Color.SPADE, Card.Rank.ACE);
+        int c3 = PackedCard.pack(Card.Color.SPADE, Card.Rank.SIX);
+        s = PackedCardSet.add(s, c1);
+        s = PackedCardSet.add(s, c2);
+        s = PackedCardSet.add(s, c3);
+        assertEquals("{♠6,♠A,♥6}", PackedCardSet.toString(s));
     }
 }

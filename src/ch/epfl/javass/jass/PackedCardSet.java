@@ -1,5 +1,9 @@
 package ch.epfl.javass.jass;
 
+import ch.epfl.javass.bits.Bits64;
+
+import java.util.StringJoiner;
+
 /**
  * Provides utility methods for working with the binary representation
  * of a set of cards.
@@ -19,6 +23,7 @@ public final class PackedCardSet {
 
     /**
      * Return true if the binary representation is valid
+     *
      * @param pkCardSet the set for which to check the validity
      * @return true if the representation was valid
      */
@@ -27,7 +32,8 @@ public final class PackedCardSet {
     }
 
     // Used for trumpAbove
-    private static long[] betterPacked = {
+    private static final long[] betterPacked = {
+            // For Spade
             0b1_1111_1110, // for 6
             0b1_1111_1100, // for 7
             0b1_1111_1000, // for 8
@@ -37,23 +43,53 @@ public final class PackedCardSet {
             0b1_1010_1000, // for Q
             0b1_0010_1000, // for K
             0b0_0010_1000, // for A
+            // For Heart
+            0b1_1111_1110L << 16, // for 6
+            0b1_1111_1100L << 16, // for 7
+            0b1_1111_1000L << 16, // for 8
+            0b0_0010_0000L << 16, // for 9
+            0b1_1110_0000L << 16, // for 10
+            0L, // for J
+            0b1_1010_1000L << 16, // for Q
+            0b1_0010_1000L << 16, // for K
+            0b0_0010_1000L << 16, // for A
+            // For Diamond
+            0b1_1111_1110L << 32, // for 6
+            0b1_1111_1100L << 32, // for 7
+            0b1_1111_1000L << 32, // for 8
+            0b0_0010_0000L << 32, // for 9
+            0b1_1110_0000L << 32, // for 10
+            0L, // for J
+            0b1_1010_1000L << 32, // for Q
+            0b1_0010_1000L << 32, // for K
+            0b0_0010_1000L << 32, // for A
+            // For Clubs
+            0b1_1111_1110L << 48, // for 6
+            0b1_1111_1100L << 48, // for 7
+            0b1_1111_1000L << 48, // for 8
+            0b0_0010_0000L << 48, // for 9
+            0b1_1110_0000L << 48, // for 10
+            0L, // for J
+            0b1_1010_1000L << 48, // for Q
+            0b1_0010_1000L << 48, // for K
+            0b0_0010_1000L << 48, // for A
     };
 
     /**
      * Return the set of cards strictly stronger than the given card,
      * under the assumption that that card is a trump card.
+     *
      * @param pkCard The card with which to compare
      * @return a set representing all cards that are better
      */
     public static long trumpAbove(int pkCard) {
-        long pattern = betterPacked[PackedCard.rank(pkCard).ordinal()];
-        // A switch might be prettier, but this makes sure we have a jump table
-        return pattern << (PackedCard.color(pkCard).ordinal() * 16);
+        return betterPacked[PackedCard.rank(pkCard).ordinal() + 9 * PackedCard.color(pkCard).ordinal()];
     }
 
     /**
      * Return the representation of a set containing just pkCard,
      * and no other cards
+     *
      * @param pkCard the lonely card in the set
      * @return the set with just that card
      */
@@ -69,6 +105,7 @@ public final class PackedCardSet {
 
     /**
      * Returns true if this represents the empty set
+     *
      * @param pkCardSet the representation to check for emptiness
      * @return true if the representation corresponds to the empty set
      */
@@ -78,6 +115,7 @@ public final class PackedCardSet {
 
     /**
      * Return the number of cards contained in this set
+     *
      * @param pkCardSet the representation of the set to count the size of
      */
     public static int size(long pkCardSet) {
@@ -87,8 +125,9 @@ public final class PackedCardSet {
 
     /**
      * Get the ith card, starting from the right, in this set
+     *
      * @param pkCardSet the binary representation of the set
-     * @param index the ith card to get
+     * @param index     the ith card to get
      * @return the packed representation of that card
      */
     public static int get(long pkCardSet, int index) {
@@ -102,8 +141,9 @@ public final class PackedCardSet {
 
     /**
      * Insert a new card into this set
+     *
      * @param pkCardSet the representation of the into which to insert
-     * @param pkCard the card to insert into the set
+     * @param pkCard    the card to insert into the set
      * @return a new set combining the old set and the new card
      */
     public static long add(long pkCardSet, int pkCard) {
@@ -113,8 +153,9 @@ public final class PackedCardSet {
 
     /**
      * Remove a card from a given set.
+     *
      * @param pkCardSet the binary representation of the set on which to operate
-     * @param pkCard the card to remove from the set
+     * @param pkCard    the card to remove from the set
      * @return a new set where the offending card is absent
      */
     public static long remove(long pkCardSet, int pkCard) {
@@ -124,8 +165,9 @@ public final class PackedCardSet {
 
     /**
      * Check if a card is inside a set
+     *
      * @param pkCardSet the binary representation of a set in which to check membership
-     * @param pkCard the card to check the membership of
+     * @param pkCard    the card to check the membership of
      * @return true if the card is in the set, false otherwise
      */
     public static boolean contains(long pkCardSet, int pkCard) {
@@ -134,6 +176,7 @@ public final class PackedCardSet {
 
     /**
      * Return the set containing everything but the elements contained in the current set.
+     *
      * @param pkCardSet the set of which to take the complement
      * @return the complement of that set
      */
@@ -141,23 +184,66 @@ public final class PackedCardSet {
         return PackedCardSet.ALL_CARDS ^ pkCardSet;
     }
 
+    /**
+     * Return the union of 2 sets, that is to say, a set containing every element
+     * in one or the other, or both.
+     *
+     * @param pkCardSet1 the first set
+     * @param pkCardSet2 the second set
+     * @return the union of both sets
+     */
     public static long union(long pkCardSet1, long pkCardSet2) {
-        return 0;
+        assert isValid(pkCardSet1);
+        assert isValid(pkCardSet2);
+
+        return pkCardSet1 | pkCardSet2;
     }
 
-    public static long intersection(long pkcCardSet1, long pkCardSet2) {
-        return 0;
+    /**
+     * Calculate the intersection of 2 sets, i.e., all elements that are in both sets.
+     * @return the intersection of the 2 sets given to this method
+     */
+    public static long intersection(long pkCardSet1, long pkCardSet2) {
+        return pkCardSet1 & pkCardSet2;
     }
 
+    /**
+     * Calculate the set difference between two sets, that is to say,
+     * all the elements that are in the first set but not the second
+     * @param pkCardSet1 the set to remove from
+     * @param pkCardSet2 the set of elements to remove from the former set
+     * @return a set consisting of all elements in the first set but not the second
+     */
     public static long difference(long pkCardSet1, long pkCardSet2) {
-        return 0;
+        return pkCardSet1 ^ pkCardSet2;
     }
 
+    // used for subsetOfColor
+    private static final long colorMasks[] = {
+        Bits64.mask(0, 16),
+        Bits64.mask(16, 16),
+        Bits64.mask(32, 16),
+        Bits64.mask(48, 16)
+    };
+    /**
+     * Returns a subset of this set, looking at the cards that of a certain color,
+     * and discarding all the reset
+     * @param pkCardSet the representation of
+     * @param color the color we're interested in
+     * @return a new set with only cards of the given color
+     */
     public static long subsetOfColor(long pkCardSet, Card.Color color) {
-        return 0;
+        return pkCardSet & colorMasks[color.ordinal()];
     }
 
+    /**
+     * Return a string representation of this set.
+     */
     public static String toString(long pkCardSet) {
-        return "I don't care";
+        StringJoiner j = new StringJoiner(",", "{", "}");
+        for (int i = 0; i < PackedCardSet.size(pkCardSet); ++i) {
+            j.add(PackedCard.toString(PackedCardSet.get(pkCardSet, i)));
+        }
+        return j.toString();
     }
 }
