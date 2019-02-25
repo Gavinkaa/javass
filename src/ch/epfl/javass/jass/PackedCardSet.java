@@ -5,18 +5,60 @@ package ch.epfl.javass.jass;
  * of a set of cards.
  */
 public final class PackedCardSet {
+    /**
+     * Represents an empty set of Cards
+     */
     public static final long EMPTY = 0;
-    public static final long ALL_CARDS = 0b1111_1111_0000000_1111_1111_0000000_1111_1111_0000000_1111_1111L;
+    /**
+     * Represents the set containing all possible cards
+     */
+    public static final long ALL_CARDS = 0b1_1111_1111_0000_0001_1111_1111_0000_0001_1111_1111_0000_0001_1111_1111L;
 
     private PackedCardSet() {
     }
 
+    /**
+     * Return true if the binary representation is valid
+     * @param pkCardSet the set for which to check the validity
+     * @return true if the representation was valid
+     */
     public static boolean isValid(long pkCardSet) {
-        return false;
+        return (pkCardSet & (~ALL_CARDS)) == 0;
     }
 
-    long trumpAbove(int pkCard) {
-        return 0L;
+    // Used for trumpAbove
+    private static long[] betterPacked = {
+            0b1_1111_1110, // for 6
+            0b1_1111_1100, // for 7
+            0b1_1111_1000, // for 8
+            0b0_0010_0000, // for 9
+            0b1_1110_0000, // for 10
+            0b0_0000_0000, // for J
+            0b1_1010_1000, // for Q
+            0b1_0010_1000, // for K
+            0b0_0010_1000, // for A
+    };
+
+    /**
+     * Return the set of cards strictly stronger than the given card,
+     * under the assumption that that card is a trump card.
+     * @param pkCard The card with which to compare
+     * @return a set representing all cards that are better
+     */
+    public static long trumpAbove(int pkCard) {
+        long pattern = betterPacked[PackedCard.rank(pkCard).ordinal()];
+        switch (PackedCard.color(pkCard)) {
+            case SPADE:
+                return pattern;
+            case HEART:
+                return pattern << 16;
+            case DIAMOND:
+                return pattern << 32;
+            case CLUB:
+                return pattern << 48;
+            default:
+                throw new RuntimeException("Unreachable Code: Unkown Color");
+        }
     }
 
     public static long singleton(int pkCard) {
@@ -68,6 +110,6 @@ public final class PackedCardSet {
     }
 
     public static String toString(long pkCardSet) {
-
+        return "I don't care";
     }
 }
