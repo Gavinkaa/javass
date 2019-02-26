@@ -26,13 +26,14 @@ public final class CardSet {
 
     /**
      * Make a new set of cards form a list a cards to include
+     *
      * @param cards the list of cards to include
      * @return the new set containing just the cards in the list
      */
-    public static CardSet of(List<Card> cards){
+    public static CardSet of(List<Card> cards) {
         long packed = PackedCardSet.EMPTY;
 
-        for (Card card: cards) {
+        for (Card card : cards) {
             packed = PackedCardSet.add(packed, card.packed());
         }
         return new CardSet(packed);
@@ -41,12 +42,13 @@ public final class CardSet {
 
     /**
      * Make a new set of cards from a binary representation to use
+     *
      * @param packed the binary representation
      * @return a set matching with the binary representation
      * @throws IllegalArgumentException: if the representation isn't valid
      */
-    public static CardSet ofPacked(long packed){
-        if(!PackedCardSet.isValid(packed)){
+    public static CardSet ofPacked(long packed) {
+        if (!PackedCardSet.isValid(packed)) {
             throw new IllegalArgumentException("Binary representation of the packed card set wasn't valid");
         }
         return new CardSet(packed);
@@ -55,65 +57,70 @@ public final class CardSet {
     /**
      * @return the binary representation of this card set
      */
-    public long packed(){
+    public long packed() {
         return packed;
     }
 
     /**
      * @return true if this is the empty set
      */
-    public boolean isEmpty(){
+    public boolean isEmpty() {
         return PackedCardSet.isEmpty(packed);
     }
 
     /**
      * @return the number of cards contained in this set
      */
-    public int size(){
+    public int size() {
         return PackedCardSet.size(packed);
     }
 
     /**
      * Returns the ith card in this set according to the canonical ordering of cards: color and then rank
+     *
      * @param index the index to fetch
      * @return the ith card
      */
-    public Card get(int index){
+    public Card get(int index) {
         return Card.ofPacked(PackedCardSet.get(packed, index));
     }
 
     /**
      * Return a new set with a new card in it
+     *
      * @param card the new card to add to this set
      * @return a new set containing that card and all the other cards of this set
      */
-    public CardSet add(Card card){
+    public CardSet add(Card card) {
         return CardSet.ofPacked(PackedCardSet.add(packed, card.packed()));
     }
 
     /**
      * Return a new set without a card in it
+     *
      * @param card the card to remove to this set
      * @return a new set all the other cards of this set except that card
      */
-    public CardSet remove(Card card){
+    public CardSet remove(Card card) {
         return CardSet.ofPacked(PackedCardSet.remove(packed, card.packed()));
     }
 
     /**
      * Check if a card is inside this set
+     *
      * @param card the card of which to check memberchip
      * @return true if the card is in the set, false otherwise
      */
-    public boolean contains(Card card){
+    public boolean contains(Card card) {
         return PackedCardSet.contains(packed, card.packed());
     }
 
     /**
      * Return a new set containing everything but the elements contained in the current set.
+     *
      * @return the complement of this set
      */
-    public CardSet complement(){
+    public CardSet complement() {
         return CardSet.ofPacked(PackedCardSet.complement(packed));
     }
 
@@ -124,23 +131,37 @@ public final class CardSet {
      * @param that the set with which to union
      * @return the union of both sets
      */
-    public CardSet union(CardSet that){
+    public CardSet union(CardSet that) {
         return CardSet.ofPacked(PackedCardSet.union(this.packed, that.packed));
     }
 
     /**
      * Calculate the intersection of the given set and this, i.e., all elements that are in both sets.
+     *
      * @return the intersection of that set and this set
      */
-    public CardSet intersection(CardSet that){
+    public CardSet intersection(CardSet that) {
         return CardSet.ofPacked(PackedCardSet.intersection(this.packed, that.packed));
     }
 
-    public CardSet difference(CardSet that){
+    /**
+     * Calculate the set difference between that set and this, that is to say,
+     * all the elements that are in the first set but not the second
+     *
+     * @param that the set of elements to remove of this set
+     * @return a set consisting of all elements in the first set but not the second
+     */
+    public CardSet difference(CardSet that) {
         return CardSet.ofPacked(PackedCardSet.difference(this.packed, that.packed));
     }
 
-    public CardSet subsetOfColor(Card.Color color){
+    /**
+     * Returns a subset of this set, looking at the cards that are of a certain color,
+     * and discarding all the reset
+     * @param color the color we're interested in
+     * @return a new set with only cards of the given color
+     */
+    public CardSet subsetOfColor(Card.Color color) {
         return CardSet.ofPacked(PackedCardSet.subsetOfColor(packed, color));
     }
 
