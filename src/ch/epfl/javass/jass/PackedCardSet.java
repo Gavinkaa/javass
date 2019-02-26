@@ -160,7 +160,7 @@ public final class PackedCardSet {
      */
     public static long remove(long pkCardSet, int pkCard) {
         assert isValid(pkCardSet);
-        return pkCardSet ^ PackedCardSet.singleton(pkCard);
+        return pkCardSet & ~PackedCardSet.singleton(pkCard);
     }
 
     /**
@@ -181,7 +181,7 @@ public final class PackedCardSet {
      * @return the complement of that set
      */
     public static long complement(long pkCardSet) {
-        return PackedCardSet.ALL_CARDS ^ pkCardSet;
+        return PackedCardSet.ALL_CARDS ^ pkCardSet; //works only because there are no zeroes in ALL_CARDS
     }
 
     /**
@@ -215,7 +215,7 @@ public final class PackedCardSet {
      * @return a set consisting of all elements in the first set but not the second
      */
     public static long difference(long pkCardSet1, long pkCardSet2) {
-        return pkCardSet1 ^ pkCardSet2;
+        return pkCardSet1 & ~pkCardSet2;
     }
 
     // used for subsetOfColor
