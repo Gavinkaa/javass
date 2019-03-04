@@ -60,4 +60,18 @@ class PackedTrickTest {
         int last = 8 << 24;
         assertTrue(PackedTrick.isLast(last));
     }
+
+    @Test
+    void nextEmptyReturnsInvalidIfIndexIsTooBig() {
+        int trick = 8 << 24;
+        assertEquals(PackedTrick.INVALID, PackedTrick.nextEmpty(trick));
+    }
+
+    @Test
+    void nextEmptyIncrementsIndex() {
+        for (int i = 0; i < 8; ++i) {
+            int extract = Bits32.extract(PackedTrick.nextEmpty(i << 24), 24, 4);
+            assertEquals(i + 1, extract);
+        }
+    }
 }
