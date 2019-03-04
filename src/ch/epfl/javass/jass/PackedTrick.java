@@ -22,7 +22,7 @@ public final class PackedTrick {
      * @return true if the packed representation is valid
      */
     public static boolean isValid(int pkTrick) {
-        assert PackedTrick.isValid(pkTrick);
+        assert isValid(pkTrick);
 
         // Check if the cards are correct
         boolean foundValid = false;
@@ -67,7 +67,7 @@ public final class PackedTrick {
      * @return the empty trick right after this one
      */
     public static int nextEmpty(int pkTrick) {
-        assert PackedTrick.isValid(pkTrick);
+        assert isValid(pkTrick);
 
         int nextIndex = Bits32.extract(pkTrick, 24, 4) + 1;
         if (nextIndex > 8) {
@@ -92,8 +92,18 @@ public final class PackedTrick {
      * @return true if this is the last trick of a turn
      */
     public static boolean isLast(int pkTrick) {
-        assert PackedTrick.isValid(pkTrick);
+        assert isValid(pkTrick);
 
         return Bits32.extract(pkTrick, 24, 4) == 8;
+    }
+
+    public static boolean isEmpty(int pkTrick) {
+        assert isValid(pkTrick);
+        for (int i = 0; i < 4; ++i) {
+            if (Bits32.extract(pkTrick, i * 6, 6) != PackedCard.INVALID) {
+                return false;
+            }
+        }
+        return true;
     }
 }
