@@ -48,4 +48,16 @@ class PackedTrickTest {
             }
         }
     }
+
+    @Test
+    void firstEmptyIsNotLast() {
+        int first = PackedTrick.firstEmpty(Card.Color.SPADE, PlayerId.PLAYER_1);
+        assertFalse(PackedTrick.isLast(first));
+    }
+
+    @Test
+    void isLastIstrueIfIndexIs8() {
+        int last = 8 << 24;
+        assertTrue(PackedTrick.isLast(last));
+    }
 }

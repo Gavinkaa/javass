@@ -57,4 +57,11 @@ public final class PackedTrick {
                 trump.ordinal(), 2
         );
     }
+
+    /**
+     * @return true if this is the last trick of a turn
+     */
+    public static boolean isLast(int packedTrick) {
+        return Bits32.extract(packedTrick, 24, 4) == 8;
+    }
 }
