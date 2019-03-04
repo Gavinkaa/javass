@@ -31,49 +31,32 @@ public final class PackedCardSet {
         return (pkCardSet & (~ALL_CARDS)) == 0;
     }
 
-    // Used for trumpAbove
-    private static final long[] betterPacked = {
-            // For Spade
-            0b1_1111_1110, // for 6
-            0b1_1111_1100, // for 7
-            0b1_1111_1000, // for 8
-            0b0_0010_0000, // for 9
-            0b1_1110_0000, // for 10
-            0b0_0000_0000, // for J
-            0b1_1010_1000, // for Q
-            0b1_0010_1000, // for K
-            0b0_0010_1000, // for A
-            // For Heart
-            0b1_1111_1110L << 16, // for 6
-            0b1_1111_1100L << 16, // for 7
-            0b1_1111_1000L << 16, // for 8
-            0b0_0010_0000L << 16, // for 9
-            0b1_1110_0000L << 16, // for 10
-            0L, // for J
-            0b1_1010_1000L << 16, // for Q
-            0b1_0010_1000L << 16, // for K
-            0b0_0010_1000L << 16, // for A
-            // For Diamond
-            0b1_1111_1110L << 32, // for 6
-            0b1_1111_1100L << 32, // for 7
-            0b1_1111_1000L << 32, // for 8
-            0b0_0010_0000L << 32, // for 9
-            0b1_1110_0000L << 32, // for 10
-            0L, // for J
-            0b1_1010_1000L << 32, // for Q
-            0b1_0010_1000L << 32, // for K
-            0b0_0010_1000L << 32, // for A
-            // For Clubs
-            0b1_1111_1110L << 48, // for 6
-            0b1_1111_1100L << 48, // for 7
-            0b1_1111_1000L << 48, // for 8
-            0b0_0010_0000L << 48, // for 9
-            0b1_1110_0000L << 48, // for 10
-            0L, // for J
-            0b1_1010_1000L << 48, // for Q
-            0b1_0010_1000L << 48, // for K
-            0b0_0010_1000L << 48, // for A
-    };
+    private static long betterCards(Card card) {
+        int shift = 16 * card.color().ordinal();
+        long pattern = 0;
+        int spike = 1;
+        for (Card.Rank r : Card.Rank.ALL) {
+            Card candidate = Card.of(card.color(), r);
+            if (candidate.isBetter(card.color(), card)) {
+                pattern |= spike;
+            }
+            spike <<= 1;
+        }
+        return pattern << shift;
+    }
+
+    private static long[] makeBetterPacked() {
+        long[] arr = new long[Card.Color.COUNT * Card.Rank.COUNT];
+        int i = 0;
+        for (Card.Color color : Card.Color.ALL) {
+            for (Card.Rank rank : Card.Rank.ALL) {
+                arr[i++] = betterCards(Card.of(color, rank));
+            }
+        }
+        return arr;
+    }
+
+    private static final long[] betterPacked = makeBetterPacked();
 
     /**
      * Return the set of cards strictly stronger than the given card,
