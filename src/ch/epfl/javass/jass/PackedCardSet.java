@@ -143,7 +143,7 @@ public final class PackedCardSet {
      */
     public static long remove(long pkCardSet, int pkCard) {
         assert isValid(pkCardSet);
-        return pkCardSet ^ PackedCardSet.singleton(pkCard);
+        return pkCardSet & ~PackedCardSet.singleton(pkCard);
     }
 
     /**
@@ -164,7 +164,7 @@ public final class PackedCardSet {
      * @return the complement of that set
      */
     public static long complement(long pkCardSet) {
-        return PackedCardSet.ALL_CARDS ^ pkCardSet;
+        return PackedCardSet.ALL_CARDS ^ pkCardSet; //works only because there are no zeroes in ALL_CARDS
     }
 
     /**
@@ -184,6 +184,7 @@ public final class PackedCardSet {
 
     /**
      * Calculate the intersection of 2 sets, i.e., all elements that are in both sets.
+     *
      * @return the intersection of the 2 sets given to this method
      */
     public static long intersection(long pkCardSet1, long pkCardSet2) {
@@ -193,26 +194,29 @@ public final class PackedCardSet {
     /**
      * Calculate the set difference between two sets, that is to say,
      * all the elements that are in the first set but not the second
+     *
      * @param pkCardSet1 the set to remove from
      * @param pkCardSet2 the set of elements to remove from the former set
      * @return a set consisting of all elements in the first set but not the second
      */
     public static long difference(long pkCardSet1, long pkCardSet2) {
-        return pkCardSet1 ^ pkCardSet2;
+        return pkCardSet1 & ~pkCardSet2;
     }
 
     // used for subsetOfColor
     private static final long colorMasks[] = {
-        Bits64.mask(0, 16),
-        Bits64.mask(16, 16),
-        Bits64.mask(32, 16),
-        Bits64.mask(48, 16)
+            Bits64.mask(0, 16),
+            Bits64.mask(16, 16),
+            Bits64.mask(32, 16),
+            Bits64.mask(48, 16)
     };
+
     /**
-     * Returns a subset of this set, looking at the cards that of a certain color,
+     * Returns a subset of this set, looking at the cards that are of a certain color,
      * and discarding all the reset
-     * @param pkCardSet the representation of
-     * @param color the color we're interested in
+     *
+     * @param pkCardSet the representation of the set
+     * @param color     the color we're interested in
      * @return a new set with only cards of the given color
      */
     public static long subsetOfColor(long pkCardSet, Card.Color color) {

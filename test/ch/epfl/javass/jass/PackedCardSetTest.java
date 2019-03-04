@@ -130,6 +130,18 @@ class PackedCardSetTest {
     }
 
     @Test
+    void removingTwiceIsSameAsOne() {
+        for (Card.Color color : Card.Color.ALL) {
+            for (Card.Rank rank : Card.Rank.ALL) {
+                int pkCard = Card.of(color, rank).packed();
+                long single = PackedCardSet.singleton(pkCard);
+                long once = PackedCardSet.remove(single, pkCard);
+                assertEquals(once, PackedCardSet.remove(once, pkCard));
+            }
+        }
+    }
+
+    @Test
     void singletonContainsItsCard() {
         for (Card.Color color : Card.Color.ALL) {
             for (Card.Rank rank : Card.Rank.ALL) {
