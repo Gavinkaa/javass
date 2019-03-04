@@ -22,6 +22,8 @@ public final class PackedTrick {
      * @return true if the packed representation is valid
      */
     public static boolean isValid(int pkTrick) {
+        assert PackedTrick.isValid(pkTrick);
+
         // Check if the cards are correct
         boolean foundValid = false;
         for (int i = 3; i >= 0; --i) {
@@ -65,6 +67,8 @@ public final class PackedTrick {
      * @return the empty trick right after this one
      */
     public static int nextEmpty(int pkTrick) {
+        assert PackedTrick.isValid(pkTrick);
+
         int nextIndex = Bits32.extract(pkTrick, 24, 4) + 1;
         if (nextIndex > 8) {
             return PackedTrick.INVALID;
