@@ -39,4 +39,22 @@ public final class PackedTrick {
         }
         return true;
     }
+
+    /**
+     * Construct a packed representation of a trick with no played cards,
+     * and the given trump and firstPlayer.
+     * @param trump the current trump color
+     * @param firstPlayer the first player to play this turn
+     */
+    public static int firstEmpty(Card.Color trump, PlayerId firstPlayer) {
+        return Bits32.pack(
+                PackedCard.INVALID, 6,
+                PackedCard.INVALID, 6,
+                PackedCard.INVALID, 6,
+                PackedCard.INVALID, 6,
+                0, 4,
+                firstPlayer.ordinal(), 2,
+                trump.ordinal(), 2
+        );
+    }
 }
