@@ -23,8 +23,6 @@ public final class PackedTrick {
      * @return true if the packed representation is valid
      */
     public static boolean isValid(int pkTrick) {
-        assert isValid(pkTrick);
-
         // Check if the cards are correct
         boolean foundValid = false;
         for (int i = 3; i >= 0; --i) {
