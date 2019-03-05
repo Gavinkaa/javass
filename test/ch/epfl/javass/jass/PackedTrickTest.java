@@ -90,4 +90,15 @@ class PackedTrickTest {
             assertFalse(PackedTrick.isEmpty(pkTrick));
         }
     }
+
+    @Test
+    void isFullReturnTrueIffAllCardsAreThere(){
+        int pkTrick = Bits32.mask(0, 24);
+        for (int i = 0; i < 4; i++) {
+            pkTrick ^= Bits32.mask(i*6, 6);
+            assertFalse(PackedTrick.isEmpty(pkTrick));
+        }
+
+        assertTrue(PackedTrick.isFull(pkTrick));
+    }
 }

@@ -95,13 +95,33 @@ public final class PackedTrick {
         return Bits32.extract(pkTrick, 24, 4) == 8;
     }
 
+    /**
+     * @return true if there is no valid card
+     */
     public static boolean isEmpty(int pkTrick) {
+        return size(pkTrick) == 0;
+    }
+
+    /**
+     * @return true if every card is valid
+     */
+    public static boolean isFull(int pkTrick){
+        return size(pkTrick) == 4;
+    }
+
+    /**
+     *
+     * @return the number of cards contained in this trick
+     */
+    public static int size(int pkTrick){
         assert isValid(pkTrick);
+
+        int count = 0;
         for (int i = 0; i < 4; ++i) {
             if (Bits32.extract(pkTrick, i * 6, 6) != PackedCard.INVALID) {
-                return false;
+                count++;
             }
         }
-        return true;
+        return count;
     }
 }
