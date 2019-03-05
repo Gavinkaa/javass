@@ -3,9 +3,7 @@ package ch.epfl.javass.jass;
 import ch.epfl.javass.bits.Bits32;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class PackedTrickTest {
     @Test
@@ -76,29 +74,47 @@ class PackedTrickTest {
     }
 
     @Test
-    void isEmptyReturnFalseIfThereIsACard(){
+    void isEmptyReturnFalseIfThereIsACard() {
         assertFalse(PackedTrick.isEmpty(0));
     }
 
     @Test
-    void isEmptyReturnTrueIffAllCardsInvalid(){
+    void isEmptyReturnTrueIffAllCardsInvalid() {
         int pkTrick = Bits32.mask(0, 24);
         assertTrue(PackedTrick.isEmpty(pkTrick));
 
         for (int i = 0; i < 4; i++) {
-            pkTrick ^= Bits32.mask(i*6, 6);
+            pkTrick ^= Bits32.mask(i * 6, 6);
             assertFalse(PackedTrick.isEmpty(pkTrick));
         }
     }
 
     @Test
-    void isFullReturnTrueIffAllCardsAreThere(){
+    void isFullReturnTrueIffAllCardsAreThere() {
         int pkTrick = Bits32.mask(0, 24);
         for (int i = 0; i < 4; i++) {
-            pkTrick ^= Bits32.mask(i*6, 6);
+            pkTrick ^= Bits32.mask(i * 6, 6);
             assertFalse(PackedTrick.isEmpty(pkTrick));
         }
 
         assertTrue(PackedTrick.isFull(pkTrick));
+    }
+
+    @Test
+    void sizeReturnTheCorrectSize() {
+        int pkTrick = Bits32.mask(0, 24);
+        for (int i = 0; i < 4; i++) {
+            pkTrick ^= Bits32.mask(i * 6, 6);
+            assertEquals(i + 1, PackedTrick.size(pkTrick));
+        }
+    }
+
+    @Test
+    void withAddedCardSizeIncreased() {
+        int pkTrick = PackedTrick.firstEmpty(Card.Color.SPADE, PlayerId.PLAYER_1);
+        for (int i = 0; i < 4; i++) {
+            assertEquals(i, PackedTrick.size(pkTrick));
+            pkTrick = PackedTrick.withAddedCard(pkTrick, 0);
+        }
     }
 }
