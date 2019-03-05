@@ -74,4 +74,20 @@ class PackedTrickTest {
             assertEquals(i + 1, extract);
         }
     }
+
+    @Test
+    void isEmptyReturnFalseIfThereIsACard(){
+        assertFalse(PackedTrick.isEmpty(0));
+    }
+
+    @Test
+    void isEmptyReturnTrueIffAllCardsInvalid(){
+        int pkTrick = Bits32.mask(0, 24);
+        assertTrue(PackedTrick.isEmpty(pkTrick));
+
+        for (int i = 0; i < 4; i++) {
+            pkTrick ^= Bits32.mask(i*6, 6);
+            assertFalse(PackedTrick.isEmpty(pkTrick));
+        }
+    }
 }
