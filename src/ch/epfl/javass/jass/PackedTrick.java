@@ -254,4 +254,26 @@ public final class PackedTrick {
         }
         return total;
     }
+
+    /**
+     * Return the player that won this trick
+     * @param pkTrick the binary representation of this trick
+     * @return the player played the best card.
+     */
+    public static PlayerId winningPlayer(int pkTrick) {
+        assert isValid(pkTrick);
+        assert !isEmpty(pkTrick);
+
+        Card.Color trump = PackedTrick.trump(pkTrick);
+        int bestCard = PackedTrick.card(pkTrick, 0);
+        int bestIndex = 0;
+        for (int i = 1; i < PackedTrick.size(pkTrick); ++i) {
+            int card = PackedTrick.card(pkTrick, i);
+            if (PackedCard.isBetter(trump, card, bestCard)) {
+                bestCard = card;
+                bestIndex = i;
+            }
+        }
+        return PackedTrick.player(pkTrick, bestIndex);
+    }
 }
