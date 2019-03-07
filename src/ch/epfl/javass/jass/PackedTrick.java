@@ -276,4 +276,25 @@ public final class PackedTrick {
         }
         return PackedTrick.player(pkTrick, bestIndex);
     }
+
+    /**
+     * Return a string representation of this trick
+     * @param pkTrick the binary representation of this trick
+     * @return a string representing the information in this trick
+     */
+    public static String toString(int pkTrick) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Trump: ");
+        sb.append(PackedTrick.trump(pkTrick));
+        sb.append("; ");
+        for (int i = 0; i < PackedTrick.size(pkTrick); ++i) {
+            sb.append(PackedTrick.player(pkTrick, i));
+            sb.append(" ");
+            sb.append(PackedCard.toString(PackedTrick.card(pkTrick, i)));
+            if (i != PackedTrick.size(pkTrick) - 1) {
+                sb.append(", ");
+            }
+        }
+        return sb.toString();
+    }
 }
