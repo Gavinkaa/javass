@@ -170,4 +170,15 @@ class PackedTrickTest {
         }
         assertEquals(157, total);
     }
+
+    @Test
+    void winningPlayerWorksOnSomeExamples() {
+         int trick1 = addAllCards(
+                PackedTrick.firstEmpty(Card.Color.HEART, PlayerId.PLAYER_3),
+                Card.of(Card.Color.HEART, Card.Rank.SIX),
+                Card.of(Card.Color.SPADE, Card.Rank.SEVEN),
+                Card.of(Card.Color.HEART, Card.Rank.TEN)
+         );
+         assertEquals(PlayerId.PLAYER_1, PackedTrick.winningPlayer(trick1));
+    }
 }
