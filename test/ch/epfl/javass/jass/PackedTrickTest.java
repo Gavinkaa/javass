@@ -150,4 +150,24 @@ class PackedTrickTest {
         target.add(Card.of(Card.Color.HEART, Card.Rank.JACK));
         assertEquals(target.packed(), PackedTrick.playableCards(trick1, hand1.packed()));
     }
+
+    @Test
+    void addingAllCardsGivesUs157() {
+        int total = 0;
+        int i = 0;
+        int pkTrick = PackedTrick.firstEmpty(Card.Color.HEART, PlayerId.PLAYER_1);
+        for (Card.Color c : Card.Color.ALL) {
+            for (Card.Rank r : Card.Rank.ALL) {
+                Card card = Card.of(c, r);
+                pkTrick = PackedTrick.withAddedCard(pkTrick, card.packed());
+                ++i;
+                if (i == 4) {
+                    total += PackedTrick.points(pkTrick);
+                    pkTrick = PackedTrick.nextEmpty(pkTrick);
+                    i = 0;
+                }
+            }
+        }
+        assertEquals(157, total);
+    }
 }

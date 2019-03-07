@@ -234,4 +234,24 @@ public final class PackedTrick {
             return PackedCardSet.union(baseColored, trumpsWeCanPlay);
         }
     }
+
+    /**
+     * Calculate the number of points in a trick
+     * @param pkTrick the binary representation of the trick to tally
+     * @return the number of points that trick is worth
+     */
+    public static int points(int pkTrick) {
+        assert isValid(pkTrick);
+        assert isFull(pkTrick);
+
+        int total = 0;
+        for (int i = 0; i < 4; ++i) {
+            int card = PackedTrick.card(pkTrick, i);
+            total += PackedCard.points(PackedTrick.trump(pkTrick), card);
+        }
+        if (PackedTrick.isLast(pkTrick)) {
+            total += 5;
+        }
+        return total;
+    }
 }
