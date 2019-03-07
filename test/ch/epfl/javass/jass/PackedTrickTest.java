@@ -117,4 +117,37 @@ class PackedTrickTest {
             pkTrick = PackedTrick.withAddedCard(pkTrick, 0);
         }
     }
+
+    @Test
+    void baseColorReturnsTheColorOfFirstCard() {
+        int pkTrick = 0;
+        assertEquals(Card.Color.SPADE, PackedTrick.baseColor(pkTrick));
+    }
+
+    private int addAllCards(int pkTrick, Card card1, Card card2, Card card3) {
+        pkTrick = PackedTrick.withAddedCard(pkTrick, card1.packed());
+        pkTrick = PackedTrick.withAddedCard(pkTrick, card2.packed());
+        pkTrick = PackedTrick.withAddedCard(pkTrick, card3.packed());
+        return pkTrick;
+    }
+
+    @Test
+    void playableCardsWorksOnSomeExamples() {
+        int trick1 = addAllCards(
+                PackedTrick.firstEmpty(Card.Color.HEART, PlayerId.PLAYER_1),
+                Card.of(Card.Color.HEART, Card.Rank.SIX),
+                Card.of(Card.Color.SPADE, Card.Rank.SEVEN),
+                Card.of(Card.Color.HEART, Card.Rank.TEN)
+        );
+        CardSet hand1 = CardSet.EMPTY;
+        hand1.add(Card.of(Card.Color.HEART, Card.Rank.JACK));
+        assertEquals(hand1.packed(), PackedTrick.playableCards(trick1, hand1.packed()));
+        hand1.add(Card.of(Card.Color.SPADE, Card.Rank.SIX));
+        assertEquals(hand1.packed(), PackedTrick.playableCards(trick1, hand1.packed()));
+        hand1.add(Card.of(Card.Color.HEART, Card.Rank.EIGHT));
+        CardSet target = CardSet.EMPTY;
+        target.add(Card.of(Card.Color.HEART, Card.Rank.EIGHT));
+        target.add(Card.of(Card.Color.HEART, Card.Rank.JACK));
+        assertEquals(target.packed(), PackedTrick.playableCards(trick1, hand1.packed()));
+    }
 }

@@ -165,4 +165,73 @@ public final class PackedTrick {
         int start = PackedTrick.size(pkTrick) * 6;
         return ((pkTrick & ~Bits32.mask(start, 6)) | (pkCard << start));
     }
+
+    /**
+     * Return the base color of this trick, i.e.,
+     * the color of the first card played in this trick.
+     * @param pkTrick the representation of the trick
+     * @return the base color of that trick
+     */
+    public static Card.Color baseColor(int pkTrick) {
+        assert isValid(pkTrick);
+        return PackedCard.color(Bits32.extract(pkTrick, 0, 6));
+    }
+
+    // Return the best trump card played so far, or invalid
+    private static int bestTrumpCard(int pkTrick, Card.Color trump) {
+        int bestTrump = PackedCard.INVALID;
+        for (int i = 0; i < PackedTrick.size(pkTrick); ++i) {
+            int card = PackedTrick.card(pkTrick, i);
+                if (PackedCard.color(card) == trump) {
+                if (bestTrump == PackedCard.INVALID)  {
+                    bestTrump = card;
+                } else {
+                    bestTrump = PackedCard.isBetter(trump, card, bestTrump) ? card : bestTrump;
+                }
+            }
+        }
+        return bestTrump;
+    }
+
+    /**
+     * Return the set of cards that can be played next,
+     * given the current state of the trick
+     * @param pkTrick the binary representation of the trick
+     * @param pkHand the packed card set representing the hand of the player
+     * @return the subset of that hand that can be played
+     */
+    public static long playableCards(int pkTrick, long pkHand) {
+        assert !isFull(pkTrick);
+        if (isEmpty(pkTrick)) {
+            return pkHand;
+        }
+        Card.Color trump = trump(pkTrick);
+        Card.Color base = baseColor(pkTrick);
+
+        long baseColored = PackedCardSet.subsetOfColor(pkHand, base);
+        if (PackedCardSet.isEmpty(baseColored)) {
+            return pkHand;
+        }
+        // If the base color is the same as the trump color,
+        // we must play our trump cards, except the jack.
+        if (base == trump) {
+            // If the only trump card we have is a Jack, we're free to play anything
+            if (baseColored == PackedCardSet.singleton(Card.of(trump, Card.Rank.JACK).packed())) {
+                return pkHand;
+            } else {
+                return baseColored;
+            }
+        } else {
+            long trumpsWeCanPlay = PackedCardSet.subsetOfColor(pkHand, trump);
+            int bestTrumpCard = PackedTrick.bestTrumpCard(pkTrick, trump);
+            for (Card.Rank rank : Card.Rank.ALL) {
+                Card card = Card.of(trump, rank);
+                if (Card.ofPacked(bestTrumpCard).isBetter(trump, card)) {
+                    trumpsWeCanPlay = PackedCardSet.remove(trumpsWeCanPlay, card.packed());
+                }
+            }
+
+            return PackedCardSet.union(baseColored, trumpsWeCanPlay);
+        }
+    }
 }
