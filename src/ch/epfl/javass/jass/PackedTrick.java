@@ -185,6 +185,13 @@ public final class PackedTrick {
         return bestTrump;
     }
 
+    // Return the trump cards in a hand better than the best trump card
+    private static long handTrumpAbove(int pkTrick, Card.Color trump, long pkHand) {
+        int bestTrump = bestTrumpCard(pkTrick, trump);
+        long trumpAbove = PackedCardSet.trumpAbove(bestTrump);
+        return PackedCardSet.intersection(pkHand, trumpAbove);
+    }
+
     /**
      * Return the set of cards that can be played next,
      * given the current state of the trick
@@ -203,7 +210,13 @@ public final class PackedTrick {
 
         long baseColored = PackedCardSet.subsetOfColor(pkHand, base);
         if (PackedCardSet.isEmpty(baseColored)) {
-            return pkHand;
+            long trumpAbove = PackedTrick.handTrumpAbove(pkTrick, trump, pkHand);
+            long ourTrumpBelow = PackedCardSet.difference(PackedCardSet.subsetOfColor(pkHand, trump), trumpAbove);
+            if (ourTrumpBelow == pkHand) {
+                return pkHand;
+            } else {
+                return PackedCardSet.difference(pkHand, ourTrumpBelow);
+            }
         }
         // If the base color is the same as the trump color,
         // we must play our trump cards, except the jack.
@@ -215,10 +228,7 @@ public final class PackedTrick {
                 return baseColored;
             }
         } else {
-            int bestTrumpCard = PackedTrick.bestTrumpCard(pkTrick, trump);
-            long trumpAbove = PackedCardSet.trumpAbove(bestTrumpCard);
-            long trumpsWeCanPlay = PackedCardSet.intersection(trumpAbove, PackedCardSet.subsetOfColor(pkHand, trump));
-            return PackedCardSet.union(baseColored, trumpsWeCanPlay);
+            return PackedCardSet.union(baseColored, handTrumpAbove(pkTrick, trump, pkHand));
         }
     }
 
