@@ -1,6 +1,8 @@
 package ch.epfl.javass.jass;
 
 
+import ch.epfl.javass.Preconditions;
+
 /**
  * Represents a Score in a match of Jass, with methods
  * to be update concurrently over the course of the game.
@@ -22,9 +24,7 @@ public final class Score {
      * @throws IllegalArgumentException if the binary representation isn't valid
      */
     public static Score ofPacked(long packed) {
-        if (!PackedScore.isValid(packed)) {
-            throw new IllegalArgumentException("The provided score wasn't valid: " + PackedScore.toString(packed));
-        }
+        Preconditions.checkArgument(PackedScore.isValid(packed));
         return new Score(packed);
     }
 
@@ -81,9 +81,7 @@ public final class Score {
      * @return a new score representing the result of that win
      */
     public Score withAdditionalTrick(TeamId winningTeam, int trickPoints) {
-        if (trickPoints < 0) {
-            throw new IllegalArgumentException("trickPoints must be greater than 0");
-        }
+        Preconditions.checkArgument(trickPoints >= 0);
         return new Score(PackedScore.withAdditionalTrick(packed, winningTeam, trickPoints));
     }
 

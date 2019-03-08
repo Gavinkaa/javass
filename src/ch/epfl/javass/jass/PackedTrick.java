@@ -213,15 +213,9 @@ public final class PackedTrick {
                 return baseColored;
             }
         } else {
-            long trumpsWeCanPlay = PackedCardSet.subsetOfColor(pkHand, trump);
             int bestTrumpCard = PackedTrick.bestTrumpCard(pkTrick, trump);
-            for (Card.Rank rank : Card.Rank.ALL) {
-                Card card = Card.of(trump, rank);
-                if (Card.ofPacked(bestTrumpCard).isBetter(trump, card)) {
-                    trumpsWeCanPlay = PackedCardSet.remove(trumpsWeCanPlay, card.packed());
-                }
-            }
-
+            long trumpAbove = PackedCardSet.trumpAbove(bestTrumpCard);
+            long trumpsWeCanPlay = PackedCardSet.intersection(trumpAbove, PackedCardSet.subsetOfColor(pkHand, trump));
             return PackedCardSet.union(baseColored, trumpsWeCanPlay);
         }
     }
@@ -274,6 +268,8 @@ public final class PackedTrick {
      * @return a string representing the information in this trick
      */
     public static String toString(int pkTrick) {
+        assert isValid(pkTrick);
+
         StringBuilder sb = new StringBuilder();
         sb.append("Trump: ");
         sb.append(PackedTrick.trump(pkTrick));

@@ -1,5 +1,7 @@
 package ch.epfl.javass.jass;
 
+import ch.epfl.javass.Preconditions;
+
 /**
  * Represents a Trick in the game of Jass,
  * a round of the game where each player takes turns
@@ -34,9 +36,7 @@ public final class Trick {
      * @throws IllegalArgumentException if the packed representation wasn't valid
      */
     public static Trick ofPacked(int packed) {
-        if (!PackedTrick.isValid(packed)) {
-            throw new IllegalArgumentException("Packed trick is invalid");
-        }
+        Preconditions.checkArgument(PackedTrick.isValid(packed));
         return new Trick(packed);
     }
 
@@ -128,10 +128,7 @@ public final class Trick {
      * @throws IndexOutOfBoundsException if the index is not in [0;4[
      */
     public PlayerId player(int index) {
-        if (index < 0 || index >= 4) {
-            throw new IndexOutOfBoundsException("Index was not in [0;4[");
-        }
-        return PackedTrick.player(packed, index);
+        return PackedTrick.player(packed, Preconditions.checkIndex(index, 4));
     }
 
     /**
@@ -141,10 +138,7 @@ public final class Trick {
      * @throws IndexOutOfBoundsException if the index was outside the valid range
      */
     public Card card(int index) {
-        if (index < 0 || index >= size()) {
-            throw new IndexOutOfBoundsException("Index was not in [0;size()[");
-        }
-        return Card.ofPacked(PackedTrick.card(packed, index));
+        return Card.ofPacked(PackedTrick.card(packed, Preconditions.checkIndex(index, size())));
     }
 
     /**

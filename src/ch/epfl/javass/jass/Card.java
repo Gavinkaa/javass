@@ -1,5 +1,7 @@
 package ch.epfl.javass.jass;
 
+import ch.epfl.javass.Preconditions;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -109,9 +111,7 @@ public final class Card {
      * @return a new card matching the passed representation
      */
     public static Card ofPacked(int packed) {
-        if (!PackedCard.isValid(packed)) {
-            throw new IllegalArgumentException("The packed card isn't valid");
-        }
+        Preconditions.checkArgument(PackedCard.isValid(packed));
         return new Card(packed);
     }
 

@@ -1,5 +1,7 @@
 package ch.epfl.javass.jass;
 
+import ch.epfl.javass.Preconditions;
+
 import java.util.List;
 
 /**
@@ -48,9 +50,7 @@ public final class CardSet {
      * @throws IllegalArgumentException: if the representation isn't valid
      */
     public static CardSet ofPacked(long packed) {
-        if (!PackedCardSet.isValid(packed)) {
-            throw new IllegalArgumentException("Binary representation of the packed card set wasn't valid");
-        }
+        Preconditions.checkArgument(PackedCardSet.isValid(packed));
         return new CardSet(packed);
     }
 
