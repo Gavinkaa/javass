@@ -75,17 +75,8 @@ public final class PackedTrick {
             return PackedTrick.INVALID;
         }
         Card.Color trump = PackedTrick.trump(pkTrick);
-        int winningIndex = 0;
-        int winningCard = PackedTrick.card(pkTrick, 0);
-        for (int i = 1; i <= 3; ++i) {
-            int card = PackedTrick.card(pkTrick, i);
-            if (PackedCard.isBetter(trump, card, winningCard)) {
-                winningCard = card;
-                winningIndex = i;
-            }
-        }
         // Index is 0 so this works
-        return firstEmpty(trump, PackedTrick.player(pkTrick, winningIndex)) | (nextIndex << 24);
+        return firstEmpty(trump, PackedTrick.winningPlayer(pkTrick)) | (nextIndex << 24);
     }
 
     /**
@@ -245,7 +236,7 @@ public final class PackedTrick {
         assert isFull(pkTrick);
 
         int total = 0;
-        for (int i = 0; i < 4; ++i) {
+        for (int i = 0; i < PackedTrick.size(pkTrick); ++i) {
             int card = PackedTrick.card(pkTrick, i);
             total += PackedCard.points(PackedTrick.trump(pkTrick), card);
         }
