@@ -188,6 +188,9 @@ public final class PackedTrick {
     // Return the trump cards in a hand better than the best trump card
     private static long handTrumpAbove(int pkTrick, Card.Color trump, long pkHand) {
         int bestTrump = bestTrumpCard(pkTrick, trump);
+        if(!PackedCard.isValid(bestTrump)){
+            return PackedCardSet.subsetOfColor(pkHand, trump);
+        }
         long trumpAbove = PackedCardSet.trumpAbove(bestTrump);
         return PackedCardSet.intersection(pkHand, trumpAbove);
     }

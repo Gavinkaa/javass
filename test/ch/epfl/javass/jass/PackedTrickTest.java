@@ -1,7 +1,13 @@
 package ch.epfl.javass.jass;
 
 import ch.epfl.javass.bits.Bits32;
+import ch.epfl.test.TestRandomizer;
 import org.junit.jupiter.api.Test;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -173,12 +179,38 @@ class PackedTrickTest {
 
     @Test
     void winningPlayerWorksOnSomeExamples() {
-         int trick1 = addAllCards(
+        int trick1 = addAllCards(
                 PackedTrick.firstEmpty(Card.Color.HEART, PlayerId.PLAYER_3),
                 Card.of(Card.Color.HEART, Card.Rank.SIX),
                 Card.of(Card.Color.SPADE, Card.Rank.SEVEN),
                 Card.of(Card.Color.HEART, Card.Rank.TEN)
-         );
-         assertEquals(PlayerId.PLAYER_1, PackedTrick.winningPlayer(trick1));
+        );
+        assertEquals(PlayerId.PLAYER_1, PackedTrick.winningPlayer(trick1));
+    }
+
+    @Test
+    void playableCardsIsNeverEmpty(){
+
+        List<Card> allCards = new ArrayList<>(Card.Rank.COUNT * Card.Color.COUNT);
+
+        for (Card.Color color : Card.Color.ALL){
+            for(Card.Rank rank : Card.Rank.ALL){
+                allCards.add(Card.of(color, rank));
+            }
+        }
+        Random rng = new Random(TestRandomizer.SEED);
+        for (int i = 0; i < TestRandomizer.RANDOM_ITERATIONS; i++) {
+            Collections.shuffle(allCards, rng);
+            CardSet hand = CardSet.of(allCards.subList(0, 9));
+
+            int trick = PackedTrick.firstEmpty(Card.Color.HEART, PlayerId.PLAYER_1);
+            for(Card card : allCards.subList(9,12)){
+                trick = PackedTrick.withAddedCard(trick, card.packed());
+            }
+
+            long playable = PackedTrick.playableCards(trick, hand.packed());
+            assertFalse(PackedCardSet.isEmpty(playable));
+        }
+
     }
 }
