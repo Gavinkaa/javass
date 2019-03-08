@@ -25,6 +25,7 @@ public enum PlayerId {
 
     /**
      * Each player belongs to a team in an hardcoded way
+     *
      * @return team1 if the player is 1 or 3 otherwise team2
      */
     public TeamId team() {

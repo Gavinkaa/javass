@@ -158,6 +158,7 @@ public final class CardSet {
     /**
      * Returns a subset of this set, looking at the cards that are of a certain color,
      * and discarding all the reset
+     *
      * @param color the color we're interested in
      * @return a new set with only cards of the given color
      */

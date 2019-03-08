@@ -8,8 +8,9 @@ public class Bits64 {
 
     /**
      * Create a bit mask with a range of bits set to 1, and the rest to 0
+     *
      * @param start the index where the 1 field starts
-     * @param size the size of the 1 mask
+     * @param size  the size of the 1 mask
      * @return an integer with bits [start;start+size[ all 1, and the rest 0
      */
     public static long mask(int start, int size) {
@@ -22,9 +23,10 @@ public class Bits64 {
 
     /**
      * Extract out `size` bits from `bits`, starting from `start`
-     * @param bits the bits from which to extract a range
+     *
+     * @param bits  the bits from which to extract a range
      * @param start the index to start extracting from
-     * @param size the number of bits to extract
+     * @param size  the number of bits to extract
      * @return a number whose first size bits correspond to the extracted range
      */
     public static long extract(long bits, int start, int size) {
@@ -34,6 +36,7 @@ public class Bits64 {
 
     /**
      * Pack multiple small numbers into a larger bitpattern
+     *
      * @param v1 the first number to pack
      * @param s1 the number of bits in this number to pack
      * @param v2 the second number to pack
@@ -52,7 +55,6 @@ public class Bits64 {
 
         return ret;
     }
-
 
 
     private static long packAt(long v, int s, int index) {

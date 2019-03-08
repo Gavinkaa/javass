@@ -5,7 +5,8 @@ package ch.epfl.javass;
  * This is mainly useful in testing situations.
  */
 public final class Preconditions {
-    private Preconditions() {}
+    private Preconditions() {
+    }
 
     /**
      * Check if a condition is true, throwing an IllegalArgumentException
@@ -20,8 +21,9 @@ public final class Preconditions {
     /**
      * Check if an index is contained in the range [0;size[,
      * throwing an IndexOutOfBoundsException if this is not the case.
+     *
      * @param index the index to verify
-     * @param size the exclusive end point of the range
+     * @param size  the exclusive end point of the range
      * @return index if it is in range
      */
     public static int checkIndex(int index, int size) {

@@ -13,7 +13,7 @@ public enum TeamId {
 
     private final boolean isTeam1;
 
-    TeamId(boolean isTeam1){
+    TeamId(boolean isTeam1) {
         this.isTeam1 = isTeam1;
     }
 
@@ -32,7 +32,7 @@ public enum TeamId {
     /**
      * @return the team id this instance isn't
      */
-    public TeamId other(){
+    public TeamId other() {
         return isTeam1 ? TEAM_2 : TEAM_1;
     }
 }

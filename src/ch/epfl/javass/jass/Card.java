@@ -81,6 +81,7 @@ public final class Card {
          * The ordering of Ranks changes depending on whether or not the Color
          * is the trump color, so this ordering should be used in that case.
          * Otherwise, Enum.ordinal suffices.
+         *
          * @return the special ordinal for the trump color
          */
         public int trumpOrdinal() {
@@ -96,6 +97,7 @@ public final class Card {
 
     /**
      * Create a new Card with a certain rank and color
+     *
      * @param c the color the card will have
      * @param r the rank the card will have
      * @return a new Card with the specified properties
@@ -106,9 +108,10 @@ public final class Card {
 
     /**
      * Create a new card from a packed representation
+     *
      * @param packed the binary representation of the card to create
-     * @throws IllegalArgumentException if the representation is invalid
      * @return a new card matching the passed representation
+     * @throws IllegalArgumentException if the representation is invalid
      */
     public static Card ofPacked(int packed) {
         Preconditions.checkArgument(PackedCard.isValid(packed));
@@ -117,6 +120,7 @@ public final class Card {
 
     /**
      * See this card in binary form.
+     *
      * @return the packed representation of this card
      */
     public int packed() {
@@ -140,8 +144,9 @@ public final class Card {
     /**
      * Check if this card is better than that one.
      * This depends on what Color is currently the trump color.
+     *
      * @param trump which color is currently the trump color
-     * @param that the other card with which to compare
+     * @param that  the other card with which to compare
      * @return true if this card beats the other. false otherwise
      */
     public boolean isBetter(Color trump, Card that) {
@@ -151,6 +156,7 @@ public final class Card {
     /**
      * Return the number of points this card is worth, which
      * depends on the current trump card.
+     *
      * @param trump the current trump color
      * @return an integer tallying the points this card is worth
      */

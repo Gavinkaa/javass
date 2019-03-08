@@ -160,6 +160,7 @@ public final class PackedTrick {
     /**
      * Return the base color of this trick, i.e.,
      * the color of the first card played in this trick.
+     *
      * @param pkTrick the representation of the trick
      * @return the base color of that trick
      */
@@ -173,8 +174,8 @@ public final class PackedTrick {
         int bestTrump = PackedCard.INVALID;
         for (int i = 0; i < PackedTrick.size(pkTrick); ++i) {
             int card = PackedTrick.card(pkTrick, i);
-                if (PackedCard.color(card) == trump) {
-                if (bestTrump == PackedCard.INVALID)  {
+            if (PackedCard.color(card) == trump) {
+                if (bestTrump == PackedCard.INVALID) {
                     bestTrump = card;
                 } else {
                     bestTrump = PackedCard.isBetter(trump, card, bestTrump) ? card : bestTrump;
@@ -187,8 +188,9 @@ public final class PackedTrick {
     /**
      * Return the set of cards that can be played next,
      * given the current state of the trick
+     *
      * @param pkTrick the binary representation of the trick
-     * @param pkHand the packed card set representing the hand of the player
+     * @param pkHand  the packed card set representing the hand of the player
      * @return the subset of that hand that can be played
      */
     public static long playableCards(int pkTrick, long pkHand) {
@@ -222,6 +224,7 @@ public final class PackedTrick {
 
     /**
      * Calculate the number of points in a trick
+     *
      * @param pkTrick the binary representation of the trick to tally
      * @return the number of points that trick is worth
      */
@@ -242,6 +245,7 @@ public final class PackedTrick {
 
     /**
      * Return the player that won this trick
+     *
      * @param pkTrick the binary representation of this trick
      * @return the player played the best card.
      */
@@ -264,6 +268,7 @@ public final class PackedTrick {
 
     /**
      * Return a string representation of this trick
+     *
      * @param pkTrick the binary representation of this trick
      * @return a string representing the information in this trick
      */
