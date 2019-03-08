@@ -76,12 +76,13 @@ public final class Trick {
      * This method clear out all cards, increments the index,
      * and sets the starting player to the player who won this Trick
      * @throws IllegalStateException if the trick wasn't full
+     * @returns the nextEmpty trick, or INVALID if this was the last trick of a round
      */
     public Trick nextEmpty() {
         if (!isFull()) {
             throw new IllegalStateException("Trick must be full to call nextEmpty()");
         }
-        // TODO: maybe have an exception instead of returning invalid
+        // Invalid is normal here
         return new Trick(PackedTrick.nextEmpty(packed));
     }
 
@@ -192,9 +193,12 @@ public final class Trick {
      * Calculate the value of this Trick, by tallying up the value of each card,
      * and adding an extra bonus of this is the last Trick of a round.
      * @return the number of points this Trick is worth
+     * @throws IllegalStateException if the Trick isn't full
      */
     public int points() {
-        // TODO: Figure out what to do if the Trick isn't full, an assertion will fail beneath us
+        if (!isFull()) {
+            throw new IllegalStateException("points() called on a not full Trick");
+        }
         return PackedTrick.points(packed);
     }
 
