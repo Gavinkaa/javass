@@ -66,6 +66,7 @@ public final class PackedCardSet {
      * @return a set representing all cards that are better
      */
     public static long trumpAbove(int pkCard) {
+        assert PackedCard.isValid(pkCard);
         return betterPacked[PackedCard.rank(pkCard).ordinal() + 9 * PackedCard.color(pkCard).ordinal()];
     }
 
@@ -93,6 +94,7 @@ public final class PackedCardSet {
      * @return true if the representation corresponds to the empty set
      */
     public static boolean isEmpty(long pkCardSet) {
+        assert isValid(pkCardSet);
         return pkCardSet == PackedCardSet.EMPTY;
     }
 
@@ -114,12 +116,13 @@ public final class PackedCardSet {
      * @return the packed representation of that card
      */
     public static int get(long pkCardSet, int index) {
+        assert isValid(pkCardSet);
         assert index < size(pkCardSet);
         for (int i = 0; i < index; ++i) {
             pkCardSet = pkCardSet ^ Long.lowestOneBit(pkCardSet);
         }
-        int zeroes = Long.numberOfTrailingZeros(pkCardSet);
-        return PackedCard.pack(Card.Color.ALL.get(zeroes / 16), Card.Rank.ALL.get(zeroes % 16));
+        // The index of the card corresponds exactly with the packed representation
+        return Long.numberOfTrailingZeros(pkCardSet);
     }
 
     /**
@@ -154,6 +157,8 @@ public final class PackedCardSet {
      * @return true if the card is in the set, false otherwise
      */
     public static boolean contains(long pkCardSet, int pkCard) {
+        assert isValid(pkCardSet);
+        assert PackedCard.isValid(pkCard);
         return (pkCardSet & PackedCardSet.singleton(pkCard)) != 0;
     }
 
@@ -164,6 +169,7 @@ public final class PackedCardSet {
      * @return the complement of that set
      */
     public static long complement(long pkCardSet) {
+        assert isValid(pkCardSet);
         return PackedCardSet.ALL_CARDS ^ pkCardSet; //works only because there are no zeroes in ALL_CARDS
     }
 
@@ -188,6 +194,8 @@ public final class PackedCardSet {
      * @return the intersection of the 2 sets given to this method
      */
     public static long intersection(long pkCardSet1, long pkCardSet2) {
+        assert isValid(pkCardSet1);
+        assert isValid(pkCardSet2);
         return pkCardSet1 & pkCardSet2;
     }
 
@@ -200,6 +208,8 @@ public final class PackedCardSet {
      * @return a set consisting of all elements in the first set but not the second
      */
     public static long difference(long pkCardSet1, long pkCardSet2) {
+        assert isValid(pkCardSet1);
+        assert isValid(pkCardSet2);
         return pkCardSet1 & ~pkCardSet2;
     }
 
@@ -220,6 +230,7 @@ public final class PackedCardSet {
      * @return a new set with only cards of the given color
      */
     public static long subsetOfColor(long pkCardSet, Card.Color color) {
+        assert isValid(pkCardSet);
         return pkCardSet & colorMasks[color.ordinal()];
     }
 
@@ -227,6 +238,7 @@ public final class PackedCardSet {
      * Return a string representation of this set.
      */
     public static String toString(long pkCardSet) {
+        assert isValid(pkCardSet);
         StringJoiner j = new StringJoiner(",", "{", "}");
         for (int i = 0; i < PackedCardSet.size(pkCardSet); ++i) {
             j.add(PackedCard.toString(PackedCardSet.get(pkCardSet, i)));
