@@ -20,7 +20,7 @@ public final class TurnState {
      * @param firstPlayer the first player to play
      * @return the initial TurnState
      */
-    public TurnState initial(Card.Color trump, Score score, PlayerId firstPlayer){
+    public static TurnState initial(Card.Color trump, Score score, PlayerId firstPlayer){
         return new TurnState(score.packed(), PackedCardSet.ALL_CARDS, PackedTrick.firstEmpty(trump, firstPlayer));
     }
 
@@ -33,7 +33,7 @@ public final class TurnState {
      * @return the TurnState with the current information
      * @throws IllegalArgumentException if any of the packed components are invalid
      */
-    public TurnState ofPackedComponents(long pkScore, long pkUnplayedCards, int pkTrick){
+    public static TurnState ofPackedComponents(long pkScore, long pkUnplayedCards, int pkTrick){
         Preconditions.checkArgument(PackedScore.isValid(pkScore));
         Preconditions.checkArgument(PackedCardSet.isValid(pkUnplayedCards));
         Preconditions.checkArgument(PackedTrick.isValid(pkTrick));

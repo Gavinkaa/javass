@@ -8,6 +8,11 @@ public final class PacedPlayer implements Player {
     private final Player underlyingPlayer;
     private final double minTime;
 
+    /**
+     * Construct a new PacedPlayer over another player
+     * @param underlyingPlayer the other player to wrap
+     * @param minTime the minimum time the player should take to make decisions
+     */
     public PacedPlayer(Player underlyingPlayer, double minTime) {
         this.underlyingPlayer = underlyingPlayer;
         this.minTime = minTime;
