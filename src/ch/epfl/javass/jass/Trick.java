@@ -224,4 +224,22 @@ public final class Trick {
         }
         return PackedTrick.winningPlayer(packed);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Trick trick = (Trick) o;
+        return packed == trick.packed;
+    }
+
+    @Override
+    public int hashCode() {
+        return packed;
+    }
+
+    @Override
+    public String toString() {
+        return "Trick (" + PackedTrick.toString(packed) + ")";
+    }
 }
