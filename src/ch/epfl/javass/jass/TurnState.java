@@ -118,6 +118,12 @@ public final class TurnState {
         return new TurnState(pkScore, newUnplayedCards, newTrick);
     }
 
+    /**
+     * Return a new TurnState after having collected
+     * up the cards for a given trick and moved on to the subsequent one
+     * @return the next TurnState after this trick has been completed
+     * @throws IllegalStateException if the trick isn't full
+     */
     public TurnState withTrickCollected(){
         if(!PackedTrick.isFull(pkTrick)){
             throw new IllegalStateException("the trick isn't full");
@@ -132,6 +138,23 @@ public final class TurnState {
         return new TurnState(newPkScore, pkUnplayedCard, newTrick);
     }
 
-
-
+    /**
+     * This combines playing a card and collecting up a trick.
+     * If after playing the card, the trick isn't full, this method
+     * has no further effect.
+     * @param card the card to play
+     * @return the state of the TurnState after applying one or both operations
+     * @throws IllegalStateException if the trick is full, and we can't add a card
+     */
+    public TurnState withNewCardPlayedAndTrickCollected(Card card) {
+        if (PackedTrick.isFull(pkTrick)) {
+            throw new IllegalStateException("the trick was full");
+        }
+        TurnState withCard = withNewCardPlayed(card);
+        if (PackedTrick.isFull(withCard.packedTrick())) {
+            return withCard.withTrickCollected();
+        } else {
+            return withCard;
+        }
+    }
 }
