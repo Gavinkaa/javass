@@ -17,6 +17,7 @@ public final class JassGame {
     // The interior cardsets are mutable
     private final Map<PlayerId, CardSet> playerHands;
     private final List<Card> deck;
+    private PlayerId lastTurnStarter;
 
 
     public JassGame(long rngSeed, Map<PlayerId, Player> players, Map<PlayerId, String> playerNames) {
@@ -36,6 +37,7 @@ public final class JassGame {
             }
         }
         this.turnState = null;
+        this.lastTurnStarter = null;
     }
 
 
@@ -66,6 +68,17 @@ public final class JassGame {
         throw new Error("Unreachable code");
     }
 
+    private void initializeTurnState() {
+        initializeHands();
+        if (lastTurnStarter == null) {
+            lastTurnStarter = firstPlayerBySeven();
+        } else {
+            lastTurnStarter = PlayerId.ALL.get((lastTurnStarter.ordinal() + 1) % 4);
+        }
+        Score score = turnState == null ? Score.INITIAL : turnState.score();
+        turnState = TurnState.initial(nextTrump(), score, lastTurnStarter);
+    }
+
     /**
      * @return true if we've reached the end of the game, i.e., someone has reached 1000+ points
      */
@@ -74,7 +87,7 @@ public final class JassGame {
             return false;
         }
         for (TeamId id : TeamId.ALL) {
-            if (turnState.score().totalPoints(id) >= Jass.WINNING_POINTS)  {
+            if (turnState.score().totalPoints(id) >= Jass.WINNING_POINTS) {
                 return true;
             }
         }
@@ -85,9 +98,14 @@ public final class JassGame {
         if (isGameOver()) {
             return;
         }
-        initializeHands();
         if (turnState == null) {
-            turnState = TurnState.initial(nextTrump(), Score.INITIAL, firstPlayerBySeven());
+           initializeTurnState();
+        }
+        if (turnState.trick().isFull()) {
+            turnState = turnState.withTrickCollected();
+            if (turnState.trick().equals(Trick.INVALID)) {
+               initializeTurnState();
+            }
         }
         while (!turnState.trick().isFull()) {
             PlayerId nextId = turnState.nextPlayer();
