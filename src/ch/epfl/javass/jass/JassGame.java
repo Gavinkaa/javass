@@ -129,6 +129,13 @@ public final class JassGame {
         return false;
     }
 
+    /**
+     * This collect the current trick, and advance the game
+     * up until the end of the next trick.
+     * This can be used after first initialising the game,
+     * in which case it will play out the first trick of the first turn.
+     * This will also automatically advance turns as well.
+     */
     public void advanceToEndOfNextTrick() {
         if (isGameOver()) {
             return;

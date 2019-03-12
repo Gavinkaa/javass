@@ -14,6 +14,7 @@ public final class PrintingPlayer implements Player {
         System.out.print("C'est à moi de jouer... Je joue : ");
         Card c = underlyingPlayer.cardToPlay(state, hand);
         System.out.println(c);
+        System.out.println("Mes Cartes Restantes : " + hand.remove(c));
         return c;
     }
 
