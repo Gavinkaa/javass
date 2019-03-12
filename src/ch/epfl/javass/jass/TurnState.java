@@ -128,11 +128,9 @@ public final class TurnState {
         if(!PackedTrick.isFull(pkTrick)){
             throw new IllegalStateException("the trick isn't full");
         }
-
         TeamId winningTeam = PackedTrick.winningPlayer(pkTrick).team();
         int trickPoints = PackedTrick.points(pkTrick);
         long newPkScore = PackedScore.withAdditionalTrick(pkScore, winningTeam, trickPoints);
-        newPkScore = PackedScore.nextTurn(newPkScore);
         int newTrick = PackedTrick.nextEmpty(pkTrick);
 
         return new TurnState(newPkScore, pkUnplayedCard, newTrick);

@@ -122,7 +122,6 @@ public final class PackedScore {
      */
     public static long withAdditionalTrick(long pkScore, TeamId winningTeam, int trickPoints) {
         assert PackedScore.isValid(pkScore);
-
         int shift = winningTeam == TeamId.TEAM_1 ? 0 : 32;
         long turnPoints = PackedScore.turnPoints(pkScore, winningTeam);
         long turnTricks = PackedScore.turnTricks(pkScore, winningTeam);

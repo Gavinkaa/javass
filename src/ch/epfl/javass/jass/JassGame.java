@@ -138,9 +138,10 @@ public final class JassGame {
             informOfTrick();
         }
         if (turnState.trick().isFull()) {
+            boolean wasTerminal = turnState.isTerminal();
             turnState = turnState.withTrickCollected();
             informOfScore();
-            if (turnState.trick().equals(Trick.INVALID)) {
+            if (wasTerminal) {
                 initializeTurnState();
             }
             informOfTrick();
