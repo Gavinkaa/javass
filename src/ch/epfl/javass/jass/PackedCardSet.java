@@ -7,6 +7,9 @@ import java.util.StringJoiner;
 /**
  * Provides utility methods for working with the binary representation
  * of a set of cards.
+ *
+ * @author Lúcás Críostóir Meier (300831)
+ * @author Ludovic Burnier (301308)
  */
 public final class PackedCardSet {
     /**

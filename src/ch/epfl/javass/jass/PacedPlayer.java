@@ -3,6 +3,9 @@ package ch.epfl.javass.jass;
 /**
  * This can be used to wrap around another player,
  * and ensure that their decisions always take a certain time.
+ *
+ * @author Lúcás Críostóir Meier (300831)
+ * @author Ludovic Burnier (301308)
  */
 public final class PacedPlayer implements Player {
     private final Player underlyingPlayer;

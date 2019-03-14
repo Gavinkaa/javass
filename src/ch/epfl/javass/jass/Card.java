@@ -9,6 +9,9 @@ import java.util.List;
 /**
  * Represents a single Card in the game of Jass.
  * Cards are uniquely determined by their Color and Rank.
+ *
+ * @author Lúcás Críostóir Meier (300831)
+ * @author Ludovic Burnier (301308)
  */
 public final class Card {
     /**

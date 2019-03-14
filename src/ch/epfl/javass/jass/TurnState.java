@@ -2,6 +2,11 @@ package ch.epfl.javass.jass;
 
 import ch.epfl.javass.Preconditions;
 
+
+/**
+ * @author Lúcás Críostóir Meier (300831)
+ * @author Ludovic Burnier (301308)
+ */
 public final class TurnState {
     private final long pkScore;
     private final long pkUnplayedCard;

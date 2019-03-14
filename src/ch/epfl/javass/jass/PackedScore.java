@@ -6,6 +6,9 @@ import ch.epfl.javass.bits.Bits64;
 
 /**
  * Provides utility method for working with the binary representation of scores.
+ *
+ * @author Lúcás Críostóir Meier (300831)
+ * @author Ludovic Burnier (301308)
  */
 public final class PackedScore {
     /**

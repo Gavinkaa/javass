@@ -12,6 +12,9 @@ import ch.epfl.javass.Preconditions;
  * be played.
  * This class also holds the trump card for that round, as well as the
  * first player to play that round.
+ *
+ * @author Lúcás Críostóir Meier (300831)
+ * @author Ludovic Burnier (301308)
  */
 public final class Trick {
     private final int packed;

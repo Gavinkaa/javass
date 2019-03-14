@@ -5,6 +5,9 @@ import java.util.Map;
 /**
  * Represents an autonomous player that can decide
  * on which card to play, given the state of the game.
+ *
+ * @author Lúcás Críostóir Meier (300831)
+ * @author Ludovic Burnier (301308)
  */
 public interface Player {
     /**

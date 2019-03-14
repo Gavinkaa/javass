@@ -6,6 +6,9 @@ import java.util.List;
 
 /**
  * This class is used to identify one of the 2 teams of the game
+ *
+ * @author Lúcás Críostóir Meier (300831)
+ * @author Ludovic Burnier (301308)
  */
 public enum TeamId {
     TEAM_1(true),

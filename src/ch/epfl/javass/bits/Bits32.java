@@ -4,6 +4,8 @@ import ch.epfl.javass.Preconditions;
 
 /**
  * This class provides utility functions for working with bis.
+ * @author Lúcás Críostóir Meier (300831)
+ * @author Ludovic Burnier (301308)
  */
 public final class Bits32 {
     private Bits32() {

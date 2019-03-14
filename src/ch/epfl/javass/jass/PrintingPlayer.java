@@ -2,6 +2,10 @@ package ch.epfl.javass.jass;
 
 import java.util.Map;
 
+/**
+ * @author Lúcás Críostóir Meier (300831)
+ * @author Ludovic Burnier (301308)
+ */
 public final class PrintingPlayer implements Player {
     private final Player underlyingPlayer;
 
