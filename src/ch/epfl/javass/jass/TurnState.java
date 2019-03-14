@@ -45,7 +45,7 @@ public final class TurnState {
      * @return the packed version of the score
      */
     public long packedScore() {
-        return pkTrick;
+        return pkScore;
     }
 
     /**
@@ -84,10 +84,10 @@ public final class TurnState {
     }
 
     /**
-     * @return true if the last trick has been played
+     * @return true if the last trick has been played and collected
      */
     public boolean isTerminal(){
-        return PackedTrick.isLast(pkTrick) && PackedTrick.isFull(pkTrick);
+        return pkTrick == PackedTrick.INVALID;
     }
 
     /**
