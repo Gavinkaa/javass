@@ -2,6 +2,10 @@ package ch.epfl.javass.jass;
 
 import java.util.Random;
 
+/**
+ * @author Lúcás Críostóir Meier (300831)
+ * @author Ludovic Burnier (301308)
+ */
 public final class RandomPlayer implements Player {
     private final Random rng;
 

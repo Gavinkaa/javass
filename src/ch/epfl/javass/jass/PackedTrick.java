@@ -6,7 +6,10 @@ import ch.epfl.javass.bits.Bits32;
  * Contains utility functions for working with a single trick,
  * i.e., a round of gameplay where each player has played one of their cards.
  * Each packed representation contains each of the 4 cards the player
- * put down,
+ * put down
+ *
+ * @author Lúcás Críostóir Meier (300831)
+ * @author Ludovic Burnier (301308)
  */
 public final class PackedTrick {
     /**

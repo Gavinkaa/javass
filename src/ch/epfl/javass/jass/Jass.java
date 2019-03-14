@@ -2,6 +2,9 @@ package ch.epfl.javass.jass;
 
 /**
  * Contains useful constants for the game of Jass
+ *
+ * @author Lúcás Críostóir Meier (300831)
+ * @author Ludovic Burnier (301308)
  */
 public interface Jass {
     int HAND_SIZE = 9;

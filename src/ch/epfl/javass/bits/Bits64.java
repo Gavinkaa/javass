@@ -2,6 +2,12 @@ package ch.epfl.javass.bits;
 
 import ch.epfl.javass.Preconditions;
 
+/**
+ * Provides utility functions for working with packed 64 bit patterns
+ *
+ * @author Lúcás Críostóir Meier (300831)
+ * @author Ludovic Burnier (301308)
+**/
 public class Bits64 {
     private Bits64() {
     }

@@ -5,6 +5,9 @@ import ch.epfl.javass.bits.Bits32;
 /**
  * This class provides static utility methods to work
  * with a binary representations of cards in Jass
+ *
+ * @author Lúcás Críostóir Meier (300831)
+ * @author Ludovic Burnier (301308)
  */
 public final class PackedCard {
     public static final int INVALID = 0b111111;

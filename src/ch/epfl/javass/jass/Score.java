@@ -6,6 +6,9 @@ import ch.epfl.javass.Preconditions;
 /**
  * Represents a Score in a match of Jass, with methods
  * to be update concurrently over the course of the game.
+ *
+ * @author Lúcás Críostóir Meier (300831)
+ * @author Ludovic Burnier (301308)
  */
 public final class Score {
     public static final Score INITIAL = Score.ofPacked(PackedScore.INITIAL);

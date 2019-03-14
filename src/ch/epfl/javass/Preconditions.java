@@ -3,6 +3,9 @@ package ch.epfl.javass;
 /**
  * This class provides static methods to check preconditions in functions.
  * This is mainly useful in testing situations.
+ *
+ * @author Lúcás Críostóir Meier (300831)
+ * @author Ludovic Burnier (301308)
  */
 public final class Preconditions {
     private Preconditions() {

@@ -5,6 +5,10 @@ import ch.epfl.javass.jass.*;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * @author Lúcás Críostóir Meier (300831)
+ * @author Ludovic Burnier (301308)
+ */
 public final class RandomJassGame {
     public static void main(String[] args) {
         Map<PlayerId, Player> players = new HashMap<>();

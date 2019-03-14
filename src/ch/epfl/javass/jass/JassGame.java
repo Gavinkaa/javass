@@ -5,6 +5,9 @@ import java.util.*;
 /**
  * Represents a Game of Jass, capable of
  * keeping track of and advancing a game of Jass
+ *
+ * @author Lúcás Críostóir Meier (300831)
+ * @author Ludovic Burnier (301308)
  */
 public final class JassGame {
     private final Map<PlayerId, Player> players;
