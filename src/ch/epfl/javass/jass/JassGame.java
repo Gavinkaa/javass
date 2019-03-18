@@ -122,7 +122,7 @@ public final class JassGame {
             if (turnState.score().totalPoints(id) >= Jass.WINNING_POINTS) {
                 gameOver = true;
 
-                for(Player player: players.values()){
+                for (Player player : players.values()) {
                     player.setWinningTeam(id);
                 }
 
@@ -140,26 +140,30 @@ public final class JassGame {
      * This will also automatically advance turns as well.
      */
     public void advanceToEndOfNextTrick() {
-        if (isGameOver()) {
-            return;
-        }
         if (turnState == null) {
             initializeTurnState();
             informOfTrick();
         }
+
         if (turnState.trick().isFull()) {
             turnState = turnState.withTrickCollected();
             informOfScore();
+            if (isGameOver()) {
+                return;
+            }
             if (turnState.isTerminal()) {
                 initializeTurnState();
             }
             informOfTrick();
         }
+
         while (!turnState.trick().isFull()) {
             PlayerId nextId = turnState.nextPlayer();
             Player next = players.get(nextId);
-            Card choice = next.cardToPlay(turnState, playerHands.get(nextId));
+            CardSet hand = playerHands.get(nextId);
+            Card choice = next.cardToPlay(turnState, hand);
             turnState = turnState.withNewCardPlayed(choice);
+            setHand(nextId, hand.remove(choice));
             informOfTrick();
         }
     }
