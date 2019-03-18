@@ -292,7 +292,9 @@ public final class PackedTrick {
         assert isValid(pkTrick);
 
         StringBuilder sb = new StringBuilder();
-        sb.append("Trump: ");
+        sb.append("index: ");
+        sb.append(index(pkTrick));
+        sb.append("; Trump: ");
         sb.append(PackedTrick.trump(pkTrick));
         sb.append("; ");
         for (int i = 0; i < PackedTrick.size(pkTrick); ++i) {
