@@ -62,7 +62,11 @@ public final class MctsPlayer implements Player {
                     } else {
                         nextHand = nextTurnState.unplayedCards().difference(firstHand);
                     }
-                    children[i] = new Node(nextTurnState, nextHand);
+                    if (nextTurnState.isTerminal()) {
+                        children[i] = new Node(nextTurnState, CardSet.EMPTY);
+                    } else {
+                        children[i] = new Node(nextTurnState, nextTurnState.trick().playableCards(nextHand));
+                    }
                     List<Node> path = new ArrayList<>(2);
                     path.add(children[i]);
                     path.add(this);
@@ -121,7 +125,7 @@ public final class MctsPlayer implements Player {
 
     @Override
     public Card cardToPlay(TurnState state, CardSet hand) {
-        Node root = new Node(state, hand);
+        Node root = new Node(state, state.trick().playableCards(hand));
         for (int i = 0; i < interations; i++) {
             List<Node> path = root.addNode(hand, ownId);
             if (path == null) {
