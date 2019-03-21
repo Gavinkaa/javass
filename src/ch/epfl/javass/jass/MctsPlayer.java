@@ -50,13 +50,18 @@ public final class MctsPlayer implements Player {
         }
 
         // Returns null if we can't add a node
-        public List<Node> addNode(CardSet firstHand) {
+        public List<Node> addNode(CardSet firstHand, PlayerId ownId) {
             for (int i = 0; i < children.length; ++i) {
                 Node child = children[i];
                 if (child == null) {
                     Card toPlay = unusedCards.get(i);
                     TurnState nextTurnState = turnState.withNewCardPlayedAndTrickCollected(toPlay);
-                    CardSet nextHand = nextTurnState.unplayedCards().difference(firstHand);
+                    CardSet nextHand;
+                    if (nextTurnState.nextPlayer() == ownId) {
+                        nextHand = firstHand.intersection(nextTurnState.unplayedCards());
+                    } else {
+                        nextHand = nextTurnState.unplayedCards().difference(firstHand);
+                    }
                     children[i] = new Node(nextTurnState, nextHand);
                     List<Node> path = new ArrayList<>(2);
                     path.add(children[i]);
@@ -70,7 +75,7 @@ public final class MctsPlayer implements Player {
             }
             Node child = children[bestIndex];
 
-            List<Node> path = child.addNode(firstHand);
+            List<Node> path = child.addNode(firstHand, ownId);
             if (path == null) {
                 return null;
             }
@@ -93,7 +98,6 @@ public final class MctsPlayer implements Player {
     }
 
     private Score sampleEndTurnScore(TurnState turnState, CardSet firstHand) {
-        System.out.println(firstHand);
         firstHand = firstHand.intersection(turnState.unplayedCards());
 
         while (!turnState.isTerminal()) {
@@ -105,7 +109,6 @@ public final class MctsPlayer implements Player {
             } else {
                 cardSet = turnState.unplayedCards().difference(firstHand);
             }
-            System.out.println(ownId + " " + turnState.nextPlayer() + " " + cardSet);
             Card cardToPlay = cardSet.get(rng.nextInt(cardSet.size()));
             if (mePlaying) {
                 firstHand = firstHand.remove(cardToPlay);
@@ -120,7 +123,7 @@ public final class MctsPlayer implements Player {
     public Card cardToPlay(TurnState state, CardSet hand) {
         Node root = new Node(state, hand);
         for (int i = 0; i < interations; i++) {
-            List<Node> path = root.addNode(hand);
+            List<Node> path = root.addNode(hand, ownId);
             if (path == null) {
                 break;
             }
