@@ -2,14 +2,17 @@ package ch.epfl.javass.jass;
 
 import ch.epfl.javass.Preconditions;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.SplittableRandom;
 
 /**
  * @author Lúcás Críostóir Meier (300831)
  * @author Ludovic Burnier (301308)
  */
 
-public final class MctsPlayer implements Player{
+public final class MctsPlayer implements Player {
 
     private static class Node {
         private TurnState turnState;
@@ -32,7 +35,7 @@ public final class MctsPlayer implements Player{
                 if (child != null) {
                     double vScore;
                     if (child.numberOfFinishedTurns > 0) {
-                        vScore = ((double)child.totalPoints) / child.numberOfFinishedTurns;
+                        vScore = ((double) child.totalPoints) / child.numberOfFinishedTurns;
                         vScore += c * Math.sqrt(2 * Math.log(numberOfFinishedTurns) / child.numberOfFinishedTurns);
                     } else {
                         vScore = Double.POSITIVE_INFINITY;
@@ -55,7 +58,10 @@ public final class MctsPlayer implements Player{
                     TurnState nextTurnState = turnState.withNewCardPlayedAndTrickCollected(toPlay);
                     CardSet nextHand = nextTurnState.unplayedCards().difference(firstHand);
                     children[i] = new Node(nextTurnState, nextHand);
-                    return Collections.singletonList(this);
+                    List<Node> path = new ArrayList<>(2);
+                    path.add(children[i]);
+                    path.add(this);
+                    return path;
                 }
             }
             Node child = bestChild(40);
@@ -71,14 +77,52 @@ public final class MctsPlayer implements Player{
         }
     }
 
-    MctsPlayer(PlayerId ownId, long rngSeed, int iterations){
-        Preconditions.checkArgument(iterations >= 9);
+    //--------------------------------------------------------------------------------
+    private PlayerId ownId;
+    private SplittableRandom rng;
+    private int interations;
 
+    public MctsPlayer(PlayerId ownId, long rngSeed, int iterations) {
+        Preconditions.checkArgument(iterations >= 9);
+        this.ownId = ownId;
+        this.rng = new SplittableRandom(rngSeed);
+        this.interations = iterations;
+    }
+
+    private Score sampleEndTurnScore(TurnState turnState, CardSet firstHand) {
+        while (!turnState.isTerminal()) {
+            CardSet cardSet = turnState.unplayedCards().difference(firstHand);
+            Card cardToPlay = cardSet.get(rng.nextInt(cardSet.size()));
+
+            turnState = turnState.withNewCardPlayedAndTrickCollected(cardToPlay);
+        }
+        return turnState.score();
     }
 
     @Override
     public Card cardToPlay(TurnState state, CardSet hand) {
-        return null;
+        Node root = new Node(state, hand);
+        for (int i = 0; i < interations; i++) {
+             List<Node> path = root.addNode(hand);
+             if(path == null){
+                 break;
+             }
+             Score score = sampleEndTurnScore(path.get(0).turnState, hand);
+
+            for (int j = 0; j < path.size() - 1;) {
+                 Node thisNode = path.get(j);
+                 Node nextNode = path.get(++j);
+
+                 TeamId thisTeam = nextNode.turnState.nextPlayer().team();
+                 double relevant = score.totalPoints(thisTeam);
+
+                 thisNode.totalPoints += relevant;
+                 thisNode.numberOfFinishedTurns++;
+            }
+            root.numberOfFinishedTurns++;
+            root.totalPoints += score.totalPoints(ownId.team());
+        }
+        return root.bestChild(0);
     }
 
 
