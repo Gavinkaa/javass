@@ -3,7 +3,6 @@ package ch.epfl.javass.jass;
 import ch.epfl.javass.Preconditions;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.SplittableRandom;
 
@@ -28,10 +27,11 @@ public final class MctsPlayer implements Player {
             this.unusedCards = hand;
         }
 
-        private Node bestChild(double c) {
+        private int bestChild(double c) {
             double bestScore = Double.NEGATIVE_INFINITY;
-            Node bestNode = null;
-            for (Node child : children) {
+            int bestIndex = -1;
+            for (int i = 0; i < children.length; i++) {
+                Node child = children[i];
                 if (child != null) {
                     double vScore;
                     if (child.numberOfFinishedTurns > 0) {
@@ -42,11 +42,11 @@ public final class MctsPlayer implements Player {
                     }
                     if (vScore > bestScore) {
                         bestScore = vScore;
-                        bestNode = child;
+                        bestIndex = i;
                     }
                 }
             }
-            return bestNode;
+            return bestIndex;
         }
 
         // Returns null if we can't add a node
@@ -64,10 +64,12 @@ public final class MctsPlayer implements Player {
                     return path;
                 }
             }
-            Node child = bestChild(40);
-            if (child == null) {
+            int bestIndex = bestChild(C);
+            if (bestIndex < 0) {
                 return null;
             }
+            Node child = children[bestIndex];
+
             List<Node> path = child.addNode(firstHand);
             if (path == null) {
                 return null;
@@ -81,6 +83,7 @@ public final class MctsPlayer implements Player {
     private PlayerId ownId;
     private SplittableRandom rng;
     private int interations;
+    private static final int C = 40;
 
     public MctsPlayer(PlayerId ownId, long rngSeed, int iterations) {
         Preconditions.checkArgument(iterations >= 9);
@@ -90,9 +93,23 @@ public final class MctsPlayer implements Player {
     }
 
     private Score sampleEndTurnScore(TurnState turnState, CardSet firstHand) {
+        System.out.println(firstHand);
+        firstHand = firstHand.intersection(turnState.unplayedCards());
+
         while (!turnState.isTerminal()) {
-            CardSet cardSet = turnState.unplayedCards().difference(firstHand);
+            boolean mePlaying = turnState.nextPlayer() == ownId;
+            CardSet cardSet;
+
+            if (mePlaying) {
+                cardSet = firstHand;
+            } else {
+                cardSet = turnState.unplayedCards().difference(firstHand);
+            }
+            System.out.println(ownId + " " + turnState.nextPlayer() + " " + cardSet);
             Card cardToPlay = cardSet.get(rng.nextInt(cardSet.size()));
+            if (mePlaying) {
+                firstHand = firstHand.remove(cardToPlay);
+            }
 
             turnState = turnState.withNewCardPlayedAndTrickCollected(cardToPlay);
         }
@@ -103,26 +120,26 @@ public final class MctsPlayer implements Player {
     public Card cardToPlay(TurnState state, CardSet hand) {
         Node root = new Node(state, hand);
         for (int i = 0; i < interations; i++) {
-             List<Node> path = root.addNode(hand);
-             if(path == null){
-                 break;
-             }
-             Score score = sampleEndTurnScore(path.get(0).turnState, hand);
+            List<Node> path = root.addNode(hand);
+            if (path == null) {
+                break;
+            }
+            Score score = sampleEndTurnScore(path.get(0).turnState, hand);
 
-            for (int j = 0; j < path.size() - 1;) {
-                 Node thisNode = path.get(j);
-                 Node nextNode = path.get(++j);
+            for (int j = 0; j < path.size() - 1; ) {
+                Node thisNode = path.get(j);
+                Node nextNode = path.get(++j);
 
-                 TeamId thisTeam = nextNode.turnState.nextPlayer().team();
-                 double relevant = score.totalPoints(thisTeam);
+                TeamId thisTeam = nextNode.turnState.nextPlayer().team();
+                int relevant = score.totalPoints(thisTeam);
 
-                 thisNode.totalPoints += relevant;
-                 thisNode.numberOfFinishedTurns++;
+                thisNode.totalPoints += relevant;
+                thisNode.numberOfFinishedTurns++;
             }
             root.numberOfFinishedTurns++;
             root.totalPoints += score.totalPoints(ownId.team());
         }
-        return root.bestChild(0);
+        return hand.get(root.bestChild(C));
     }
 
 

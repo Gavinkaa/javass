@@ -15,7 +15,7 @@ public final class RandomJassGame {
         Map<PlayerId, String> playerNames = new HashMap<>();
 
         for (PlayerId pId: PlayerId.ALL) {
-            Player player = new RandomPlayer(2019);
+            Player player = new MctsPlayer(pId, 2019, 1000);
             if (pId == PlayerId.PLAYER_1)
                 player = new PrintingPlayer(player);
             players.put(pId, player);
