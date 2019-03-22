@@ -107,22 +107,16 @@ public final class MctsPlayer implements Player {
     }
 
     private Score sampleEndTurnScore(TurnState turnState, long firstHand) {
-        firstHand = PackedCardSet.intersection(firstHand, turnState.packedUnplayedCards());
-
         while (!turnState.isTerminal()) {
             boolean mePlaying = turnState.nextPlayer() == ownId;
             long cardSet;
             if (mePlaying) {
-                cardSet = firstHand;
+                cardSet = PackedCardSet.intersection(firstHand, turnState.packedUnplayedCards());
             } else {
                 cardSet = PackedCardSet.difference(turnState.packedUnplayedCards(), firstHand);
             }
             cardSet = PackedTrick.playableCards(turnState.packedTrick(), cardSet);
             int cardToPlay = PackedCardSet.get(cardSet, rng.nextInt(PackedCardSet.size(cardSet)));
-            if (mePlaying) {
-                firstHand = PackedCardSet.remove(firstHand, cardToPlay);
-            }
-
             turnState = turnState.withNewCardPlayedAndTrickCollected(Card.ofPacked(cardToPlay));
         }
         return turnState.score();
