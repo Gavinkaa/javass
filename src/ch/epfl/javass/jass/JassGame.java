@@ -19,7 +19,6 @@ public final class JassGame {
     private TurnState turnState;
     // The interior cardsets are mutable
     private final Map<PlayerId, CardSet> playerHands;
-    private final List<Card> deck;
     private PlayerId lastTurnStarter;
     private boolean gameOver;
 
@@ -37,12 +36,6 @@ public final class JassGame {
             setHand(id, CardSet.EMPTY);
         }
         this.trumpRng = new Random(rng.nextLong());
-        this.deck = new ArrayList<>(Card.Color.COUNT * Card.Rank.COUNT);
-        for (Card.Color color : Card.Color.ALL) {
-            for (Card.Rank rank : Card.Rank.ALL) {
-                this.deck.add(Card.of(color, rank));
-            }
-        }
         this.turnState = null;
         this.lastTurnStarter = null;
         this.gameOver = false;
@@ -56,8 +49,15 @@ public final class JassGame {
         return nextTrump;
     }
 
-    private void shuffleDeck() {
+    private List<Card> shuffleDeck() {
+        List<Card> deck = new ArrayList<>(Card.Color.COUNT * Card.Rank.COUNT);
+        for (Card.Color color : Card.Color.ALL) {
+            for (Card.Rank rank : Card.Rank.ALL) {
+                deck.add(Card.of(color, rank));
+            }
+        }
         Collections.shuffle(deck, shuffleRng);
+        return deck;
     }
 
     private void setHand(PlayerId id, CardSet hand) {
@@ -66,7 +66,7 @@ public final class JassGame {
     }
 
     private void initializeHands() {
-        shuffleDeck();
+        List<Card> deck = shuffleDeck();
         int i = 0;
         for (PlayerId id : PlayerId.values()) {
             int next_i = i + Jass.HAND_SIZE;
