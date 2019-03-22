@@ -5,11 +5,29 @@ import ch.epfl.javass.Preconditions;
 import java.util.*;
 
 /**
+ * MctsPlayer is a player that makes decisions on which cards to play
+ * based on a Monte Carlo tree search algorithm. Every time it needs to
+ * play a card, it constructs a new search tree, and evaluates it with
+ * a certain depth.
+ *
  * @author Lúcás Críostóir Meier (300831)
  * @author Ludovic Burnier (301308)
  */
-
 public final class MctsPlayer implements Player {
+
+    // turnState must not be terminal when calling this method
+    private static long packedNextHand(TurnState turnState, PlayerId ownId, long firstHand) {
+        assert !turnState.isTerminal();
+
+        boolean mePlaying = turnState.nextPlayer() == ownId;
+        long cardSet;
+        if (mePlaying) {
+            cardSet = PackedCardSet.intersection(firstHand, turnState.packedUnplayedCards());
+        } else {
+            cardSet = PackedCardSet.difference(turnState.packedUnplayedCards(), firstHand);
+        }
+        return PackedTrick.playableCards(turnState.packedTrick(), cardSet);
+    }
 
     private static class Node {
         private TurnState turnState;
@@ -25,6 +43,16 @@ public final class MctsPlayer implements Player {
             this.unusedCards = hand;
         }
 
+        private double vScore(Node child, double c) {
+            if (child.numberOfFinishedTurns > 0) {
+                double vScore = ((double) child.totalPoints) / child.numberOfFinishedTurns;
+                vScore += c * Math.sqrt(2 * Math.log(numberOfFinishedTurns) / child.numberOfFinishedTurns);
+                return vScore;
+            } else {
+                return Double.POSITIVE_INFINITY;
+            }
+        }
+
         private int bestChild(double c) {
             // performance shortcut
             if (children.length == 1) {
@@ -35,13 +63,7 @@ public final class MctsPlayer implements Player {
             for (int i = 0; i < children.length; i++) {
                 Node child = children[i];
                 if (child != null) {
-                    double vScore;
-                    if (child.numberOfFinishedTurns > 0) {
-                        vScore = ((double) child.totalPoints) / child.numberOfFinishedTurns;
-                        vScore += c * Math.sqrt(2 * Math.log(numberOfFinishedTurns) / child.numberOfFinishedTurns);
-                    } else {
-                        vScore = Double.POSITIVE_INFINITY;
-                    }
+                    double vScore = vScore(child, c);
                     if (vScore > bestScore) {
                         bestScore = vScore;
                         bestIndex = i;
@@ -58,25 +80,21 @@ public final class MctsPlayer implements Player {
 
         private static Collection<Node> realAddNode(Node root, long firstHand, PlayerId ownId, ArrayDeque<Node> path) {
             Node currentNode = root;
-            for (;;) {
+            for (; ; ) {
                 // Try and insert directly below the currentNode
                 for (int i = 0; i < currentNode.children.length; ++i) {
                     Node child = currentNode.children[i];
                     if (child == null) {
                         Card toPlay = Card.ofPacked(PackedCardSet.get(currentNode.unusedCards, i));
                         TurnState nextTurnState = currentNode.turnState.withNewCardPlayedAndTrickCollected(toPlay);
-                        long nextHand;
-                        if (nextTurnState.nextPlayer() == ownId) {
-                            nextHand = PackedCardSet.intersection(firstHand, nextTurnState.packedUnplayedCards());
-                        } else {
-                            nextHand = PackedCardSet.difference(nextTurnState.packedUnplayedCards(), firstHand);
-                        }
+                        Node newNode;
                         if (nextTurnState.isTerminal()) {
-                            currentNode.children[i] = new Node(nextTurnState, PackedCardSet.EMPTY);
+                            newNode = new Node(nextTurnState, PackedCardSet.EMPTY);
                         } else {
-                            nextHand = PackedTrick.playableCards(nextTurnState.packedTrick(), nextHand);
-                            currentNode.children[i] = new Node(nextTurnState, nextHand);
+                            long nextHand = packedNextHand(nextTurnState, ownId, firstHand);
+                            newNode = new Node(nextTurnState, nextHand);
                         }
+                        currentNode.children[i] = newNode;
                         path.addFirst(currentNode);
                         path.addFirst(currentNode.children[i]);
                         return path;
@@ -110,14 +128,7 @@ public final class MctsPlayer implements Player {
 
     private Score sampleEndTurnScore(TurnState turnState, long firstHand) {
         while (!turnState.isTerminal()) {
-            boolean mePlaying = turnState.nextPlayer() == ownId;
-            long cardSet;
-            if (mePlaying) {
-                cardSet = PackedCardSet.intersection(firstHand, turnState.packedUnplayedCards());
-            } else {
-                cardSet = PackedCardSet.difference(turnState.packedUnplayedCards(), firstHand);
-            }
-            cardSet = PackedTrick.playableCards(turnState.packedTrick(), cardSet);
+            long cardSet = packedNextHand(turnState, ownId, firstHand);
             int cardToPlay = PackedCardSet.get(cardSet, rng.nextInt(PackedCardSet.size(cardSet)));
             turnState = turnState.withNewCardPlayedAndTrickCollected(Card.ofPacked(cardToPlay));
         }
