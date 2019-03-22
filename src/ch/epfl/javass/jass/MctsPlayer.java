@@ -76,7 +76,7 @@ public final class MctsPlayer implements Player {
                         return path;
                     }
                 }
-                int bestIndex = currentNode.bestChild(C);
+                int bestIndex = currentNode.bestChild(CURIOSITY);
                 if (bestIndex < 0) {
                     return null;
                 }
@@ -92,7 +92,7 @@ public final class MctsPlayer implements Player {
     private PlayerId ownId;
     private SplittableRandom rng;
     private int interations;
-    private static final int C = 40;
+    private static final int CURIOSITY = 40;
 
     public MctsPlayer(PlayerId ownId, long rngSeed, int iterations) {
         Preconditions.checkArgument(iterations >= 9);
@@ -148,7 +148,7 @@ public final class MctsPlayer implements Player {
             root.numberOfFinishedTurns++;
             root.totalPoints += score.totalPoints(ownId.team());
         }
-        return hand.get(root.bestChild(C));
+        return hand.get(root.bestChild(CURIOSITY));
     }
 
 
