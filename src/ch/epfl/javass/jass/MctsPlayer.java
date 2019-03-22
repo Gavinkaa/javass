@@ -2,9 +2,7 @@ package ch.epfl.javass.jass;
 
 import ch.epfl.javass.Preconditions;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.SplittableRandom;
+import java.util.*;
 
 /**
  * @author Lúcás Críostóir Meier (300831)
@@ -50,41 +48,43 @@ public final class MctsPlayer implements Player {
         }
 
         // Returns null if we can't add a node
-        public List<Node> addNode(CardSet firstHand, PlayerId ownId) {
-            for (int i = 0; i < children.length; ++i) {
-                Node child = children[i];
-                if (child == null) {
-                    Card toPlay = unusedCards.get(i);
-                    TurnState nextTurnState = turnState.withNewCardPlayedAndTrickCollected(toPlay);
-                    CardSet nextHand;
-                    if (nextTurnState.nextPlayer() == ownId) {
-                        nextHand = firstHand.intersection(nextTurnState.unplayedCards());
-                    } else {
-                        nextHand = nextTurnState.unplayedCards().difference(firstHand);
-                    }
-                    if (nextTurnState.isTerminal()) {
-                        children[i] = new Node(nextTurnState, CardSet.EMPTY);
-                    } else {
-                        children[i] = new Node(nextTurnState, nextTurnState.trick().playableCards(nextHand));
-                    }
-                    List<Node> path = new ArrayList<>(2);
-                    path.add(children[i]);
-                    path.add(this);
-                    return path;
-                }
-            }
-            int bestIndex = bestChild(C);
-            if (bestIndex < 0) {
-                return null;
-            }
-            Node child = children[bestIndex];
+        public Collection<Node> addNode(CardSet firstHand, PlayerId ownId) {
+            return realAddNode(this, firstHand, ownId, new ArrayDeque<>());
+        }
 
-            List<Node> path = child.addNode(firstHand, ownId);
-            if (path == null) {
-                return null;
+        private static Collection<Node> realAddNode(Node root, CardSet firstHand, PlayerId ownId, ArrayDeque<Node> path) {
+            Node currentNode = root;
+            for (;;) {
+                for (int i = 0; i < currentNode.children.length; ++i) {
+                    Node child = currentNode.children[i];
+                    if (child == null) {
+                        Card toPlay = currentNode.unusedCards.get(i);
+                        TurnState nextTurnState = currentNode.turnState.withNewCardPlayedAndTrickCollected(toPlay);
+                        CardSet nextHand;
+                        if (nextTurnState.nextPlayer() == ownId) {
+                            nextHand = firstHand.intersection(nextTurnState.unplayedCards());
+                        } else {
+                            nextHand = nextTurnState.unplayedCards().difference(firstHand);
+                        }
+                        if (nextTurnState.isTerminal()) {
+                            currentNode.children[i] = new Node(nextTurnState, CardSet.EMPTY);
+                        } else {
+                            currentNode.children[i] = new Node(nextTurnState, nextTurnState.trick().playableCards(nextHand));
+                        }
+                        path.addFirst(currentNode);
+                        path.addFirst(currentNode.children[i]);
+                        return path;
+                    }
+                }
+                int bestIndex = currentNode.bestChild(C);
+                if (bestIndex < 0) {
+                    return null;
+                }
+                Node child = currentNode.children[bestIndex];
+
+                path.addFirst(currentNode);
+                currentNode = child;
             }
-            path.add(this);
-            return path;
         }
     }
 
@@ -127,15 +127,17 @@ public final class MctsPlayer implements Player {
     public Card cardToPlay(TurnState state, CardSet hand) {
         Node root = new Node(state, state.trick().playableCards(hand));
         for (int i = 0; i < interations; i++) {
-            List<Node> path = root.addNode(hand, ownId);
+            Collection<Node> path = root.addNode(hand, ownId);
             if (path == null) {
                 break;
             }
-            Score score = sampleEndTurnScore(path.get(0).turnState, hand);
 
-            for (int j = 0; j < path.size() - 1; ) {
-                Node thisNode = path.get(j);
-                Node nextNode = path.get(++j);
+            Iterator<Node> iter = path.iterator();
+            Node nextNode = iter.next();
+            Score score = sampleEndTurnScore(nextNode.turnState, hand);
+            while (iter.hasNext()) {
+                Node thisNode = nextNode;
+                nextNode = iter.next();
 
                 TeamId thisTeam = nextNode.turnState.nextPlayer().team();
                 int relevant = score.totalPoints(thisTeam);

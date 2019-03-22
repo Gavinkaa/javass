@@ -23,9 +23,13 @@ public final class RandomJassGame {
         }
 
         JassGame g = new JassGame(2019, players, playerNames);
+        long then = System.currentTimeMillis();
         while (! g.isGameOver()) {
             g.advanceToEndOfNextTrick();
             System.out.println("----");
+            long now = System.currentTimeMillis();
+            System.out.println("Time Elapsed: " + (now - then));
+            then = now;
         }
     }
 }
