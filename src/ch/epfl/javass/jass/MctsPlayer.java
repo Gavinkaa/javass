@@ -59,6 +59,7 @@ public final class MctsPlayer implements Player {
         private static Collection<Node> realAddNode(Node root, long firstHand, PlayerId ownId, ArrayDeque<Node> path) {
             Node currentNode = root;
             for (;;) {
+                // Try and insert directly below the currentNode
                 for (int i = 0; i < currentNode.children.length; ++i) {
                     Node child = currentNode.children[i];
                     if (child == null) {
@@ -81,6 +82,7 @@ public final class MctsPlayer implements Player {
                         return path;
                     }
                 }
+                // Recurse with the most promising direct child
                 int bestIndex = currentNode.bestChild(CURIOSITY);
                 if (bestIndex < 0) {
                     return null;
@@ -140,19 +142,18 @@ public final class MctsPlayer implements Player {
             Iterator<Node> iter = path.iterator();
             Node nextNode = iter.next();
             Score score = sampleEndTurnScore(nextNode.turnState, packedHand);
+            // Propagate scores
             while (iter.hasNext()) {
                 Node thisNode = nextNode;
                 nextNode = iter.next();
-
                 TeamId thisTeam = nextNode.turnState.nextPlayer().team();
                 int relevant = score.totalPoints(thisTeam);
-
                 thisNode.totalPoints += relevant;
                 thisNode.numberOfFinishedTurns++;
             }
             root.numberOfFinishedTurns++;
             root.totalPoints += score.totalPoints(ownId.team());
         }
-        return Card.ofPacked(PackedCardSet.get(playableHand, root.bestChild(CURIOSITY)));
+        return Card.ofPacked(PackedCardSet.get(playableHand, root.bestChild(0)));
     }
 }
