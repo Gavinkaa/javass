@@ -14,18 +14,22 @@ public final class MctsPlayer implements Player {
     private static class Node {
         private TurnState turnState;
         private Node[] children;
-        private CardSet unusedCards;
+        private long unusedCards;
         // This will be unused in the case of the root node
         private int totalPoints = 0;
         private int numberOfFinishedTurns = 0;
 
-        public Node(TurnState turnState, CardSet hand) {
+        public Node(TurnState turnState, long hand) {
             this.turnState = turnState;
-            this.children = new Node[hand.size()];
+            this.children = new Node[PackedCardSet.size(hand)];
             this.unusedCards = hand;
         }
 
         private int bestChild(double c) {
+            // performance shortcut
+            if (children.length == 1) {
+                return 0;
+            }
             double bestScore = Double.NEGATIVE_INFINITY;
             int bestIndex = -1;
             for (int i = 0; i < children.length; i++) {
@@ -48,28 +52,29 @@ public final class MctsPlayer implements Player {
         }
 
         // Returns null if we can't add a node
-        public Collection<Node> addNode(CardSet firstHand, PlayerId ownId) {
+        public Collection<Node> addNode(long firstHand, PlayerId ownId) {
             return realAddNode(this, firstHand, ownId, new ArrayDeque<>());
         }
 
-        private static Collection<Node> realAddNode(Node root, CardSet firstHand, PlayerId ownId, ArrayDeque<Node> path) {
+        private static Collection<Node> realAddNode(Node root, long firstHand, PlayerId ownId, ArrayDeque<Node> path) {
             Node currentNode = root;
             for (;;) {
                 for (int i = 0; i < currentNode.children.length; ++i) {
                     Node child = currentNode.children[i];
                     if (child == null) {
-                        Card toPlay = currentNode.unusedCards.get(i);
+                        Card toPlay = Card.ofPacked(PackedCardSet.get(currentNode.unusedCards, i));
                         TurnState nextTurnState = currentNode.turnState.withNewCardPlayedAndTrickCollected(toPlay);
-                        CardSet nextHand;
+                        long nextHand;
                         if (nextTurnState.nextPlayer() == ownId) {
-                            nextHand = firstHand.intersection(nextTurnState.unplayedCards());
+                            nextHand = PackedCardSet.intersection(firstHand, nextTurnState.packedUnplayedCards());
                         } else {
-                            nextHand = nextTurnState.unplayedCards().difference(firstHand);
+                            nextHand = PackedCardSet.difference(nextTurnState.packedUnplayedCards(), firstHand);
                         }
                         if (nextTurnState.isTerminal()) {
-                            currentNode.children[i] = new Node(nextTurnState, CardSet.EMPTY);
+                            currentNode.children[i] = new Node(nextTurnState, PackedCardSet.EMPTY);
                         } else {
-                            currentNode.children[i] = new Node(nextTurnState, nextTurnState.trick().playableCards(nextHand));
+                            nextHand = PackedTrick.playableCards(nextTurnState.packedTrick(), nextHand);
+                            currentNode.children[i] = new Node(nextTurnState, nextHand);
                         }
                         path.addFirst(currentNode);
                         path.addFirst(currentNode.children[i]);
@@ -101,40 +106,46 @@ public final class MctsPlayer implements Player {
         this.interations = iterations;
     }
 
-    private Score sampleEndTurnScore(TurnState turnState, CardSet firstHand) {
-        firstHand = firstHand.intersection(turnState.unplayedCards());
+    private Score sampleEndTurnScore(TurnState turnState, long firstHand) {
+        firstHand = PackedCardSet.intersection(firstHand, turnState.packedUnplayedCards());
 
         while (!turnState.isTerminal()) {
             boolean mePlaying = turnState.nextPlayer() == ownId;
-            CardSet cardSet;
-
+            long cardSet;
             if (mePlaying) {
                 cardSet = firstHand;
             } else {
-                cardSet = turnState.unplayedCards().difference(firstHand);
+                cardSet = PackedCardSet.difference(turnState.packedUnplayedCards(), firstHand);
             }
-            Card cardToPlay = cardSet.get(rng.nextInt(cardSet.size()));
+            cardSet = PackedTrick.playableCards(turnState.packedTrick(), cardSet);
+            int cardToPlay = PackedCardSet.get(cardSet, rng.nextInt(PackedCardSet.size(cardSet)));
             if (mePlaying) {
-                firstHand = firstHand.remove(cardToPlay);
+                firstHand = PackedCardSet.remove(firstHand, cardToPlay);
             }
 
-            turnState = turnState.withNewCardPlayedAndTrickCollected(cardToPlay);
+            turnState = turnState.withNewCardPlayedAndTrickCollected(Card.ofPacked(cardToPlay));
         }
         return turnState.score();
     }
 
     @Override
     public Card cardToPlay(TurnState state, CardSet hand) {
-        Node root = new Node(state, state.trick().playableCards(hand));
+        long packedHand = hand.packed();
+        long playableHand = PackedTrick.playableCards(state.packedTrick(), packedHand);
+        // performance shortcut
+        if (PackedCardSet.size(playableHand) == 1) {
+            return Card.ofPacked(PackedCardSet.get(playableHand, 0));
+        }
+        Node root = new Node(state, playableHand);
         for (int i = 0; i < interations; i++) {
-            Collection<Node> path = root.addNode(hand, ownId);
+            Collection<Node> path = root.addNode(packedHand, ownId);
             if (path == null) {
                 break;
             }
 
             Iterator<Node> iter = path.iterator();
             Node nextNode = iter.next();
-            Score score = sampleEndTurnScore(nextNode.turnState, hand);
+            Score score = sampleEndTurnScore(nextNode.turnState, packedHand);
             while (iter.hasNext()) {
                 Node thisNode = nextNode;
                 nextNode = iter.next();
@@ -148,8 +159,6 @@ public final class MctsPlayer implements Player {
             root.numberOfFinishedTurns++;
             root.totalPoints += score.totalPoints(ownId.team());
         }
-        return hand.get(root.bestChild(CURIOSITY));
+        return Card.ofPacked(PackedCardSet.get(playableHand, root.bestChild(CURIOSITY)));
     }
-
-
 }
