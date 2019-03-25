@@ -1,5 +1,7 @@
 package ch.epfl.javass.jass;
 
+import java.util.Map;
+
 /**
  * This can be used to wrap around another player,
  * and ensure that their decisions always take a certain time.
@@ -30,9 +32,39 @@ public final class PacedPlayer implements Player {
         double diff = ((double)milliDiff) / 1000;
         if (diff < minTime) {
             try {
-                Thread.sleep(milliDiff);
+                Thread.sleep((long)((minTime - diff) * 1000));
             } catch (InterruptedException e) { /* ignore */ }
         }
         return card;
+    }
+
+    @Override
+    public void setPlayers(PlayerId ownId, Map<PlayerId, String> playerNames) {
+        underlyingPlayer.setPlayers(ownId, playerNames);
+    }
+
+    @Override
+    public void updateHand(CardSet newHand) {
+        underlyingPlayer.updateHand(newHand);
+    }
+
+    @Override
+    public void setTrump(Card.Color trump) {
+        underlyingPlayer.setTrump(trump);
+    }
+
+    @Override
+    public void updateTrick(Trick newTrick) {
+        underlyingPlayer.updateTrick(newTrick);
+    }
+
+    @Override
+    public void updateScore(Score score) {
+        underlyingPlayer.updateScore(score);
+    }
+
+    @Override
+    public void setWinningTeam(TeamId winningTeam) {
+        underlyingPlayer.setWinningTeam(winningTeam);
     }
 }

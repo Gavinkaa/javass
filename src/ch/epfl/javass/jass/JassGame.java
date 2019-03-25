@@ -32,9 +32,6 @@ public final class JassGame {
         Random rng = new Random(rngSeed);
         this.shuffleRng = new Random(rng.nextLong());
         this.playerHands = new EnumMap<>(PlayerId.class);
-        for (PlayerId id : PlayerId.ALL) {
-            setHand(id, CardSet.EMPTY);
-        }
         this.trumpRng = new Random(rng.nextLong());
         this.turnState = null;
         this.lastTurnStarter = null;
@@ -140,6 +137,9 @@ public final class JassGame {
      * This will also automatically advance turns as well.
      */
     public void advanceToEndOfNextTrick() {
+        if (isGameOver()) {
+            return;
+        }
         if (turnState == null) {
             initializeTurnState();
             informOfTrick();
