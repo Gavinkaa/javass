@@ -86,7 +86,7 @@ public final class JassGame {
         if (lastTurnStarter == null) {
             lastTurnStarter = firstPlayerBySeven();
         } else {
-            lastTurnStarter = PlayerId.ALL.get((lastTurnStarter.ordinal() + 1) % 4);
+            lastTurnStarter = PlayerId.ALL.get((lastTurnStarter.ordinal() + 1) % PlayerId.COUNT);
         }
         Score score = turnState == null ? Score.INITIAL : turnState.score().nextTurn();
         turnState = TurnState.initial(nextTrump(), score, lastTurnStarter);

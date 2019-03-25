@@ -120,7 +120,7 @@ public final class MctsPlayer implements Player {
     private static final int CURIOSITY = 40;
 
     public MctsPlayer(PlayerId ownId, long rngSeed, int iterations) {
-        Preconditions.checkArgument(iterations >= 9);
+        Preconditions.checkArgument(iterations >= Jass.HAND_SIZE);
         this.ownId = ownId;
         this.rng = new SplittableRandom(rngSeed);
         this.interations = iterations;
