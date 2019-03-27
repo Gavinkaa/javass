@@ -2,7 +2,10 @@ package ch.epfl.javass.jass;
 
 import ch.epfl.javass.Preconditions;
 
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.SplittableRandom;
 
 /**
  * MctsPlayer is a player that makes decisions on which cards to play
@@ -156,8 +159,7 @@ public final class MctsPlayer implements Player {
                 thisNode.totalPoints += relevant;
                 thisNode.numberOfFinishedTurns++;
             }
-            root.numberOfFinishedTurns++;
-            root.totalPoints += score.totalPoints(ownId.team());
+            // we don't need to propagate to the root
         }
         return Card.ofPacked(PackedCardSet.get(playableHand, root.bestChild(0)));
     }
