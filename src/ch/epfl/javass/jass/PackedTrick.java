@@ -254,7 +254,7 @@ public final class PackedTrick {
             total += PackedCard.points(PackedTrick.trump(pkTrick), card);
         }
         if (PackedTrick.isLast(pkTrick)) {
-            total += 5;
+            total += Jass.LAST_TRICK_ADDITIONAL_POINTS;
         }
         return total;
     }

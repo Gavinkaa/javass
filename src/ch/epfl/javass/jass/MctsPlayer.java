@@ -100,15 +100,13 @@ public final class MctsPlayer implements Player {
                         return path;
                     }
                 }
+                path.addFirst(currentNode);
                 // Recurse with the most promising direct child
                 int bestIndex = currentNode.bestChild(CURIOSITY);
                 if (bestIndex < 0) {
-                    return null;
+                    return path;
                 }
-                Node child = currentNode.children[bestIndex];
-
-                path.addFirst(currentNode);
-                currentNode = child;
+                currentNode = currentNode.children[bestIndex];
             }
         }
     }
@@ -146,10 +144,6 @@ public final class MctsPlayer implements Player {
         Node root = new Node(state, playableHand);
         for (int i = 0; i < interations; i++) {
             Collection<Node> path = root.addNode(packedHand, ownId);
-            if (path == null) {
-                break;
-            }
-
             Iterator<Node> iter = path.iterator();
             Node nextNode = iter.next();
             Score score = sampleEndTurnScore(nextNode.turnState, packedHand);
