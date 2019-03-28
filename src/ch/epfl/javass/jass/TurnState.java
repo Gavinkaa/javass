@@ -4,6 +4,11 @@ import ch.epfl.javass.Preconditions;
 
 
 /**
+ * TurnState represents the state of a single turn.
+ *
+ * Each turn is composed of 9 tricks.
+ * This class provides methods to advance the state of the turn
+ * by playing a card inside a trick, or collecting a full trick.
  * @author Lúcás Críostóir Meier (300831)
  * @author Ludovic Burnier (301308)
  */

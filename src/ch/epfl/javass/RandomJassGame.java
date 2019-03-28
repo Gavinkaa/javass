@@ -6,6 +6,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * RandomJassGame exists for testing purposes.
+ *
+ * It allows us to run a full game with varying configurations
+ * of players.
  * @author Lúcás Críostóir Meier (300831)
  * @author Ludovic Burnier (301308)
  */

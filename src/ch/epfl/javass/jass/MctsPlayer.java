@@ -114,17 +114,16 @@ public final class MctsPlayer implements Player {
         }
     }
 
-    //--------------------------------------------------------------------------------
     private PlayerId ownId;
     private SplittableRandom rng;
-    private int interations;
+    private int iterations;
     private static final int CURIOSITY = 40;
 
     public MctsPlayer(PlayerId ownId, long rngSeed, int iterations) {
         Preconditions.checkArgument(iterations >= Jass.HAND_SIZE);
         this.ownId = ownId;
         this.rng = new SplittableRandom(rngSeed);
-        this.interations = iterations;
+        this.iterations = iterations;
     }
 
     private Score sampleEndTurnScore(TurnState turnState, long firstHand) {
@@ -145,7 +144,7 @@ public final class MctsPlayer implements Player {
             return Card.ofPacked(PackedCardSet.get(playableHand, 0));
         }
         Node root = new Node(state, playableHand);
-        for (int i = 0; i < interations; i++) {
+        for (int i = 0; i < iterations; i++) {
             Collection<Node> path = root.addNode(packedHand, ownId);
             Iterator<Node> iter = path.iterator();
             Node nextNode = iter.next();

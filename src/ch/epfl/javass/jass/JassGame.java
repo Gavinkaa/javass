@@ -4,7 +4,8 @@ import java.util.*;
 
 /**
  * Represents a Game of Jass, capable of
- * keeping track of and advancing a game of Jass
+ * keeping track of and advancing the state of the game
+ * as players take their turns.
  *
  * @author Lúcás Críostóir Meier (300831)
  * @author Ludovic Burnier (301308)
