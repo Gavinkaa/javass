@@ -57,7 +57,6 @@ public final class MctsPlayer implements Player {
         }
 
         private int bestChild(double c) {
-            // performance shortcut
             if (children.length == 1) {
                 return 0;
             }
@@ -159,6 +158,7 @@ public final class MctsPlayer implements Player {
                 thisNode.numberOfFinishedTurns++;
             }
             // we don't need to propagate to the root
+            root.numberOfFinishedTurns++;
         }
         return Card.ofPacked(PackedCardSet.get(playableHand, root.bestChild(0)));
     }
