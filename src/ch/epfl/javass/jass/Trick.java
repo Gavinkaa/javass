@@ -12,6 +12,7 @@ import ch.epfl.javass.Preconditions;
  * be played.
  * This class also holds the trump card for that round, as well as the
  * first player to play that round.
+ * </p>
  *
  * @author Lúcás Críostóir Meier (300831)
  * @author Ludovic Burnier (301308)
@@ -85,7 +86,7 @@ public final class Trick {
      * and sets the starting player to the player who won this Trick
      *
      * @throws IllegalStateException if the trick wasn't full
-     * @returns the nextEmpty trick, or INVALID if this was the last trick of a round
+     * @return the nextEmpty trick, or INVALID if this was the last trick of a round
      */
     public Trick nextEmpty() {
         if (!isFull()) {

@@ -3,7 +3,7 @@ package ch.epfl.javass.bits;
 import ch.epfl.javass.Preconditions;
 
 /**
- * This class provides utility functions for working with bis.
+ * This class provides utility functions for working with 32 bits.
  * @author Lúcás Críostóir Meier (300831)
  * @author Ludovic Burnier (301308)
  */
@@ -40,7 +40,7 @@ public final class Bits32 {
     }
 
     /**
-     * Pack multiple small numbers into a larger bitpattern
+     * Pack multiple small numbers into a larger bit-pattern
      *
      * @param v1 the first number to pack
      * @param s1 the number of bits in this number to pack
@@ -62,7 +62,7 @@ public final class Bits32 {
     }
 
     /**
-     * See the other versions of `pack`
+     * See the other version of {@link #pack(int, int, int, int)}
      */
     public static int pack(int v1, int s1, int v2, int s2, int v3, int s3) {
         int index = s1 + s2;

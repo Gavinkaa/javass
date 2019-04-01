@@ -25,7 +25,8 @@ public final class PackedCard {
      */
     public static boolean isValid(int pkCard) {
         int rank = Bits32.extract(pkCard, 0, 4);
-        if (rank > 8) {
+        // COUNT - 1 is the largest possible ordinal for a rank
+        if (rank > Card.Rank.COUNT - 1) {
             return false;
         }
         int zeroed = Bits32.extract(pkCard, 6, 26);

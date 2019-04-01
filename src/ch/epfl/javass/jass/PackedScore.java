@@ -20,7 +20,7 @@ public final class PackedScore {
     }
 
     private static boolean isValidHalf(long halfScore, int start) {
-        if (Bits64.extract(halfScore, start, 4) > 9) {
+        if (Bits64.extract(halfScore, start, 4) > Jass.TRICKS_PER_TURN) {
             return false;
         }
         if (Bits64.extract(halfScore, start + 4, 9) > 257) {

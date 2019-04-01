@@ -110,7 +110,7 @@ public final class CardSet {
     /**
      * Check if a card is inside this set
      *
-     * @param card the card of which to check memberchip
+     * @param card the card of which to check membership
      * @return true if the card is in the set, false otherwise
      */
     public boolean contains(Card card) {

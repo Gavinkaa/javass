@@ -2,7 +2,10 @@ package ch.epfl.javass.jass;
 
 import ch.epfl.javass.Preconditions;
 
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.SplittableRandom;
 
 /**
  * MctsPlayer is a player that makes decisions on which cards to play
@@ -100,30 +103,27 @@ public final class MctsPlayer implements Player {
                         return path;
                     }
                 }
+                path.addFirst(currentNode);
                 // Recurse with the most promising direct child
                 int bestIndex = currentNode.bestChild(CURIOSITY);
                 if (bestIndex < 0) {
-                    return null;
+                    return path;
                 }
-                Node child = currentNode.children[bestIndex];
-
-                path.addFirst(currentNode);
-                currentNode = child;
+                currentNode = currentNode.children[bestIndex];
             }
         }
     }
 
-    //--------------------------------------------------------------------------------
     private PlayerId ownId;
     private SplittableRandom rng;
-    private int interations;
+    private int iterations;
     private static final int CURIOSITY = 40;
 
     public MctsPlayer(PlayerId ownId, long rngSeed, int iterations) {
-        Preconditions.checkArgument(iterations >= 9);
+        Preconditions.checkArgument(iterations >= Jass.HAND_SIZE);
         this.ownId = ownId;
         this.rng = new SplittableRandom(rngSeed);
-        this.interations = iterations;
+        this.iterations = iterations;
     }
 
     private Score sampleEndTurnScore(TurnState turnState, long firstHand) {
@@ -144,12 +144,8 @@ public final class MctsPlayer implements Player {
             return Card.ofPacked(PackedCardSet.get(playableHand, 0));
         }
         Node root = new Node(state, playableHand);
-        for (int i = 0; i < interations; i++) {
+        for (int i = 0; i < iterations; i++) {
             Collection<Node> path = root.addNode(packedHand, ownId);
-            if (path == null) {
-                break;
-            }
-
             Iterator<Node> iter = path.iterator();
             Node nextNode = iter.next();
             Score score = sampleEndTurnScore(nextNode.turnState, packedHand);
@@ -162,8 +158,7 @@ public final class MctsPlayer implements Player {
                 thisNode.totalPoints += relevant;
                 thisNode.numberOfFinishedTurns++;
             }
-            root.numberOfFinishedTurns++;
-            root.totalPoints += score.totalPoints(ownId.team());
+            // we don't need to propagate to the root
         }
         return Card.ofPacked(PackedCardSet.get(playableHand, root.bestChild(0)));
     }

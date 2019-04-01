@@ -4,7 +4,8 @@ import java.util.*;
 
 /**
  * Represents a Game of Jass, capable of
- * keeping track of and advancing a game of Jass
+ * keeping track of and advancing the state of the game
+ * as players take their turns.
  *
  * @author Lúcás Críostóir Meier (300831)
  * @author Ludovic Burnier (301308)
@@ -32,9 +33,6 @@ public final class JassGame {
         Random rng = new Random(rngSeed);
         this.shuffleRng = new Random(rng.nextLong());
         this.playerHands = new EnumMap<>(PlayerId.class);
-        for (PlayerId id : PlayerId.ALL) {
-            setHand(id, CardSet.EMPTY);
-        }
         this.trumpRng = new Random(rng.nextLong());
         this.turnState = null;
         this.lastTurnStarter = null;
@@ -89,7 +87,7 @@ public final class JassGame {
         if (lastTurnStarter == null) {
             lastTurnStarter = firstPlayerBySeven();
         } else {
-            lastTurnStarter = PlayerId.ALL.get((lastTurnStarter.ordinal() + 1) % 4);
+            lastTurnStarter = PlayerId.ALL.get((lastTurnStarter.ordinal() + 1) % PlayerId.COUNT);
         }
         Score score = turnState == null ? Score.INITIAL : turnState.score().nextTurn();
         turnState = TurnState.initial(nextTrump(), score, lastTurnStarter);
@@ -140,6 +138,9 @@ public final class JassGame {
      * This will also automatically advance turns as well.
      */
     public void advanceToEndOfNextTrick() {
+        if (isGameOver()) {
+            return;
+        }
         if (turnState == null) {
             initializeTurnState();
             informOfTrick();
