@@ -157,7 +157,7 @@ public final class MctsPlayer implements Player {
                 thisNode.totalPoints += relevant;
                 thisNode.numberOfFinishedTurns++;
             }
-            // we don't need to propagate to the root
+            // we don't need to propagate points to the root
             root.numberOfFinishedTurns++;
         }
         return Card.ofPacked(PackedCardSet.get(playableHand, root.bestChild(0)));
