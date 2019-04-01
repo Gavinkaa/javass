@@ -49,7 +49,6 @@ public class JassGameTest {
 
                 CardSet cards = CardSet.ALL_CARDS;
                 for (TestPlayer p: ps.values()) {
-                    System.out.println(p.updateHandInitialHand);
                     assertEquals(9, cards.intersection(p.updateHandInitialHand).size());
                     cards = cards.difference(p.updateHandInitialHand);
                 }
