@@ -1,6 +1,9 @@
 package ch.epfl.javass.net;
 
+import ch.epfl.test.TestRandomizer;
 import org.junit.jupiter.api.Test;
+
+import java.util.SplittableRandom;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -22,6 +25,15 @@ class StringSerializerTest {
         assertEquals(32, StringSerializer.deserializeInt("20"));
         assertEquals(256, StringSerializer.deserializeInt("100"));
         assertEquals(11, StringSerializer.deserializeInt("b"));
+    }
+
+    @Test
+    void serializeIntRoundTrips() {
+        SplittableRandom rng = TestRandomizer.newRandom();
+        for (int i = 0; i < TestRandomizer.RANDOM_ITERATIONS; ++i) {
+            int num = rng.nextInt();
+            assertEquals(num, StringSerializer.deserializeInt(StringSerializer.serializeInt(num)));
+        }
     }
 
     @Test
@@ -48,5 +60,14 @@ class StringSerializerTest {
         //---
         assertEquals(0x1_0000_0000L, StringSerializer.deserializeLong("100000000"));
         assertEquals(0x12345678944L, StringSerializer.deserializeLong("12345678944"));
+    }
+
+    @Test
+    void serializeLongRoundTrips() {
+        SplittableRandom rng = TestRandomizer.newRandom();
+        for (int i = 0; i < TestRandomizer.RANDOM_ITERATIONS; ++i) {
+            long num = rng.nextLong();
+            assertEquals(num, StringSerializer.deserializeLong(StringSerializer.serializeLong(num)));
+        }
     }
 }

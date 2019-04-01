@@ -27,7 +27,7 @@ public final class StringSerializer {
      * @return the deserialized number
      */
     public static int deserializeInt(String num) {
-        return Integer.valueOf(num, RADIX);
+        return Integer.parseUnsignedInt(num, RADIX);
     }
 
     /**
@@ -41,6 +41,6 @@ public final class StringSerializer {
      * Similar to {@link #deserializeInt(String)} except it can operate on longer numbers
      */
     public static long deserializeLong(String num) {
-        return Long.valueOf(num, RADIX);
+        return Long.parseUnsignedLong(num, RADIX);
     }
 }
