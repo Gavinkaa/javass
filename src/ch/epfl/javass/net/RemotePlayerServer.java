@@ -1,0 +1,122 @@
+package ch.epfl.javass.net;
+
+import ch.epfl.javass.jass.*;
+
+import java.io.*;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.nio.charset.StandardCharsets;
+import java.util.EnumMap;
+import java.util.Map;
+
+/**
+ * @author Lúcás Críostóir Meier (300831)
+ * @author Ludovic Burnier (301308)
+ */
+public final class RemotePlayerServer {
+    private final Player local;
+
+    /**
+     * Construct a new RemotePlayerServer,
+     * given an underlying player to inform of changes in the game.
+     *
+     * @param player the player to make play the game
+     */
+    public RemotePlayerServer(Player player) {
+        local = player;
+    }
+
+    public void run() {
+        try (ServerSocket server = new ServerSocket(5108)) {
+            Socket s = server.accept();
+            BufferedReader r = new BufferedReader(
+                    new InputStreamReader(s.getInputStream(), StandardCharsets.US_ASCII)
+            );
+            BufferedWriter w = new BufferedWriter(
+                    new OutputStreamWriter(s.getOutputStream(), StandardCharsets.US_ASCII)
+            );
+            for (; ; ) {
+                interactWith(r, w);
+            }
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+
+    private void interactWith(BufferedReader r, Writer w) throws IOException {
+        String msg = r.readLine();
+        String[] components = StringSerializer.split(' ', msg);
+        JassCommand cmd = JassCommand.valueOf(components[0]);
+        switch (cmd) {
+            case PLRS:
+                handlePLRS(components);
+                break;
+            case TRMP:
+                handleTRMP(components);
+                break;
+            case HAND:
+                handleHAND(components);
+                break;
+            case TRCK:
+                handleTRCK(components);
+                break;
+            case CARD:
+                handleCARD(components, w);
+                break;
+            case SCOR:
+                handleSCOR(components);
+                break;
+            case WINR:
+                handleWINR(components);
+                break;
+        }
+    }
+
+    private void handlePLRS(String[] components) {
+        PlayerId ownId = PlayerId.ALL.get(StringSerializer.deserializeInt(components[1]));
+        Map<PlayerId, String> players = new EnumMap<>(PlayerId.class);
+        String[] names = StringSerializer.split(',', components[2]);
+        for (int i = 0; i < PlayerId.COUNT; ++i) {
+            PlayerId p = PlayerId.ALL.get(i);
+            players.put(p, StringSerializer.deserializeString(names[i]));
+        }
+        local.setPlayers(ownId, players);
+    }
+
+    private void handleTRMP(String[] components) {
+        int trumpOrd = StringSerializer.deserializeInt(components[1]);
+        local.setTrump(Card.Color.ALL.get(trumpOrd));
+    }
+
+    private void handleHAND(String[] components) {
+        long pkHand = StringSerializer.deserializeLong(components[1]);
+        local.updateHand(CardSet.ofPacked(pkHand));
+    }
+
+    private void handleTRCK(String[] components) {
+        int pkTrick = StringSerializer.deserializeInt(components[1]);
+        local.updateTrick(Trick.ofPacked(pkTrick));
+    }
+
+    private void handleCARD(String[] components, Writer w) throws IOException {
+        String[] stArgs = StringSerializer.split(',', components[1]);
+        TurnState st = TurnState.ofPackedComponents(
+                StringSerializer.deserializeLong(stArgs[0]),
+                StringSerializer.deserializeLong(stArgs[1]),
+                StringSerializer.deserializeInt(stArgs[2])
+        );
+        long pkHand = StringSerializer.deserializeLong(components[2]);
+        Card played = local.cardToPlay(st, CardSet.ofPacked(pkHand));
+        w.write(StringSerializer.serializeInt(played.packed()));
+    }
+
+    private void handleSCOR(String[] components) {
+        long pkScore = StringSerializer.deserializeLong(components[1]);
+        local.updateScore(Score.ofPacked(pkScore));
+    }
+
+    private void handleWINR(String[] components) {
+        int teamOrd = StringSerializer.deserializeInt(components[1]);
+        local.setWinningTeam(TeamId.ALL.get(teamOrd));
+    }
+}
