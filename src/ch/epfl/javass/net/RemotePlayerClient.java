@@ -36,6 +36,19 @@ public final class RemotePlayerClient implements Player, AutoCloseable {
         );
     }
 
+    // appends a newline and wraps the exception
+    private void writeMessage(JassCommand cmd, String... components) {
+        String[] args = new String[components.length + 1];
+        System.arraycopy(components, 0, args, 1, components.length);
+        args[0] = cmd.name();
+        try {
+            w.write(StringSerializer.combine(' ', args));
+            w.write('\n');
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+
     @Override
     public Card cardToPlay(TurnState state, CardSet hand) {
         String stateString = StringSerializer.combine(',',
@@ -44,11 +57,10 @@ public final class RemotePlayerClient implements Player, AutoCloseable {
                 StringSerializer.serializeInt(state.packedTrick())
         );
         String handString = StringSerializer.serializeLong(hand.packed());
-        String msg = StringSerializer.combine(' ', JassCommand.CARD.name(), stateString, handString);
+        writeMessage(JassCommand.CARD, stateString, handString);
         try {
-            w.write(msg);
-            w.write('\n');
-            return Card.ofPacked(StringSerializer.deserializeInt(r.readLine()));
+            String resp = r.readLine();
+            return Card.ofPacked(StringSerializer.deserializeInt(resp));
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
@@ -56,31 +68,38 @@ public final class RemotePlayerClient implements Player, AutoCloseable {
 
     @Override
     public void setPlayers(PlayerId ownId, Map<PlayerId, String> playerNames) {
+        String idString = StringSerializer.serializeInt(ownId.ordinal());
+        String[] names = new String[PlayerId.COUNT];
+        for (PlayerId p : PlayerId.ALL) {
+            names[p.ordinal()] = StringSerializer.serializeString(playerNames.get(p));
+        }
+        String nameString = StringSerializer.combine(',', names);
+        writeMessage(JassCommand.PLRS, idString, nameString);
     }
 
     @Override
     public void updateHand(CardSet newHand) {
-
+        writeMessage(JassCommand.HAND, StringSerializer.serializeLong(newHand.packed()));
     }
 
     @Override
     public void setTrump(Card.Color trump) {
-
+        writeMessage(JassCommand.TRMP, StringSerializer.serializeInt(trump.ordinal()));
     }
 
     @Override
     public void updateTrick(Trick newTrick) {
-
+        writeMessage(JassCommand.TRCK, StringSerializer.serializeInt(newTrick.packed()));
     }
 
     @Override
     public void updateScore(Score score) {
-
+        writeMessage(JassCommand.SCOR, StringSerializer.serializeLong(score.packed()));
     }
 
     @Override
     public void setWinningTeam(TeamId winningTeam) {
-
+        writeMessage(JassCommand.WINR, StringSerializer.serializeInt(winningTeam.ordinal()));
     }
 
     @Override
