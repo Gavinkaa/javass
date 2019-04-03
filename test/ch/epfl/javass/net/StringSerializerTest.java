@@ -70,4 +70,31 @@ class StringSerializerTest {
             assertEquals(num, StringSerializer.deserializeLong(StringSerializer.serializeLong(num)));
         }
     }
+
+    @Test
+    void serializeStringWorksOnExamples() {
+        assertEquals("THVkb3ZpYyBCdXJuaWVy", StringSerializer.serializeString("Ludovic Burnier"));
+        assertEquals("TMO6Y8OhcyBDcsOtb3N0w7NpciBNZWllcg==", StringSerializer.serializeString("Lúcás Críostóir Meier"));
+    }
+
+    @Test
+    void deserializeStringWorks() {
+        assertEquals("Ludovic Burnier", StringSerializer.deserializeString("THVkb3ZpYyBCdXJuaWVy"));
+        assertEquals("Lúcás Críostóir Meier", StringSerializer.deserializeString("TMO6Y8OhcyBDcsOtb3N0w7NpciBNZWllcg=="));
+    }
+
+    @Test
+    void serializeStringRoundTrips() {
+        SplittableRandom rng = TestRandomizer.newRandom();
+        for (int i = 0; i < TestRandomizer.RANDOM_ITERATIONS; ++i) {
+            char[] chars = new char[20];
+            for (int j = 0; i < chars.length; ++i) {
+                chars[j]  = (char)rng.nextInt(Character.MIN_VALUE, Character.MAX_VALUE);
+            }
+            String s = new String(chars);
+            String encoded = StringSerializer.serializeString(s);
+            String decoded = StringSerializer.deserializeString(encoded);
+            assertEquals(s, decoded);
+        }
+    }
 }
