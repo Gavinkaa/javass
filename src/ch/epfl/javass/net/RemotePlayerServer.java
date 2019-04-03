@@ -10,6 +10,12 @@ import java.util.EnumMap;
 import java.util.Map;
 
 /**
+ * This class allows us to wrap a client,
+ * in order to keep them informed on the state of the game
+ * on another computer. We accept a connection from that computer
+ * in order to listen for events, and inform the player we're
+ * keeping hold of.
+ *
  * @author Lúcás Críostóir Meier (300831)
  * @author Ludovic Burnier (301308)
  */
@@ -26,6 +32,15 @@ public final class RemotePlayerServer {
         local = player;
     }
 
+    /**
+     * This function will listen for a connection,
+     * and then enter into an infinite game loop with that connection.
+     * It will listen for messages, informing its underlying player,
+     * and responding with its own messages when necessary
+     *
+     * If some IOException gets raised during the loop,
+     * this function will exit with an Unchecked wrapper around it.
+     */
     public void run() {
         try (ServerSocket server = new ServerSocket(5108)) {
             Socket s = server.accept();
