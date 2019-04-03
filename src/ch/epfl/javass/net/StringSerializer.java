@@ -4,6 +4,10 @@ import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
 /**
+ * StringSerializer contains utilities for working with the serialization
+ * of various things to and from Strings. It provides utilities for converting
+ * anything into a valid ASCII string via Base64, as well as converting ints and longs.
+ *
  * @author Lúcás Críostóir Meier (300831)
  * @author Ludovic Burnier (301308)
  */
