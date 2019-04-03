@@ -5,9 +5,22 @@ import org.junit.jupiter.api.Test;
 
 import java.util.SplittableRandom;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class StringSerializerTest {
+    private static char randomChar(SplittableRandom rng) {
+        // so that we have a single byte
+        return (char) rng.nextInt(Character.MIN_VALUE, 0xD7FF);
+    }
+
+    private static String randomString(SplittableRandom rng, int length) {
+        char[] chars = new char[length];
+        for (int j = 0; j < chars.length; ++j) {
+            chars[j] = randomChar(rng);
+        }
+        return new String(chars);
+    }
 
     @Test
     void serializeIntWorksOnExample() {
@@ -87,14 +100,42 @@ class StringSerializerTest {
     void serializeStringRoundTrips() {
         SplittableRandom rng = TestRandomizer.newRandom();
         for (int i = 0; i < TestRandomizer.RANDOM_ITERATIONS; ++i) {
-            char[] chars = new char[20];
-            for (int j = 0; i < chars.length; ++i) {
-                chars[j]  = (char)rng.nextInt(Character.MIN_VALUE, Character.MAX_VALUE);
-            }
-            String s = new String(chars);
+            String s = randomString(rng, 20);
             String encoded = StringSerializer.serializeString(s);
             String decoded = StringSerializer.deserializeString(encoded);
             assertEquals(s, decoded);
+        }
+    }
+
+    @Test
+    void combineWorksOnExamples() {
+        assertEquals("a,b,c", StringSerializer.combine(',', "a", "b", "c"));
+        assertEquals("aa_bb", StringSerializer.combine('_', "aa", "bb"));
+        assertEquals("word", StringSerializer.combine('_', "word"));
+        assertEquals(",,", StringSerializer.combine(',', "", "", ""));
+    }
+
+    @Test
+    void splitWorksOnExamples() {
+        assertArrayEquals(new String[]{"a", "b", "c"}, StringSerializer.split(',', "a,b,c"));
+        assertArrayEquals(new String[]{"abc"}, StringSerializer.split(',', "abc"));
+    }
+
+    @Test
+    void combineAndSplitRoundtrip() {
+        SplittableRandom rng = TestRandomizer.newRandom();
+        for (int i = 0; i < TestRandomizer.RANDOM_ITERATIONS; ++i) {
+            char sep = randomChar(rng);
+            String[] strings = new String[4];
+            for (int j = 0; j < strings.length; ) {
+                String s = randomString(rng, 1);
+                if (s.indexOf(sep) < 0) {
+                    strings[j] = s;
+                    ++j;
+                }
+            }
+            String combined = StringSerializer.combine(sep, strings);
+            assertArrayEquals(strings, StringSerializer.split(sep, combined));
         }
     }
 }

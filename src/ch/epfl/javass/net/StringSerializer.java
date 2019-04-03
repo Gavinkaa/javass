@@ -74,4 +74,31 @@ public final class StringSerializer {
         byte[] utf8 = Base64.getDecoder().decode(serialized);
         return new String(utf8, StandardCharsets.UTF_8);
     }
+
+    /**
+     * This is useful to concatenate a bunch of strings together.
+     * Note that this won't do any serialization for you, the other
+     * methods in the class exist for that purpose.
+     * Care must be taken to ensure that the seperator is not inside
+     * any of the strings.
+     *
+     * @param sep the separation character to use
+     * @param strings the strings to collate together
+     * @return a new string containing all the strings interseperated by sep
+     */
+    public static String combine(char sep, String... strings) {
+        return String.join(String.valueOf(sep), strings);
+    }
+
+    /**
+     * This does the opposite of {@link #combine(char, String...)}.
+     * Like that method, it also does no deserialization of Strings.
+     *
+     * @param sep the seperation character between Strings
+     * @param combined the collated Strings to split
+     * @return a
+     */
+    public static String[] split(char sep, String combined) {
+        return combined.split(String.valueOf(sep));
+    }
 }
