@@ -27,7 +27,7 @@ public final class RemotePlayerClient implements Player, AutoCloseable {
      * @throws IOException if an IOException was thrown when constructing
      */
     public RemotePlayerClient(String hostName) throws IOException {
-        sock = new Socket(hostName, 5018);
+        sock = new Socket(hostName, 5108);
         r = new BufferedReader(
                 new InputStreamReader(sock.getInputStream(), StandardCharsets.US_ASCII)
         );
@@ -44,6 +44,7 @@ public final class RemotePlayerClient implements Player, AutoCloseable {
         try {
             w.write(StringSerializer.combine(' ', args));
             w.write('\n');
+            w.flush();
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }

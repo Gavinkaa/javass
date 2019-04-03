@@ -51,16 +51,18 @@ public final class RemotePlayerServer {
             BufferedWriter w = new BufferedWriter(
                     new OutputStreamWriter(s.getOutputStream(), StandardCharsets.US_ASCII)
             );
-            for (; ; ) {
-                interactWith(r, w);
+            while (interactWith(r, w)) {
             }
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
     }
 
-    private void interactWith(BufferedReader r, Writer w) throws IOException {
+    private boolean interactWith(BufferedReader r, Writer w) throws IOException {
         String msg = r.readLine();
+        if (msg == null) {
+            return false;
+        }
         String[] components = StringSerializer.split(' ', msg);
         JassCommand cmd = JassCommand.valueOf(components[0]);
         switch (cmd) {
@@ -86,6 +88,7 @@ public final class RemotePlayerServer {
                 handleWINR(components);
                 break;
         }
+        return true;
     }
 
     private void handlePLRS(String[] components) {
@@ -125,6 +128,7 @@ public final class RemotePlayerServer {
         Card played = local.cardToPlay(st, CardSet.ofPacked(pkHand));
         w.write(StringSerializer.serializeInt(played.packed()));
         w.write('\n');
+        w.flush();
     }
 
     private void handleSCOR(String[] components) {
