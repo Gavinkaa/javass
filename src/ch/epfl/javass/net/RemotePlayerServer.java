@@ -40,6 +40,7 @@ public final class RemotePlayerServer {
      *
      * If some IOException gets raised during the loop,
      * this function will exit with an Unchecked wrapper around it.
+     * @throws UncheckedIOException if we caught an exception in the loop
      */
     public void run() {
         try (ServerSocket server = new ServerSocket(5108)) {
@@ -123,6 +124,7 @@ public final class RemotePlayerServer {
         long pkHand = StringSerializer.deserializeLong(components[2]);
         Card played = local.cardToPlay(st, CardSet.ofPacked(pkHand));
         w.write(StringSerializer.serializeInt(played.packed()));
+        w.write('\n');
     }
 
     private void handleSCOR(String[] components) {
