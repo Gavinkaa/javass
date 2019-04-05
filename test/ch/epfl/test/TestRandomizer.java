@@ -13,4 +13,18 @@ public final class TestRandomizer {
     public static SplittableRandom newRandom() {
         return new SplittableRandom(SEED);
     }
+
+    public static char randomChar(SplittableRandom rng) {
+        // so that we have a single byte
+        return (char) rng.nextInt(Character.MIN_VALUE, 0xD7FF);
+    }
+
+    public static String randomString(SplittableRandom rng, int length) {
+        char[] chars = new char[length];
+        for (int j = 0; j < chars.length; ++j) {
+            chars[j] = randomChar(rng);
+        }
+        return new String(chars);
+    }
+
 }

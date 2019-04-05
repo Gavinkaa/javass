@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class JassGameTest {
     private static Map<PlayerId, TestPlayer> testPlayers(List<PlayerId> playingOrderLog) {
         Map<PlayerId, TestPlayer> ps = new EnumMap<>(PlayerId.class);
-        for (PlayerId pId: PlayerId.ALL)
+        for (PlayerId pId : PlayerId.ALL)
             ps.put(pId, new TestPlayer(pId, playingOrderLog));
         return ps;
     }
@@ -31,7 +31,7 @@ public class JassGameTest {
 
     private static Map<PlayerId, String> testPlayerNames() {
         Map<PlayerId, String> ps = new EnumMap<>(PlayerId.class);
-        for (PlayerId pId: PlayerId.ALL)
+        for (PlayerId pId : PlayerId.ALL)
             ps.put(pId, pId.toString());
         return ps;
     }
@@ -48,7 +48,7 @@ public class JassGameTest {
                 g.advanceToEndOfNextTrick();
 
                 CardSet cards = CardSet.ALL_CARDS;
-                for (TestPlayer p: ps.values()) {
+                for (TestPlayer p : ps.values()) {
                     assertEquals(9, cards.intersection(p.updateHandInitialHand).size());
                     cards = cards.difference(p.updateHandInitialHand);
                 }
@@ -64,7 +64,7 @@ public class JassGameTest {
             Map<PlayerId, String> ns = testPlayerNames();
             JassGame g = new JassGame(0, toNormalPlayers(ps), ns);
             g.advanceToEndOfNextTrick();
-            for (TestPlayer p: ps.values()) {
+            for (TestPlayer p : ps.values()) {
                 assertEquals(1, p.setPlayersCallCount);
                 assertEquals(p.ownId, p.setPlayersOwnId);
                 assertEquals(ns, p.setPlayersPlayerNames);
@@ -128,7 +128,7 @@ public class JassGameTest {
                     for (int t = 0; t < 9; ++t) {
                         g.advanceToEndOfNextTrick();
                         int expectedHandSize = 8 - t;
-                        for (TestPlayer p: ps.values())
+                        for (TestPlayer p : ps.values())
                             assertEquals(expectedHandSize, p.updateHandNewHand.size());
                     }
                 }
@@ -152,7 +152,7 @@ public class JassGameTest {
                     }
                     int newSetTrumpCallCount = 0;
                     Color player1Trump = ps.get(PlayerId.PLAYER_1).setTrumpTrump;
-                    for (TestPlayer p: ps.values()) {
+                    for (TestPlayer p : ps.values()) {
                         assertTrue(p.setTrumpCallCount > setTrumpCallCount);
                         newSetTrumpCallCount = Math.max(newSetTrumpCallCount, p.setTrumpCallCount);
                         assertEquals(player1Trump, p.setTrumpTrump);
@@ -174,7 +174,7 @@ public class JassGameTest {
                 for (int t = 0; t < 9; ++t) {
                     int expectedCallsToUpdateTrick = 5 * t;
                     Trick player1Trick = ps.get(PlayerId.PLAYER_1).updateTrickNewTrick;
-                    for (TestPlayer p: ps.values()) {
+                    for (TestPlayer p : ps.values()) {
                         assertTrue(p.updateTrickCallCount >= expectedCallsToUpdateTrick);
                         assertEquals(player1Trick, p.updateTrickNewTrick);
                     }
@@ -196,7 +196,7 @@ public class JassGameTest {
                 for (int t = 0; t < 9; ++t) {
                     int expectedCallsToUpdateScore = 1 * t;
                     Score player1Score = ps.get(PlayerId.PLAYER_1).updateScoreScore;
-                    for (TestPlayer p: ps.values()) {
+                    for (TestPlayer p : ps.values()) {
                         assertTrue(p.updateScoreCallCount >= expectedCallsToUpdateScore);
                         assertEquals(player1Score, p.updateScoreScore);
                     }
@@ -222,7 +222,7 @@ public class JassGameTest {
 
                 assertTrue(g.isGameOver());
                 TeamId player1WinningTeam = ps.get(PlayerId.PLAYER_1).setWinningTeamWinningTeam;
-                for (TestPlayer p: ps.values()) {
+                for (TestPlayer p : ps.values()) {
                     assertTrue(p.setWinningTeamCallCount >= 1);
                     assertEquals(player1WinningTeam, p.setWinningTeamWinningTeam);
                 }
@@ -238,7 +238,7 @@ public class JassGameTest {
                 Map<PlayerId, TestPlayer> ps = testPlayers();
                 Map<PlayerId, String> ns = testPlayerNames();
                 JassGame g = new JassGame(rng.nextLong(), toNormalPlayers(ps), ns);
-                while (! g.isGameOver()) {
+                while (!g.isGameOver()) {
                     g.advanceToEndOfNextTrick();
                 }
 
@@ -250,92 +250,5 @@ public class JassGameTest {
                 assertTrue(loosingP < 1000 && 1000 <= winningP);
             }
         });
-    }
-
-    @SuppressWarnings("unused")
-    private static class TestPlayer implements Player {
-        final PlayerId ownId;
-        final List<PlayerId> playingOrderLog;
-
-        int cardToPlayCallCount = 0;
-        TurnState cardToPlayState = null;
-        CardSet cardToPlayHand = null;
-        Card cardToPlayReturnedCard = null;
-
-        int setPlayersCallCount = 0;
-        PlayerId setPlayersOwnId = null;
-        Map<PlayerId, String> setPlayersPlayerNames = null;
-
-        int updateHandCallCount = 0;
-        CardSet updateHandNewHand = null;
-        CardSet updateHandInitialHand = null;
-
-        int setTrumpCallCount = 0;
-        Color setTrumpTrump = null;
-
-        int updateTrickCallCount = 0;
-        Trick updateTrickNewTrick = null;
-
-        int updateScoreCallCount = 0;
-        Score updateScoreScore = null;
-
-        int setWinningTeamCallCount = 0;
-        TeamId setWinningTeamWinningTeam = null;
-
-        TestPlayer(PlayerId ownId, List<PlayerId> playingOrderLog) {
-            this.ownId = ownId;
-            this.playingOrderLog = playingOrderLog;
-        }
-
-        @Override
-        public Card cardToPlay(TurnState state, CardSet hand) {
-            if (playingOrderLog != null)
-                playingOrderLog.add(ownId);
-
-            cardToPlayCallCount += 1;
-            cardToPlayState = state;
-            cardToPlayHand = hand;
-            cardToPlayReturnedCard = state.trick().playableCards(hand).get(0);
-            return cardToPlayReturnedCard;
-        }
-
-        @Override
-        public void setPlayers(PlayerId ownId, Map<PlayerId, String> playerNames) {
-            this.setPlayersCallCount += 1;
-            this.setPlayersOwnId = ownId;
-            this.setPlayersPlayerNames = playerNames;
-        }
-
-        @Override
-        public void updateHand(CardSet newHand) {
-            updateHandCallCount += 1;
-            updateHandNewHand = newHand;
-            if (updateHandInitialHand == null)
-                updateHandInitialHand = newHand;
-        }
-
-        @Override
-        public void setTrump(Color trump) {
-            setTrumpCallCount += 1;
-            setTrumpTrump = trump;
-        }
-
-        @Override
-        public void updateTrick(Trick newTrick) {
-            updateTrickCallCount += 1;
-            updateTrickNewTrick = newTrick;
-        }
-
-        @Override
-        public void updateScore(Score score) {
-            updateScoreCallCount += 1;
-            updateScoreScore = score;
-        }
-
-        @Override
-        public void setWinningTeam(TeamId winningTeam) {
-            setWinningTeamCallCount += 1;
-            setWinningTeamWinningTeam = winningTeam;
-        }
     }
 }

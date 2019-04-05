@@ -9,18 +9,6 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class StringSerializerTest {
-    private static char randomChar(SplittableRandom rng) {
-        // so that we have a single byte
-        return (char) rng.nextInt(Character.MIN_VALUE, 0xD7FF);
-    }
-
-    private static String randomString(SplittableRandom rng, int length) {
-        char[] chars = new char[length];
-        for (int j = 0; j < chars.length; ++j) {
-            chars[j] = randomChar(rng);
-        }
-        return new String(chars);
-    }
 
     @Test
     void serializeIntWorksOnExample() {
@@ -100,7 +88,7 @@ class StringSerializerTest {
     void serializeStringRoundTrips() {
         SplittableRandom rng = TestRandomizer.newRandom();
         for (int i = 0; i < TestRandomizer.RANDOM_ITERATIONS; ++i) {
-            String s = randomString(rng, 20);
+            String s = TestRandomizer.randomString(rng, 20);
             String encoded = StringSerializer.serializeString(s);
             String decoded = StringSerializer.deserializeString(encoded);
             assertEquals(s, decoded);
@@ -125,10 +113,10 @@ class StringSerializerTest {
     void combineAndSplitRoundtrip() {
         SplittableRandom rng = TestRandomizer.newRandom();
         for (int i = 0; i < TestRandomizer.RANDOM_ITERATIONS; ++i) {
-            char sep = randomChar(rng);
+            char sep = TestRandomizer.randomChar(rng);
             String[] strings = new String[4];
             for (int j = 0; j < strings.length; ) {
-                String s = randomString(rng, 1);
+                String s = TestRandomizer.randomString(rng, 1);
                 if (s.indexOf(sep) < 0) {
                     strings[j] = s;
                     ++j;
