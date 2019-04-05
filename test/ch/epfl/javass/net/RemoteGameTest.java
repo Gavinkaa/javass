@@ -43,10 +43,12 @@ public class RemoteGameTest {
 
             this.serverThread = new Thread(server::run);
             this.serverThread.start();
-
+            Thread.sleep(20);
             this.client = new RemotePlayerClient("localhost");
         } catch (IOException e) {
             throw new UncheckedIOException(e);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 
