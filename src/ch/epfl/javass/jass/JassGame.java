@@ -19,7 +19,7 @@ public final class JassGame {
     // This can be null, indicating that we have yet to start the game
     private TurnState turnState;
     // The interior cardsets are mutable
-    private final Map<PlayerId, CardSet> playerHands;
+    private final Map<PlayerId, CardSet> playerHands = new EnumMap<>(PlayerId.class);
     private PlayerId lastTurnStarter;
     private boolean gameOver;
 
@@ -32,11 +32,7 @@ public final class JassGame {
         }
         Random rng = new Random(rngSeed);
         this.shuffleRng = new Random(rng.nextLong());
-        this.playerHands = new EnumMap<>(PlayerId.class);
         this.trumpRng = new Random(rng.nextLong());
-        this.turnState = null;
-        this.lastTurnStarter = null;
-        this.gameOver = false;
     }
 
     private Card.Color nextTrump() {

@@ -217,7 +217,7 @@ public final class PackedCardSet {
     }
 
     // used for subsetOfColor
-    private static final long colorMasks[] = {
+    private static final long[] colorMasks = {
             Bits64.mask(0, 16),
             Bits64.mask(16, 16),
             Bits64.mask(32, 16),

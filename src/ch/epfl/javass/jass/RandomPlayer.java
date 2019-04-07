@@ -4,8 +4,10 @@ import java.util.Random;
 
 /**
  * RandomPlayer will randomly choose a card to play each turn.
- *
+ * <p>
  * This is mainly useful for testing the correct execution of a game.
+ * </p>
+ *
  * @author Lúcás Críostóir Meier (300831)
  * @author Ludovic Burnier (301308)
  */

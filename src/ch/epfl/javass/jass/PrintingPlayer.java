@@ -25,7 +25,7 @@ public final class PrintingPlayer implements Player {
     public void setPlayers(PlayerId ownId, Map<PlayerId, String> playerNames) {
         underlyingPlayer.setPlayers(ownId, playerNames);
         System.out.println("Les joueurs sont :");
-        for (PlayerId id : PlayerId.ALL){
+        for (PlayerId id : PlayerId.ALL) {
             System.out.println("  " + playerNames.get(id) + (ownId == id ? " (moi)" : ""));
         }
     }
