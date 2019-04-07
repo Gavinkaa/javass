@@ -85,8 +85,8 @@ public final class Trick {
      * This method clear out all cards, increments the index,
      * and sets the starting player to the player who won this Trick
      *
-     * @throws IllegalStateException if the trick wasn't full
      * @return the nextEmpty trick, or INVALID if this was the last trick of a round
+     * @throws IllegalStateException if the trick wasn't full
      */
     public Trick nextEmpty() {
         if (!isFull()) {

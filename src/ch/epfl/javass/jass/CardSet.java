@@ -6,6 +6,7 @@ import java.util.List;
 
 /**
  * Represents a set of cards, can be used to represent a hand
+ *
  * @author Lúcás Críostóir Meier (300831)
  * @author Ludovic Burnier (301308)
  */

@@ -7,9 +7,11 @@ import java.util.Map;
 
 /**
  * RandomJassGame exists for testing purposes.
- *
+ * <p>
  * It allows us to run a full game with varying configurations
  * of players.
+ * </p>
+ *
  * @author Lúcás Críostóir Meier (300831)
  * @author Ludovic Burnier (301308)
  */
@@ -18,7 +20,7 @@ public final class RandomJassGame {
         Map<PlayerId, Player> players = new HashMap<>();
         Map<PlayerId, String> playerNames = new HashMap<>();
 
-        for (PlayerId pId: PlayerId.ALL) {
+        for (PlayerId pId : PlayerId.ALL) {
             Player player = new MctsPlayer(pId, 2019, 100_000);
             if (pId == PlayerId.PLAYER_1)
                 player = new PrintingPlayer(player);
@@ -28,7 +30,7 @@ public final class RandomJassGame {
 
         JassGame g = new JassGame(2019, players, playerNames);
         long then = System.currentTimeMillis();
-        while (! g.isGameOver()) {
+        while (!g.isGameOver()) {
             g.advanceToEndOfNextTrick();
             System.out.println("----");
             long now = System.currentTimeMillis();

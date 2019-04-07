@@ -112,9 +112,7 @@ public final class PackedCard {
         boolean isTrump = color == trump;
         switch (rank(pkCard)) {
             case SIX:
-                return 0;
             case SEVEN:
-                return 0;
             case EIGHT:
                 return 0;
             case NINE:

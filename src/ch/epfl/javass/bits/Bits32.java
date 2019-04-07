@@ -4,6 +4,7 @@ import ch.epfl.javass.Preconditions;
 
 /**
  * This class provides utility functions for working with 32 bits.
+ *
  * @author Lúcás Críostóir Meier (300831)
  * @author Ludovic Burnier (301308)
  */

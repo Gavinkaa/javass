@@ -40,7 +40,7 @@ public final class MctsPlayer implements Player {
         private int totalPoints = 0;
         private int numberOfFinishedTurns = 0;
 
-        public Node(TurnState turnState, long hand) {
+        private Node(TurnState turnState, long hand) {
             this.turnState = turnState;
             this.children = new Node[PackedCardSet.size(hand)];
             this.unusedCards = hand;
@@ -76,7 +76,7 @@ public final class MctsPlayer implements Player {
         }
 
         // Returns null if we can't add a node
-        public Collection<Node> addNode(long firstHand, PlayerId ownId) {
+        private Collection<Node> addNode(long firstHand, PlayerId ownId) {
             return realAddNode(this, firstHand, ownId, new ArrayDeque<>());
         }
 
