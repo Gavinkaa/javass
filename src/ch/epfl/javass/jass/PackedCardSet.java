@@ -19,7 +19,9 @@ public final class PackedCardSet {
     /**
      * Represents the set containing all possible cards
      */
-    public static final long ALL_CARDS = 0b1_1111_1111_0000_0001_1111_1111_0000_0001_1111_1111_0000_0001_1111_1111L;
+    public static final long ALL_CARDS = 0x1FF_01FF_01FF_01FFL;
+
+    private static final int COLOR_SIZE = 16;
 
     private PackedCardSet() {
     }
@@ -35,7 +37,7 @@ public final class PackedCardSet {
     }
 
     private static long betterCards(Card card) {
-        int shift = 16 * card.color().ordinal();
+        int shift = COLOR_SIZE * card.color().ordinal();
         long pattern = 0;
         int spike = 1;
         for (Card.Rank r : Card.Rank.ALL) {
@@ -70,7 +72,9 @@ public final class PackedCardSet {
      */
     public static long trumpAbove(int pkCard) {
         assert PackedCard.isValid(pkCard);
-        return betterPacked[PackedCard.rank(pkCard).ordinal() + 9 * PackedCard.color(pkCard).ordinal()];
+        int column = Card.Rank.COUNT * PackedCard.color(pkCard).ordinal();
+        int row = PackedCard.rank(pkCard).ordinal();
+        return betterPacked[column + row];
     }
 
     /**
@@ -83,7 +87,7 @@ public final class PackedCardSet {
     public static long singleton(int pkCard) {
         assert PackedCard.isValid(pkCard);
 
-        int colorShift = PackedCard.color(pkCard).ordinal() * 16;
+        int colorShift = COLOR_SIZE * PackedCard.color(pkCard).ordinal();
         int rankShift = PackedCard.rank(pkCard).ordinal();
         long pkSet = 1L << (colorShift + rankShift);
         assert isValid(pkSet);
@@ -173,7 +177,8 @@ public final class PackedCardSet {
      */
     public static long complement(long pkCardSet) {
         assert isValid(pkCardSet);
-        return PackedCardSet.ALL_CARDS ^ pkCardSet; //works only because there are no zeroes in ALL_CARDS
+        // works only because there are no zeroes in ALL_CARDS
+        return PackedCardSet.ALL_CARDS ^ pkCardSet;
     }
 
     /**
@@ -218,10 +223,10 @@ public final class PackedCardSet {
 
     // used for subsetOfColor
     private static final long[] colorMasks = {
-            Bits64.mask(0, 16),
-            Bits64.mask(16, 16),
-            Bits64.mask(32, 16),
-            Bits64.mask(48, 16)
+            Bits64.mask(0, COLOR_SIZE),
+            Bits64.mask(COLOR_SIZE, COLOR_SIZE),
+            Bits64.mask(2 * COLOR_SIZE, COLOR_SIZE),
+            Bits64.mask(3 * COLOR_SIZE, COLOR_SIZE)
     };
 
     /**
