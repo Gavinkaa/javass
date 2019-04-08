@@ -12,6 +12,11 @@ import ch.epfl.javass.bits.Bits32;
 public final class PackedCard {
     public static final int INVALID = 0b111111;
 
+    private static final int RANK_START = 0;
+    private static final int RANK_SIZE = 4;
+    private static final int COLOR_START = 4;
+    private static final int COLOR_SIZE = 2;
+
     private PackedCard() {
     }
 
@@ -24,12 +29,14 @@ public final class PackedCard {
      * @return true if the pattern is valid, false otherwise.
      */
     public static boolean isValid(int pkCard) {
-        int rank = Bits32.extract(pkCard, 0, 4);
+        int rank = Bits32.extract(pkCard, RANK_START, RANK_SIZE);
         // COUNT - 1 is the largest possible ordinal for a rank
         if (rank > Card.Rank.COUNT - 1) {
             return false;
         }
-        int zeroed = Bits32.extract(pkCard, 6, 26);
+        int zero_start = RANK_SIZE + COLOR_SIZE;
+        int zero_size = Integer.SIZE - zero_start;
+        int zeroed = Bits32.extract(pkCard, zero_start, zero_size);
         return zeroed == 0;
     }
 
@@ -41,7 +48,7 @@ public final class PackedCard {
      * @return a bit pattern encoding this card
      */
     public static int pack(Card.Color c, Card.Rank r) {
-        return Bits32.pack(r.ordinal(), 4, c.ordinal(), 2);
+        return Bits32.pack(r.ordinal(), RANK_SIZE, c.ordinal(), COLOR_SIZE);
     }
 
     /**
@@ -53,7 +60,7 @@ public final class PackedCard {
     public static Card.Color color(int pkCard) {
         assert isValid(pkCard);
 
-        return Card.Color.ALL.get(Bits32.extract(pkCard, 4, 2));
+        return Card.Color.ALL.get(Bits32.extract(pkCard, COLOR_START, COLOR_SIZE));
     }
 
     /**
@@ -65,7 +72,7 @@ public final class PackedCard {
     public static Card.Rank rank(int pkCard) {
         assert isValid(pkCard);
 
-        return Card.Rank.ALL.get(Bits32.extract(pkCard, 0, 4));
+        return Card.Rank.ALL.get(Bits32.extract(pkCard, RANK_START, RANK_SIZE));
     }
 
     /**
@@ -98,6 +105,10 @@ public final class PackedCard {
         return false;
     }
 
+    // Used just for the next function
+    private static int[] POINTS = {0, 0, 0, 0, 10, 2, 3, 4, 11};
+    private static int[] TRUMP_POINTS = {0, 0, 0, 14, 10, 20, 3, 4, 11};
+
     /**
      * Calculate the value of a card, based on the current trump color.
      *
@@ -109,27 +120,7 @@ public final class PackedCard {
         assert isValid(pkCard);
 
         Card.Color color = color(pkCard);
-        boolean isTrump = color == trump;
-        switch (rank(pkCard)) {
-            case SIX:
-            case SEVEN:
-            case EIGHT:
-                return 0;
-            case NINE:
-                return isTrump ? 14 : 0;
-            case TEN:
-                return 10;
-            case JACK:
-                return isTrump ? 20 : 2;
-            case QUEEN:
-                return 3;
-            case KING:
-                return 4;
-            case ACE:
-                return 11;
-        }
-        // Unreachable
-        throw new RuntimeException("Unreachable code, invalid Rank");
+        return (color == trump ? TRUMP_POINTS : POINTS)[rank(pkCard).ordinal()];
     }
 
     /**
