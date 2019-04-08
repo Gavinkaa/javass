@@ -16,7 +16,6 @@ public final class PackedScore {
      */
     public static final long INITIAL = 0;
 
-    private static final int COUNT_START = 0;
     private static final int COUNT_SIZE = 4;
     private static final int TURN_POINTS_START = 4;
     private static final int TURN_POINTS_SIZE = 9;
@@ -30,19 +29,20 @@ public final class PackedScore {
     private PackedScore() {
     }
 
-    private static boolean isValidHalf(long halfScore, int start) {
-        if (Bits64.extract(halfScore, start + COUNT_START, COUNT_SIZE) > Jass.TRICKS_PER_TURN) {
+    private static boolean isValidHalf(long pkScore, TeamId team) {
+        if (turnTricks(pkScore, team) > Jass.TRICKS_PER_TURN) {
             return false;
         }
-        if (Bits64.extract(halfScore, start + TURN_POINTS_START, TURN_POINTS_SIZE) > MAX_TURN_POINTS) {
+        if (turnPoints(pkScore, team) > MAX_TURN_POINTS) {
             return false;
         }
-        if (Bits64.extract(halfScore, start + GAME_POINTS_START, GAME_POINTS_SIZE) > MAX_GAME_POINTS) {
+        if (gamePoints(pkScore, team) > MAX_GAME_POINTS) {
             return false;
         }
+        int start = team == TeamId.TEAM_1 ? 0 : HALF_SIZE;
         int zero_start = COUNT_SIZE + TURN_POINTS_SIZE + GAME_POINTS_SIZE;
         int zero_size = HALF_SIZE - zero_start;
-        return Bits64.extract(halfScore, start + zero_start, zero_size) == 0;
+        return Bits64.extract(pkScore, start + zero_start, zero_size) == 0;
     }
 
     /**
@@ -55,7 +55,7 @@ public final class PackedScore {
      * @return true of the representation was valid, and false otherwise
      */
     public static boolean isValid(long pkScore) {
-        return isValidHalf(pkScore, 0) && isValidHalf(pkScore, HALF_SIZE);
+        return isValidHalf(pkScore, TeamId.TEAM_1) && isValidHalf(pkScore, TeamId.TEAM_2);
     }
 
     /**
@@ -81,8 +81,6 @@ public final class PackedScore {
      * @return the number of tricks the team has won that turn
      */
     public static int turnTricks(long pkScore, TeamId t) {
-        assert isValid(pkScore);
-
         int shift = t == TeamId.TEAM_1 ? 0 : HALF_SIZE;
         return (int) Bits64.extract(pkScore, shift, COUNT_SIZE);
     }
@@ -95,8 +93,6 @@ public final class PackedScore {
      * @return the number of points that turn has won so far this turn
      */
     public static int turnPoints(long pkScore, TeamId t) {
-        assert isValid(pkScore);
-
         int shift = t == TeamId.TEAM_1 ? 0 : HALF_SIZE;
         return (int) Bits64.extract(pkScore, shift + TURN_POINTS_START, TURN_POINTS_SIZE);
     }
@@ -110,8 +106,6 @@ public final class PackedScore {
      * @return the number of points that team had won before this turn
      */
     public static int gamePoints(long pkScore, TeamId t) {
-        assert isValid(pkScore);
-
         int shift = t == TeamId.TEAM_1 ? 0 : HALF_SIZE;
         return (int) Bits64.extract(pkScore, shift + GAME_POINTS_START, GAME_POINTS_SIZE);
     }
