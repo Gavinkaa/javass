@@ -142,7 +142,7 @@ public final class Trick {
      * @throws IndexOutOfBoundsException if the index is not in [0;4[
      */
     public PlayerId player(int index) {
-        return PackedTrick.player(packed, Preconditions.checkIndex(index, 4));
+        return PackedTrick.player(packed, Preconditions.checkIndex(index, PlayerId.COUNT));
     }
 
     /**
