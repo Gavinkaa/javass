@@ -7,6 +7,7 @@ import javafx.collections.ObservableList;
 import javafx.collections.ObservableSet;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 /**
  * Represents an observable Hand of cards, where
@@ -17,7 +18,7 @@ import java.util.Arrays;
  */
 public final class HandBean {
     private final ObservableList<Card> hand = FXCollections.observableArrayList(
-            Arrays.asList(null, null, null, null, null, null, null, null, null)
+            Collections.nCopies(9, null)
     );
     private final ObservableSet<Card> playableCards = FXCollections.observableSet();
 
