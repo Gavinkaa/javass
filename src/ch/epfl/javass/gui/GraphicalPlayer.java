@@ -1,22 +1,24 @@
 package ch.epfl.javass.gui;
 
-import ch.epfl.javass.jass.Player;
+import ch.epfl.javass.jass.Card;
 import ch.epfl.javass.jass.PlayerId;
 import ch.epfl.javass.jass.TeamId;
 import javafx.beans.binding.Bindings;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.collections.MapChangeListener;
 import javafx.scene.Scene;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 
-import java.util.Map;
-import java.util.StringJoiner;
+import java.util.*;
 
 /**
  * @author Lúcás Críostóir Meier (300831)
@@ -26,8 +28,10 @@ public class GraphicalPlayer {
     private final Scene mainScene;
 
     public GraphicalPlayer(PlayerId player, Map<PlayerId, String> names, ScoreBean score, TrickBean trick) {
-        Pane scorePane = createScorePane(score, names);
-        mainScene = new Scene(scorePane);
+        BorderPane border = new BorderPane();
+        border.setTop(createScorePane(names, score));
+        border.setCenter(createTrickPane(player, names, trick));
+        mainScene = new Scene(border);
     }
 
     public Stage createStage() {
@@ -70,16 +74,57 @@ public class GraphicalPlayer {
         return texts;
     }
 
-    private static Pane createScorePane(ScoreBean score, Map<PlayerId, String> names) {
+    private static Pane createScorePane(Map<PlayerId, String> names, ScoreBean score) {
         GridPane scorePane = new GridPane();
         scorePane.addRow(0, getTeamScores(score, TeamId.TEAM_1, names));
         scorePane.addRow(1, getTeamScores(score, TeamId.TEAM_2, names));
-        scorePane.setStyle("-fx-font: 16 Optima; -fxbackground-color: lightgray; -fx-padding: 5px; -fx-alignment: center;");
+        scorePane.setStyle("-fx-font: 16 Optima; -fx-background-color: lightgrey; -fx-padding: 5px; -fx-alignment: center;");
         return scorePane;
     }
 
-    private static Pane createTrickPane(TrickBean trick) {
+    private static Image getCardImage(Card card, boolean big) {
+        int size = big ? 240 : 160;
+        String s = String.format("/card_%d_%d_%d.png", card.color().ordinal(), card.rank().ordinal(), size);
+        return new Image(s);
+    }
+
+    private static Pane createTrickPane(PlayerId me, Map<PlayerId, String> names, TrickBean trick) {
+        List<PlayerId> players = new ArrayList<>(PlayerId.ALL);
+        Collections.rotate(players, -me.ordinal());
         GridPane trickPane = new GridPane();
+        int[] cols = {1, 2, 1, 0};
+        int[] rows = {2, 1, 0, 1};
+        for (int i = 0; i < PlayerId.COUNT; ++i) {
+            PlayerId player = players.get(i);
+            Pane pane = new VBox();
+            ImageView v = new ImageView();
+            v.setFitHeight(180);
+            v.setFitWidth(120);
+            ObjectProperty<Image> img = new SimpleObjectProperty<>();
+            ChangeListener<Card> changeListener = (c, oldV, newV) -> {
+                System.out.println(player + " " + c);
+                if (newV != null) {
+                    img.setValue(getCardImage(newV, true));
+                }
+            };
+            Bindings.valueAt(trick.trick(), player).addListener(changeListener);
+            /*
+            MapChangeListener<PlayerId, Card> mapChangeListener = newV -> {
+                Card c = newV.getMap().get(player);
+                if (c != null) {
+                    img.setValue(getCardImage(c, true));
+                }
+            };
+            trick.trick().addListener(mapChangeListener);
+            */
+            v.imageProperty().bind(img);
+            Text txt = new Text(names.get(player));
+            txt.setStyle("-fx-font: 14 Optima;");
+            pane.getChildren().addAll(v, txt);
+            pane.setStyle("-fx-alignment: center;");
+            trickPane.add(pane, cols[i], rows[i]);
+        }
+        trickPane.setStyle("-fx-background-color: whitesmoke; -fx-padding: 5px; -fx-border-width: 3px 0px; -fx-border-style: solid; -fx-border-color: gray; -fx-alignment: center;");
         return trickPane;
     }
 
