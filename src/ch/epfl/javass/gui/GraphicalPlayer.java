@@ -13,7 +13,10 @@ import javafx.collections.MapChangeListener;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.*;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
@@ -94,36 +97,50 @@ public class GraphicalPlayer {
         GridPane trickPane = new GridPane();
         int[] cols = {1, 2, 1, 0};
         int[] rows = {2, 1, 0, 1};
+        ObjectProperty<Image>[] images = new ObjectProperty[PlayerId.COUNT];
+        for (int i = 0; i < PlayerId.COUNT; i++) {
+            images[i] = new SimpleObjectProperty<>();
+        }
+        MapChangeListener<PlayerId, Card> mapChangeListener = newV -> {
+            for (int i = 0; i < PlayerId.COUNT; i++) {
+                Card c = newV.getMap().get(players.get(i));
+                if (c != null) {
+                    images[i].setValue(getCardImage(c, true));
+                } else {
+                    images[i].setValue(null);
+                }
+            }
+        };
+        trick.trick().addListener(mapChangeListener);
         for (int i = 0; i < PlayerId.COUNT; ++i) {
             PlayerId player = players.get(i);
             Pane pane = new VBox();
             ImageView v = new ImageView();
             v.setFitHeight(180);
             v.setFitWidth(120);
-            ObjectProperty<Image> img = new SimpleObjectProperty<>();
-            ChangeListener<Card> changeListener = (c, oldV, newV) -> {
-                System.out.println(player + " " + c);
-                if (newV != null) {
-                    img.setValue(getCardImage(newV, true));
-                }
-            };
-            Bindings.valueAt(trick.trick(), player).addListener(changeListener);
-            /*
-            MapChangeListener<PlayerId, Card> mapChangeListener = newV -> {
-                Card c = newV.getMap().get(player);
-                if (c != null) {
-                    img.setValue(getCardImage(c, true));
-                }
-            };
-            trick.trick().addListener(mapChangeListener);
-            */
-            v.imageProperty().bind(img);
+
+
+            v.imageProperty().bind(images[i]);
             Text txt = new Text(names.get(player));
             txt.setStyle("-fx-font: 14 Optima;");
             pane.getChildren().addAll(v, txt);
             pane.setStyle("-fx-alignment: center;");
             trickPane.add(pane, cols[i], rows[i]);
         }
+
+        ObjectProperty<Image> trumpImage = new SimpleObjectProperty<>();
+        ChangeListener<Card.Color> changeListener = (c , oldV, newV) -> {
+            Image image = new Image("/trump_" + newV.ordinal() + ".png");
+            trumpImage.setValue(image);
+        };
+        trick.trumpProperty().addListener(changeListener);
+        ImageView trumpView = new ImageView();
+        trumpView.setFitHeight(101);
+        trumpView.setFitWidth(101);
+        trumpView.setStyle("-fx-alignment: right");
+        trumpView.imageProperty().bind(trumpImage);
+        trickPane.add(trumpView, 1, 1, 1, 1);
+
         trickPane.setStyle("-fx-background-color: whitesmoke; -fx-padding: 5px; -fx-border-width: 3px 0px; -fx-border-style: solid; -fx-border-color: gray; -fx-alignment: center;");
         return trickPane;
     }
