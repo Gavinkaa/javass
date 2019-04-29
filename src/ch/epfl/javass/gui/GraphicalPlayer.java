@@ -4,12 +4,14 @@ import ch.epfl.javass.jass.Card;
 import ch.epfl.javass.jass.PlayerId;
 import ch.epfl.javass.jass.TeamId;
 import javafx.beans.binding.Bindings;
+import javafx.beans.binding.ObjectBinding;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
-import javafx.collections.MapChangeListener;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableMap;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -97,10 +99,13 @@ public class GraphicalPlayer {
         GridPane trickPane = new GridPane();
         int[] cols = {1, 2, 1, 0};
         int[] rows = {2, 1, 0, 1};
+        /*
         ObjectProperty<Image>[] images = new ObjectProperty[PlayerId.COUNT];
         for (int i = 0; i < PlayerId.COUNT; i++) {
             images[i] = new SimpleObjectProperty<>();
         }
+
+
         MapChangeListener<PlayerId, Card> mapChangeListener = newV -> {
             for (int i = 0; i < PlayerId.COUNT; i++) {
                 Card c = newV.getMap().get(players.get(i));
@@ -111,7 +116,16 @@ public class GraphicalPlayer {
                 }
             }
         };
-        trick.trick().addListener(mapChangeListener);
+        trick.trick().addListener(mapChangeListener);*/
+
+        ObservableMap<Card, Image> cardImages = FXCollections.observableHashMap();
+        for (Card.Rank r : Card.Rank.ALL) {
+            for (Card.Color c : Card.Color.ALL) {
+                Card card = Card.of(c, r);
+                cardImages.put(card, getCardImage(card, true));
+            }
+        }
+
         for (int i = 0; i < PlayerId.COUNT; ++i) {
             PlayerId player = players.get(i);
             Pane pane = new VBox();
@@ -119,8 +133,9 @@ public class GraphicalPlayer {
             v.setFitHeight(180);
             v.setFitWidth(120);
 
+            ObjectBinding<Image> image = Bindings.valueAt(cardImages, Bindings.valueAt(trick.trick(), player));
 
-            v.imageProperty().bind(images[i]);
+            v.imageProperty().bind(image);
             Text txt = new Text(names.get(player));
             txt.setStyle("-fx-font: 14 Optima;");
             pane.getChildren().addAll(v, txt);
@@ -129,7 +144,7 @@ public class GraphicalPlayer {
         }
 
         ObjectProperty<Image> trumpImage = new SimpleObjectProperty<>();
-        ChangeListener<Card.Color> changeListener = (c , oldV, newV) -> {
+        ChangeListener<Card.Color> changeListener = (c, oldV, newV) -> {
             Image image = new Image("/trump_" + newV.ordinal() + ".png");
             trumpImage.setValue(image);
         };
