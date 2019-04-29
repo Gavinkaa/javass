@@ -5,11 +5,8 @@ import ch.epfl.javass.jass.PlayerId;
 import ch.epfl.javass.jass.TeamId;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.ObjectBinding;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableMap;
 import javafx.geometry.HPos;
@@ -119,7 +116,11 @@ public class GraphicalPlayer {
             v.imageProperty().bind(image);
             Text txt = new Text(names.get(player));
             txt.setStyle("-fx-font: 14 Optima;");
-            pane.getChildren().addAll(v, txt);
+            if (i == 0) {
+                pane.getChildren().addAll(v, txt);
+            } else {
+                pane.getChildren().addAll(txt, v);
+            }
             pane.setStyle("-fx-alignment: center;");
             trickPane.add(pane, cols[i], rows[i]);
         }
