@@ -12,12 +12,11 @@ import javafx.collections.ObservableMap;
 import javafx.geometry.HPos;
 import javafx.geometry.VPos;
 import javafx.scene.Scene;
+import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
@@ -112,13 +111,20 @@ public class GraphicalPlayer {
             PlayerId player = players.get(i);
             VBox pane = new VBox();
             pane.setSpacing(4);
+            StackPane imageLayers = new StackPane();
             ImageView v = new ImageView();
             v.setFitHeight(180);
             v.setFitWidth(120);
-
             ObjectBinding<Image> image = Bindings.valueAt(cardImages, Bindings.valueAt(trick.trick(), player));
-
             v.imageProperty().bind(image);
+            Rectangle r = new Rectangle();
+            r.setHeight(180);
+            r.setWidth(120);
+            r.setStyle("-fx-arc-width: 20; -fx-arc-height: 20; -fx-fill: transparent; -fx-stroke: lightpink; -fx-stroke-width: 5; -fx-opacity: 0.5;");
+            r.setEffect(new GaussianBlur(4));
+            r.setVisible(true);
+            imageLayers.getChildren().addAll(r, v);
+
             Text txt = new Text(names.get(player));
             txt.setStyle("-fx-font: 14 Optima;");
             if (i == 0) {
