@@ -123,14 +123,14 @@ public class GraphicalPlayer {
             r.setStyle("-fx-arc-width: 20; -fx-arc-height: 20; -fx-fill: transparent; -fx-stroke: lightpink; -fx-stroke-width: 5; -fx-opacity: 0.5;");
             r.setEffect(new GaussianBlur(4));
             r.setVisible(true);
+            r.visibleProperty().bind(trick.winningPlayerProperty().isEqualTo(player));
             imageLayers.getChildren().addAll(r, v);
-
             Text txt = new Text(names.get(player));
             txt.setStyle("-fx-font: 14 Optima;");
             if (i == 0) {
-                pane.getChildren().addAll(v, txt);
+                pane.getChildren().addAll(imageLayers, txt);
             } else {
-                pane.getChildren().addAll(txt, v);
+                pane.getChildren().addAll(txt, imageLayers);
             }
             pane.setStyle("-fx-alignment: center;");
             trickPane.add(pane, cols[i], rows[i], 1, rowSpans[i]);
