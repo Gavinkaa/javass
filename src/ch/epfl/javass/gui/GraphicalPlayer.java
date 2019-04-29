@@ -96,7 +96,8 @@ public class GraphicalPlayer {
         Collections.rotate(players, -me.ordinal());
         GridPane trickPane = new GridPane();
         int[] cols = {1, 2, 1, 0};
-        int[] rows = {2, 1, 0, 1};
+        int[] rows = {2, 0, 0, 0};
+        int[] rowSpans = {1, 3, 1, 3};
         ObservableMap<Card, Image> cardImages = FXCollections.observableHashMap();
         for (Card.Rank r : Card.Rank.ALL) {
             for (Card.Color c : Card.Color.ALL) {
@@ -122,7 +123,7 @@ public class GraphicalPlayer {
                 pane.getChildren().addAll(txt, v);
             }
             pane.setStyle("-fx-alignment: center;");
-            trickPane.add(pane, cols[i], rows[i]);
+            trickPane.add(pane, cols[i], rows[i], 1, rowSpans[i]);
         }
 
         ObservableMap<Card.Color, Image> trumpImages = FXCollections.observableHashMap();
@@ -135,10 +136,8 @@ public class GraphicalPlayer {
         GridPane.setHalignment(trumpView, HPos.CENTER);
         trumpView.setFitHeight(101);
         trumpView.setFitWidth(101);
-        trumpView.setStyle("-fx-alignment: right");
         trumpView.imageProperty().bind(trumpImage);
         trickPane.add(trumpView, 1, 1, 1, 1);
-
         trickPane.setStyle("-fx-background-color: whitesmoke; -fx-padding: 5px; -fx-border-width: 3px 0px; -fx-border-style: solid; -fx-border-color: gray; -fx-alignment: center;");
         return trickPane;
     }
