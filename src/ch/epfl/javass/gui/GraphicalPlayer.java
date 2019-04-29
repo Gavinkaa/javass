@@ -12,6 +12,7 @@ import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableMap;
+import javafx.geometry.HPos;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -130,6 +131,7 @@ public class GraphicalPlayer {
         }
         ObjectBinding<Image> trumpImage = Bindings.valueAt(trumpImages, trick.trumpProperty());
         ImageView trumpView = new ImageView();
+        GridPane.setHalignment(trumpView, HPos.CENTER);
         trumpView.setFitHeight(101);
         trumpView.setFitWidth(101);
         trumpView.setStyle("-fx-alignment: right");
