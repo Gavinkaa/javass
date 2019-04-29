@@ -123,12 +123,12 @@ public class GraphicalPlayer {
             trickPane.add(pane, cols[i], rows[i]);
         }
 
-        ObjectProperty<Image> trumpImage = new SimpleObjectProperty<>();
-        ChangeListener<Card.Color> changeListener = (c, oldV, newV) -> {
-            Image image = new Image("/trump_" + newV.ordinal() + ".png");
-            trumpImage.setValue(image);
-        };
-        trick.trumpProperty().addListener(changeListener);
+        ObservableMap<Card.Color, Image> trumpImages = FXCollections.observableHashMap();
+        for (Card.Color c : Card.Color.ALL) {
+            Image image = new Image("/trump_" + c.ordinal() + ".png");
+            trumpImages.put(c, image);
+        }
+        ObjectBinding<Image> trumpImage = Bindings.valueAt(trumpImages, trick.trumpProperty());
         ImageView trumpView = new ImageView();
         trumpView.setFitHeight(101);
         trumpView.setFitWidth(101);
