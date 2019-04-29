@@ -99,25 +99,6 @@ public class GraphicalPlayer {
         GridPane trickPane = new GridPane();
         int[] cols = {1, 2, 1, 0};
         int[] rows = {2, 1, 0, 1};
-        /*
-        ObjectProperty<Image>[] images = new ObjectProperty[PlayerId.COUNT];
-        for (int i = 0; i < PlayerId.COUNT; i++) {
-            images[i] = new SimpleObjectProperty<>();
-        }
-
-
-        MapChangeListener<PlayerId, Card> mapChangeListener = newV -> {
-            for (int i = 0; i < PlayerId.COUNT; i++) {
-                Card c = newV.getMap().get(players.get(i));
-                if (c != null) {
-                    images[i].setValue(getCardImage(c, true));
-                } else {
-                    images[i].setValue(null);
-                }
-            }
-        };
-        trick.trick().addListener(mapChangeListener);*/
-
         ObservableMap<Card, Image> cardImages = FXCollections.observableHashMap();
         for (Card.Rank r : Card.Rank.ALL) {
             for (Card.Color c : Card.Color.ALL) {
@@ -125,7 +106,6 @@ public class GraphicalPlayer {
                 cardImages.put(card, getCardImage(card, true));
             }
         }
-
         for (int i = 0; i < PlayerId.COUNT; ++i) {
             PlayerId player = players.get(i);
             Pane pane = new VBox();
