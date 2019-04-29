@@ -10,6 +10,7 @@ import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableMap;
 import javafx.geometry.HPos;
+import javafx.geometry.VPos;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -95,6 +96,8 @@ public class GraphicalPlayer {
         List<PlayerId> players = new ArrayList<>(PlayerId.ALL);
         Collections.rotate(players, -me.ordinal());
         GridPane trickPane = new GridPane();
+        trickPane.setHgap(10);
+        trickPane.setVgap(10);
         int[] cols = {1, 2, 1, 0};
         int[] rows = {2, 0, 0, 0};
         int[] rowSpans = {1, 3, 1, 3};
@@ -107,7 +110,8 @@ public class GraphicalPlayer {
         }
         for (int i = 0; i < PlayerId.COUNT; ++i) {
             PlayerId player = players.get(i);
-            Pane pane = new VBox();
+            VBox pane = new VBox();
+            pane.setSpacing(4);
             ImageView v = new ImageView();
             v.setFitHeight(180);
             v.setFitWidth(120);
