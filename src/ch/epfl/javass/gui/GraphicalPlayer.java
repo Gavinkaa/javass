@@ -75,7 +75,7 @@ public class GraphicalPlayer {
         StringProperty diff = new SimpleStringProperty();
         score.turnPointsProperty(team).addListener((o, old, nw) -> {
             int d = nw.intValue() - old.intValue();
-            diff.setValue(d == 0 ? "" : " (+" + d + ")");
+            diff.setValue(d <= 0 ? "" : " (+" + d + ")");
         });
         texts[2] = new Text();
         texts[2].textProperty().bind(diff);
