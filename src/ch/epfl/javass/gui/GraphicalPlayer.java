@@ -10,7 +10,6 @@ import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableMap;
 import javafx.geometry.HPos;
-import javafx.geometry.VPos;
 import javafx.scene.Scene;
 import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.Image;
@@ -34,7 +33,7 @@ public class GraphicalPlayer {
         BorderPane border = new BorderPane();
         border.setTop(createScorePane(names, score));
         border.setCenter(createTrickPane(player, names, trick));
-        mainScene = new Scene(border);
+        mainScene = new Scene(createVictoryPane());
     }
 
     public Stage createStage() {
@@ -152,6 +151,11 @@ public class GraphicalPlayer {
         return trickPane;
     }
 
-    private void createVictoryPane() {
+    private Pane createVictoryPane() {
+        BorderPane pane = new BorderPane();
+        pane.setStyle("-fx-font: 16 Optima; -fx-background-color: white");
+        Text txt = new Text("Jean et Claude ont gagné avec 1024 poûins");
+        pane.setCenter(txt);
+        return pane;
     }
 }
