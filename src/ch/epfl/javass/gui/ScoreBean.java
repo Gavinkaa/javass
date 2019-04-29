@@ -28,7 +28,7 @@ public final class ScoreBean {
             new SimpleIntegerProperty(0)
     };
     // null indicates no winning team yet
-    private final SimpleObjectProperty<TeamId> winningTeam = new SimpleObjectProperty<>(null);
+    private final SimpleObjectProperty<TeamId> winningTeam = new SimpleObjectProperty<>();
 
     /**
      * Get the readonly property representing the turn points for a team

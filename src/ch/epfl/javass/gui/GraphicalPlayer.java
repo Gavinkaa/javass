@@ -5,8 +5,10 @@ import ch.epfl.javass.jass.PlayerId;
 import ch.epfl.javass.jass.TeamId;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.ObjectBinding;
+import javafx.beans.property.ReadOnlyIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableMap;
 import javafx.geometry.HPos;
@@ -30,10 +32,14 @@ public class GraphicalPlayer {
     private final Scene mainScene;
 
     public GraphicalPlayer(PlayerId player, Map<PlayerId, String> names, ScoreBean score, TrickBean trick) {
-        BorderPane border = new BorderPane();
-        border.setTop(createScorePane(names, score));
-        border.setCenter(createTrickPane(player, names, trick));
-        mainScene = new Scene(createVictoryPane());
+        BorderPane mainView = new BorderPane();
+        mainView.setTop(createScorePane(names, score));
+        mainView.setCenter(createTrickPane(player, names, trick));
+        Pane victory = createVictoryPane(names, score);
+        victory.visibleProperty().bind(Bindings.isNotNull(score.winningTeamProperty()));
+        StackPane view = new StackPane();
+        view.getChildren().addAll(mainView, victory);
+        mainScene = new Scene(view);
     }
 
     public Stage createStage() {
@@ -151,10 +157,23 @@ public class GraphicalPlayer {
         return trickPane;
     }
 
-    private Pane createVictoryPane() {
+    private Pane createVictoryPane(Map<PlayerId, String> names, ScoreBean score) {
+        ObservableMap<TeamId, String> teamPlayerNames = FXCollections.observableHashMap();
+        teamPlayerNames.put(TeamId.TEAM_1, names.get(PlayerId.PLAYER_1) + " et " + names.get(PlayerId.PLAYER_3));
+        teamPlayerNames.put(TeamId.TEAM_2, names.get(PlayerId.PLAYER_2) + " et " + names.get(PlayerId.PLAYER_4));
+
         BorderPane pane = new BorderPane();
         pane.setStyle("-fx-font: 16 Optima; -fx-background-color: white");
-        Text txt = new Text("Jean et Claude ont gagné avec 1024 poûins");
+        Text txt = new Text();
+        ObservableValue<String> players = Bindings.valueAt(teamPlayerNames, score.winningTeamProperty());
+        ReadOnlyIntegerProperty score1 = score.totalPointsProperty(TeamId.TEAM_1);
+        ReadOnlyIntegerProperty score2 = score.totalPointsProperty(TeamId.TEAM_2);
+        txt.textProperty().bind(Bindings.format(
+                "%s ont gagné avec %d contre %d",
+                players,
+                Bindings.max(score1, score1),
+                Bindings.min(score1, score2)
+        ));
         pane.setCenter(txt);
         return pane;
     }
