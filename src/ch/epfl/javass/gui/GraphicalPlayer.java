@@ -23,6 +23,7 @@ import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 
 import java.util.*;
+import java.util.concurrent.BlockingQueue;
 
 /**
  * @author Lúcás Críostóir Meier (300831)
@@ -31,10 +32,11 @@ import java.util.*;
 public class GraphicalPlayer {
     private final Scene mainScene;
 
-    public GraphicalPlayer(PlayerId player, Map<PlayerId, String> names, ScoreBean score, TrickBean trick) {
+    public GraphicalPlayer(PlayerId player, Map<PlayerId, String> names, BlockingQueue<Card> queue, ScoreBean score, TrickBean trick, HandBean hand) {
         BorderPane mainView = new BorderPane();
         mainView.setTop(createScorePane(names, score));
         mainView.setCenter(createTrickPane(player, names, trick));
+        mainView.setBottom(createHandPane(hand));
         Pane victory = createVictoryPane(names, score);
         victory.visibleProperty().bind(Bindings.isNotNull(score.winningTeamProperty()));
         StackPane view = new StackPane();
@@ -96,6 +98,20 @@ public class GraphicalPlayer {
         return new Image(s);
     }
 
+    private static ObservableMap<Card, Image> makeCardImages(boolean big) {
+        ObservableMap<Card, Image> cardImages = FXCollections.observableHashMap();
+        for (Card.Rank r : Card.Rank.ALL) {
+            for (Card.Color c : Card.Color.ALL) {
+                Card card = Card.of(c, r);
+                cardImages.put(card, getCardImage(card, big));
+            }
+        }
+        return cardImages;
+    }
+
+    private static ObservableMap<Card, Image> bigCardImages = makeCardImages(true);
+    private static ObservableMap<Card, Image> smallCardImages = makeCardImages(false);
+
     private static Pane createTrickPane(PlayerId me, Map<PlayerId, String> names, TrickBean trick) {
         List<PlayerId> players = new ArrayList<>(PlayerId.ALL);
         Collections.rotate(players, -me.ordinal());
@@ -105,13 +121,7 @@ public class GraphicalPlayer {
         int[] cols = {1, 2, 1, 0};
         int[] rows = {2, 0, 0, 0};
         int[] rowSpans = {1, 3, 1, 3};
-        ObservableMap<Card, Image> cardImages = FXCollections.observableHashMap();
-        for (Card.Rank r : Card.Rank.ALL) {
-            for (Card.Color c : Card.Color.ALL) {
-                Card card = Card.of(c, r);
-                cardImages.put(card, getCardImage(card, true));
-            }
-        }
+
         for (int i = 0; i < PlayerId.COUNT; ++i) {
             PlayerId player = players.get(i);
             VBox pane = new VBox();
@@ -120,7 +130,7 @@ public class GraphicalPlayer {
             ImageView v = new ImageView();
             v.setFitHeight(180);
             v.setFitWidth(120);
-            ObjectBinding<Image> image = Bindings.valueAt(cardImages, Bindings.valueAt(trick.trick(), player));
+            ObjectBinding<Image> image = Bindings.valueAt(bigCardImages, Bindings.valueAt(trick.trick(), player));
             v.imageProperty().bind(image);
             Rectangle r = new Rectangle();
             r.setHeight(180);
@@ -155,6 +165,16 @@ public class GraphicalPlayer {
         trickPane.add(trumpView, 1, 1, 1, 1);
         trickPane.setStyle("-fx-background-color: whitesmoke; -fx-padding: 5px; -fx-border-width: 3px 0px; -fx-border-style: solid; -fx-border-color: gray; -fx-alignment: center;");
         return trickPane;
+    }
+
+    private Pane createHandPane(HandBean hand) {
+        HBox pane = new HBox();
+        pane.setStyle("-fx-background-color: lightgray; -fx-spacing: 5px; -fx-padding: 5px");
+        for (int i = 0; i < 9; ++i) {
+            ImageView view = new ImageView();
+            view.imageProperty().bind(Bindings.valueAt(smallCardImages, Bindings.valueAt(hand.hand(), i)));
+        }
+        return pane;
     }
 
     private Pane createVictoryPane(Map<PlayerId, String> names, ScoreBean score) {
