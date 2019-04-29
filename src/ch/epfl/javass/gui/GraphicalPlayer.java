@@ -4,6 +4,7 @@ import ch.epfl.javass.jass.Card;
 import ch.epfl.javass.jass.PlayerId;
 import ch.epfl.javass.jass.TeamId;
 import javafx.beans.binding.Bindings;
+import javafx.beans.binding.BooleanBinding;
 import javafx.beans.binding.ObjectBinding;
 import javafx.beans.property.ReadOnlyIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -16,6 +17,7 @@ import javafx.scene.Scene;
 import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
@@ -24,6 +26,7 @@ import javafx.stage.Stage;
 
 import java.util.*;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Callable;
 
 /**
  * @author Lúcás Críostóir Meier (300831)
@@ -31,8 +34,10 @@ import java.util.concurrent.BlockingQueue;
  */
 public class GraphicalPlayer {
     private final Scene mainScene;
+    private final BlockingQueue<Card> queue;
 
     public GraphicalPlayer(PlayerId player, Map<PlayerId, String> names, BlockingQueue<Card> queue, ScoreBean score, TrickBean trick, HandBean hand) {
+        this.queue = queue;
         BorderPane mainView = new BorderPane();
         mainView.setTop(createScorePane(names, score));
         mainView.setCenter(createTrickPane(player, names, trick));
@@ -172,7 +177,23 @@ public class GraphicalPlayer {
         pane.setStyle("-fx-background-color: lightgray; -fx-spacing: 5px; -fx-padding: 5px");
         for (int i = 0; i < 9; ++i) {
             ImageView view = new ImageView();
-            view.imageProperty().bind(Bindings.valueAt(smallCardImages, Bindings.valueAt(hand.hand(), i)));
+            ObjectBinding<Card> thisCard = Bindings.valueAt(hand.hand(), i);
+            view.imageProperty().bind(Bindings.valueAt(smallCardImages, thisCard));
+            view.setFitWidth(80);
+            view.setFitHeight(120);
+            final int thisI = i;
+            view.setOnMouseClicked(e -> {
+                Card card = hand.hand().get(thisI);
+                try {
+                    this.queue.put(card);
+                } catch (InterruptedException ex) {
+                    throw new RuntimeException(ex);
+                }
+            });
+            BooleanBinding isPlayable = Bindings.createBooleanBinding(() -> hand.playableCards().contains(thisCard.get()), hand.playableCards(), hand.hand());
+            view.opacityProperty().bind(Bindings.when(isPlayable).then(1.0).otherwise(0.2));
+            view.disableProperty().bind(Bindings.not(isPlayable));
+            pane.getChildren().add(view);
         }
         return pane;
     }

@@ -11,6 +11,8 @@ public class GraphicalPlayerAdapter implements Player {
     private final ScoreBean score = new ScoreBean();
     private final TrickBean trick = new TrickBean();
     private final HandBean hand = new HandBean();
+    private CardSet handSet;
+    private PlayerId ownId;
     private GraphicalPlayer graphicalPlayer;
     private final BlockingQueue<Card> queue = new ArrayBlockingQueue<>(1);
 
@@ -25,12 +27,14 @@ public class GraphicalPlayerAdapter implements Player {
 
     @Override
     public void setPlayers(PlayerId ownId, Map<PlayerId, String> playerNames) {
+        this.ownId = ownId;
         this.graphicalPlayer = new GraphicalPlayer(ownId, playerNames, this.queue, score, trick, this.hand);
         Platform.runLater(() -> this.graphicalPlayer.createStage().show());
     }
 
     @Override
     public void updateHand(CardSet newHand) {
+        this.handSet = newHand;
         Platform.runLater(() -> this.hand.setHand(newHand));
     }
 
@@ -41,7 +45,17 @@ public class GraphicalPlayerAdapter implements Player {
 
     @Override
     public void updateTrick(Trick newTrick) {
-        Platform.runLater(() -> this.trick.setTrick(newTrick));
+        Platform.runLater(() -> {
+            this.trick.setTrick(newTrick);
+            if (!newTrick.isFull()) {
+                boolean amPlaying = newTrick.player(newTrick.size()) == this.ownId;
+                if (amPlaying) {
+                    this.hand.setPlayableCards(newTrick.playableCards(handSet));
+                } else {
+                    this.hand.setPlayableCards(CardSet.EMPTY);
+                }
+            }
+        });
     }
 
     @Override
