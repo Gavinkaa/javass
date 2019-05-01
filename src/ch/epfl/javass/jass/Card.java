@@ -23,7 +23,7 @@ public final class Card {
         DIAMOND("♦"),
         CLUB("♣");
 
-        private String symbol;
+        private final String symbol;
 
         Color(String symbol) {
             this.symbol = symbol;
@@ -58,8 +58,8 @@ public final class Card {
         KING("K", 5),
         ACE("A", 6);
 
-        private String repr;
-        private int trumpOrdinal;
+        private final String repr;
+        private final int trumpOrdinal;
 
         Rank(String repr, int trumpOrdinal) {
             this.repr = repr;
