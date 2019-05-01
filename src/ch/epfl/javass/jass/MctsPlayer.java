@@ -32,10 +32,10 @@ public final class MctsPlayer implements Player {
         return PackedTrick.playableCards(turnState.packedTrick(), cardSet);
     }
 
-    private static class Node {
-        private TurnState turnState;
-        private Node[] children;
-        private long unusedCards;
+    private static final class Node {
+        private final TurnState turnState;
+        private final Node[] children;
+        private final long unusedCards;
         // This will be unused in the case of the root node
         private int totalPoints = 0;
         private int numberOfFinishedTurns = 0;
@@ -113,9 +113,9 @@ public final class MctsPlayer implements Player {
         }
     }
 
-    private PlayerId ownId;
-    private SplittableRandom rng;
-    private int iterations;
+    private final PlayerId ownId;
+    private final SplittableRandom rng;
+    private final int iterations;
     private static final int CURIOSITY = 40;
 
     public MctsPlayer(PlayerId ownId, long rngSeed, int iterations) {
