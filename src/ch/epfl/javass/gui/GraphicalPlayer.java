@@ -212,7 +212,7 @@ public class GraphicalPlayer {
         txt.textProperty().bind(Bindings.format(
                 "%s ont gagné avec %d contre %d",
                 players,
-                Bindings.max(score1, score1),
+                Bindings.max(score1, score2),
                 Bindings.min(score1, score2)
         ));
         pane.setCenter(txt);
