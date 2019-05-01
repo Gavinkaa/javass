@@ -232,7 +232,7 @@ public final class Trick {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof Trick)) return false;
         Trick trick = (Trick) o;
         return packed == trick.packed;
     }
