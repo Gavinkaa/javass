@@ -10,7 +10,7 @@ import ch.epfl.javass.Preconditions;
  * @author Lúcás Críostóir Meier (300831)
  * @author Ludovic Burnier (301308)
  **/
-public class Bits64 {
+public final class Bits64 {
     private Bits64() {
     }
 
