@@ -182,6 +182,6 @@ public final class Card {
 
     @Override
     public String toString() {
-        return "Card(" + PackedCard.toString(packed) + ")";
+        return PackedCard.toString(packed);
     }
 }
