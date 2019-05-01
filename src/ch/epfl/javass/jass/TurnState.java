@@ -108,9 +108,7 @@ public final class TurnState {
      * @throws IllegalStateException if the trick is full
      */
     public PlayerId nextPlayer() {
-        if (PackedTrick.isFull(pkTrick)) {
-            throw new IllegalStateException("nextPlayer called on full trick");
-        }
+        checkTrickNotFull();
 
         return PackedTrick.player(pkTrick, PackedTrick.size(pkTrick));
     }
@@ -121,8 +119,10 @@ public final class TurnState {
      * @throws IllegalStateException if the trick is full
      */
     public TurnState withNewCardPlayed(Card card) {
-        if (PackedTrick.isFull(pkTrick)) {
-            throw new IllegalStateException("the trick is already full");
+        checkTrickNotFull();
+
+        if (!unplayedCards().contains(card)) {
+            throw new IllegalStateException("the card has already been played");
         }
 
         long newUnplayedCards = PackedCardSet.remove(pkUnplayedCard, card.packed());
@@ -160,14 +160,21 @@ public final class TurnState {
      * @throws IllegalStateException if the trick is full, and we can't add a card
      */
     public TurnState withNewCardPlayedAndTrickCollected(Card card) {
+        checkTrickNotFull();
+        TurnState withCard = withNewCardPlayed(card);
+
+        if (PackedTrick.isFull(withCard.packedTrick())) {
+            withCard = withCard.withTrickCollected();
+        }
+
+        return withCard;
+    }
+
+    private void checkTrickNotFull() {
         if (PackedTrick.isFull(pkTrick)) {
             throw new IllegalStateException("the trick was full");
         }
-        TurnState withCard = withNewCardPlayed(card);
-        if (PackedTrick.isFull(withCard.packedTrick())) {
-            return withCard.withTrickCollected();
-        } else {
-            return withCard;
-        }
     }
+
+
 }
