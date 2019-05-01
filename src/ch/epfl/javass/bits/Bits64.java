@@ -38,6 +38,7 @@ public final class Bits64 {
      * @return a number whose first size bits correspond to the extracted range
      */
     public static long extract(long bits, int start, int size) {
+        Preconditions.checkArgument(0 <= start && 0 <= size && start + size <= Long.SIZE);
         long m = Bits64.mask(start, size);
         return (bits & m) >>> start;
     }
