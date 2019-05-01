@@ -2,6 +2,9 @@ package ch.epfl.javass;
 
 
 import ch.epfl.javass.gui.GraphicalPlayerAdapter;
+import ch.epfl.javass.gui.HandBean;
+import ch.epfl.javass.gui.ScoreBean;
+import ch.epfl.javass.gui.TrickBean;
 import ch.epfl.javass.jass.JassGame;
 import ch.epfl.javass.jass.MctsPlayer;
 import ch.epfl.javass.jass.Player;
@@ -24,7 +27,7 @@ public final class TestMain extends Application {
     public void start(Stage primaryStage) throws Exception {
         RemotePlayerClient p = new RemotePlayerClient("128.179.187.63");
         Map<PlayerId, Player> ps = new EnumMap<>(PlayerId.class);
-        ps.put(PLAYER_1, new GraphicalPlayerAdapter());
+        ps.put(PLAYER_1, new GraphicalPlayerAdapter(new ScoreBean(), new TrickBean(), new HandBean()));
         ps.put(PLAYER_2, new MctsPlayer(PLAYER_2, 123, 100_000));
         ps.put(PLAYER_3, p);
         ps.put(PLAYER_4, new MctsPlayer(PLAYER_4, 789, 100_000));
