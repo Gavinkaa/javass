@@ -172,7 +172,7 @@ public final class CardSet {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof CardSet)) return false;
         CardSet cardSet = (CardSet) o;
         return packed == cardSet.packed;
     }
