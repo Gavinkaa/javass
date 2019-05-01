@@ -106,12 +106,12 @@ public final class JassGame {
      * @return true if we've reached the end of the game, i.e., someone has reached 1000+ points
      */
     public boolean isGameOver() {
-        if (gameOver) {
-            return true;
-        }
-        if (turnState == null) {
-            return false;
-        }
+        return gameOver;
+    }
+
+    private void checkWinningTeam() {
+        if (turnState == null) return;
+
         for (TeamId id : TeamId.ALL) {
             if (turnState.score().totalPoints(id) >= Jass.WINNING_POINTS) {
                 gameOver = true;
@@ -119,11 +119,9 @@ public final class JassGame {
                 for (Player player : players.values()) {
                     player.setWinningTeam(id);
                 }
-
-                return true;
+                return;
             }
         }
-        return false;
     }
 
     /**
@@ -145,6 +143,7 @@ public final class JassGame {
         if (turnState.trick().isFull()) {
             turnState = turnState.withTrickCollected();
             informOfScore();
+            checkWinningTeam();
             if (isGameOver()) {
                 return;
             }
