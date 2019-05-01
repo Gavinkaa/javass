@@ -8,13 +8,19 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
 public class GraphicalPlayerAdapter implements Player {
-    private final ScoreBean score = new ScoreBean();
-    private final TrickBean trick = new TrickBean();
-    private final HandBean hand = new HandBean();
+    private final ScoreBean score;
+    private final TrickBean trick;
+    private final HandBean hand;
     private CardSet handSet;
     private PlayerId ownId;
     private GraphicalPlayer graphicalPlayer;
     private final BlockingQueue<Card> queue = new ArrayBlockingQueue<>(1);
+
+    public GraphicalPlayerAdapter(ScoreBean score, TrickBean trick, HandBean hand) {
+        this.score = score;
+        this.trick = trick;
+        this.hand = hand;
+    }
 
     @Override
     public Card cardToPlay(TurnState state, CardSet hand) {

@@ -1,6 +1,7 @@
 package ch.epfl.javass;
 
 import ch.epfl.javass.gui.GraphicalPlayer;
+import ch.epfl.javass.gui.HandBean;
 import ch.epfl.javass.gui.ScoreBean;
 import ch.epfl.javass.gui.TrickBean;
 import ch.epfl.javass.jass.*;
@@ -10,6 +11,7 @@ import javafx.stage.Stage;
 
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.concurrent.ArrayBlockingQueue;
 
 public class GuiTest extends Application {
     public static void main(String[] args) {
@@ -22,8 +24,9 @@ public class GuiTest extends Application {
         PlayerId.ALL.forEach(p -> ns.put(p, p.name()));
         ScoreBean sB = new ScoreBean();
         TrickBean tB = new TrickBean();
+        HandBean hB = new HandBean();
         GraphicalPlayer g =
-                new GraphicalPlayer(PlayerId.PLAYER_2, ns, null, sB, tB, null);
+                new GraphicalPlayer(PlayerId.PLAYER_2, ns, new ArrayBlockingQueue<Card>(1), sB, tB, new HandBean());
         g.createStage().show();
 
         new AnimationTimer() {
