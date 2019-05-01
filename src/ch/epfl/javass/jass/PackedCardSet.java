@@ -87,9 +87,7 @@ public final class PackedCardSet {
     public static long singleton(int pkCard) {
         assert PackedCard.isValid(pkCard);
 
-        int colorShift = COLOR_SIZE * PackedCard.color(pkCard).ordinal();
-        int rankShift = PackedCard.rank(pkCard).ordinal();
-        long pkSet = 1L << (colorShift + rankShift);
+        long pkSet = 1L << pkCard;
         assert isValid(pkSet);
         return pkSet;
     }
