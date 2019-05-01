@@ -46,7 +46,7 @@ public final class PackedTrick {
             }
         }
         int index = PackedTrick.index(pkTrick);
-        return index <= 8;
+        return index <= Card.Rank.COUNT - 1;
     }
 
     /**
