@@ -3,7 +3,6 @@ package ch.epfl.javass.gui;
 import ch.epfl.javass.jass.*;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.value.ObservableBooleanValue;
 
 import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -14,6 +13,7 @@ public class GraphicalPlayerAdapter implements Player {
     private final TrickBean trick = new TrickBean();
     private final HandBean hand = new HandBean();
     private final SimpleBooleanProperty mustChooseTrump = new SimpleBooleanProperty(false);
+    private final SimpleBooleanProperty canDelegate = new SimpleBooleanProperty(false);
     private CardSet handSet;
     private PlayerId ownId;
     private GraphicalPlayer graphicalPlayer;
@@ -32,6 +32,7 @@ public class GraphicalPlayerAdapter implements Player {
     @Override
     public Card.Color chooseTrump(CardSet hand, boolean canDelegate) {
         this.mustChooseTrump.setValue(true);
+        this.canDelegate.setValue(true);
         try {
             Card.Color trump = trumpQueue.take();
             this.mustChooseTrump.setValue(false);
@@ -44,7 +45,7 @@ public class GraphicalPlayerAdapter implements Player {
     @Override
     public void setPlayers(PlayerId ownId, Map<PlayerId, String> playerNames) {
         this.ownId = ownId;
-        this.graphicalPlayer = new GraphicalPlayer(ownId, playerNames, cardQueue, trumpQueue, mustChooseTrump, score, trick, hand);
+        this.graphicalPlayer = new GraphicalPlayer(ownId, playerNames, cardQueue, trumpQueue, mustChooseTrump, canDelegate, score, trick, hand);
         Platform.runLater(() -> this.graphicalPlayer.createStage().show());
     }
 

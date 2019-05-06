@@ -16,6 +16,7 @@ import javafx.collections.ObservableMap;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -37,7 +38,7 @@ public class GraphicalPlayer {
     private final BlockingQueue<Card> cardQ;
     private final BlockingQueue<Card.Color> trumpQ;
 
-    public GraphicalPlayer(PlayerId player, Map<PlayerId, String> names, BlockingQueue<Card> cardQ, BlockingQueue<Card.Color> trumpQ, ObservableBooleanValue mustChooseTrump, ScoreBean score, TrickBean trick, HandBean hand) {
+    public GraphicalPlayer(PlayerId player, Map<PlayerId, String> names, BlockingQueue<Card> cardQ, BlockingQueue<Card.Color> trumpQ, ObservableBooleanValue mustChooseTrump, ObservableBooleanValue canDelegate, ScoreBean score, TrickBean trick, HandBean hand) {
         this.cardQ = cardQ;
         this.trumpQ = trumpQ;
         BorderPane mainView = new BorderPane();
@@ -45,7 +46,7 @@ public class GraphicalPlayer {
         StackPane center = new StackPane();
         Pane trickPane = createTrickPane(player, names, trick);
         trickPane.visibleProperty().bind(Bindings.not(mustChooseTrump));
-        Pane trumpPane = createTrumpPane();
+        Pane trumpPane = createTrumpPane(canDelegate);
         trumpPane.visibleProperty().bind(mustChooseTrump);
         trumpPane.disableProperty().bind(Bindings.not(mustChooseTrump));
         center.getChildren().addAll(trickPane, trumpPane);
@@ -181,12 +182,12 @@ public class GraphicalPlayer {
         return trickPane;
     }
 
-    private Pane createTrumpPane() {
-        HBox box = new HBox();
-        box.setAlignment(Pos.CENTER);
-        box.setSpacing(30);
+    private Pane createTrumpPane(ObservableBooleanValue canDelegate) {
+        HBox trumps = new HBox();
+        trumps.setAlignment(Pos.CENTER);
+        trumps.setSpacing(30);
         for (Card.Color c : Card.Color.ALL) {
-            ImageView trumpView = new ImageView() ;
+            ImageView trumpView = new ImageView();
             trumpView.setImage(new Image("/trump_" + c.ordinal() + ".png"));
             trumpView.setFitHeight(101);
             trumpView.setFitWidth(101);
@@ -197,8 +198,13 @@ public class GraphicalPlayer {
                     throw new RuntimeException(ex);
                 }
             });
-            box.getChildren().add(trumpView);
+            trumps.getChildren().add(trumpView);
         }
+        Button b = new Button();
+        b.textProperty().set("Chibrer");
+        b.visibleProperty().bind(canDelegate);
+        VBox box = new VBox();
+        box.getChildren().addAll(trumps, b);
         return box;
     }
 
