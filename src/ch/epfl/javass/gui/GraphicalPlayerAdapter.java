@@ -2,6 +2,8 @@ package ch.epfl.javass.gui;
 
 import ch.epfl.javass.jass.*;
 import javafx.application.Platform;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ObservableBooleanValue;
 
 import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -11,15 +13,17 @@ public class GraphicalPlayerAdapter implements Player {
     private final ScoreBean score = new ScoreBean();
     private final TrickBean trick = new TrickBean();
     private final HandBean hand = new HandBean();
+    private final SimpleBooleanProperty mustChooseTrump = new SimpleBooleanProperty(false);
     private CardSet handSet;
     private PlayerId ownId;
     private GraphicalPlayer graphicalPlayer;
-    private final BlockingQueue<Card> queue = new ArrayBlockingQueue<>(1);
+    private final BlockingQueue<Card> cardQueue = new ArrayBlockingQueue<>(1);
+    private final BlockingQueue<Card.Color> trumpQueue = new ArrayBlockingQueue<>(1);
 
     @Override
     public Card cardToPlay(TurnState state, CardSet hand) {
         try {
-            return queue.take();
+            return cardQueue.take();
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -27,13 +31,20 @@ public class GraphicalPlayerAdapter implements Player {
 
     @Override
     public Card.Color chooseTrump(CardSet hand, boolean canDelegate) {
-        return Card.Color.HEART;
+        this.mustChooseTrump.setValue(true);
+        try {
+            Card.Color trump = trumpQueue.take();
+            this.mustChooseTrump.setValue(false);
+            return trump;
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public void setPlayers(PlayerId ownId, Map<PlayerId, String> playerNames) {
         this.ownId = ownId;
-        this.graphicalPlayer = new GraphicalPlayer(ownId, playerNames, this.queue, score, trick, this.hand);
+        this.graphicalPlayer = new GraphicalPlayer(ownId, playerNames, cardQueue, trumpQueue, mustChooseTrump, score, trick, hand);
         Platform.runLater(() -> this.graphicalPlayer.createStage().show());
     }
 
