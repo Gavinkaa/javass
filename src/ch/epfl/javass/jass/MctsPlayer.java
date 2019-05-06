@@ -163,9 +163,24 @@ public final class MctsPlayer implements Player {
         return Card.ofPacked(PackedCardSet.get(playableHand, root.bestChild(0)));
     }
 
+    private final static int[] TRUMP_CARD_VALUES = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+    private final int DELEGATE_LIMIT = 10;
+
     //TODO: Make this smarter
     @Override
     public Card.Color chooseTrump(CardSet hand, boolean canDelegate) {
+        int[] trumpValues = new int[Card.Color.COUNT];
+        for (int i = 0; i < hand.size(); ++i) {
+            Card card = hand.get(i);
+            trumpValues[card.color().ordinal()] += TRUMP_CARD_VALUES[card.rank().ordinal()];
+        }
+        int i = 0;
+        int max = trumpValues[i];
+        for (;i < Card.Color.COUNT; ++i) {
+            if (trumpValues[i] > max) {
+                max = trumpValues[i];
+            }
+        }
         return Card.Color.ALL.get(rng.nextInt(Card.Color.COUNT));
     }
 }
