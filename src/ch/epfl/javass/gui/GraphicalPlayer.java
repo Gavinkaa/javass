@@ -183,6 +183,8 @@ public class GraphicalPlayer {
 
     private Pane createTrumpPane() {
         HBox box = new HBox();
+        box.setAlignment(Pos.CENTER);
+        box.setSpacing(30);
         for (Card.Color c : Card.Color.ALL) {
             ImageView trumpView = new ImageView() ;
             trumpView.setImage(new Image("/trump_" + c.ordinal() + ".png"));
