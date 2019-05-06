@@ -162,4 +162,10 @@ public final class MctsPlayer implements Player {
         }
         return Card.ofPacked(PackedCardSet.get(playableHand, root.bestChild(0)));
     }
+
+    //TODO: Make this smarter
+    @Override
+    public Card.Color chooseTrump(CardSet hand, boolean canDelegate) {
+        return Card.Color.ALL.get(rng.nextInt(Card.Color.COUNT));
+    }
 }

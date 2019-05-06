@@ -35,12 +35,12 @@ public final class JassGame {
         this.trumpRng = new Random(rng.nextLong());
     }
 
-    private Card.Color nextTrump() {
-        Card.Color nextTrump = Card.Color.ALL.get(trumpRng.nextInt(Card.Color.COUNT));
+    private Card.Color nextTrump(PlayerId chooser) {
+        Card.Color trump = players.get(chooser).chooseTrump(playerHands.get(chooser), false);
         for (Player player : players.values()) {
-            player.setTrump(nextTrump);
+            player.setTrump(trump);
         }
-        return nextTrump;
+        return trump;
     }
 
     private List<Card> shuffleDeck() {
@@ -86,7 +86,8 @@ public final class JassGame {
             lastTurnStarter = PlayerId.ALL.get((lastTurnStarter.ordinal() + 1) % PlayerId.COUNT);
         }
         Score score = turnState == null ? Score.INITIAL : turnState.score().nextTurn();
-        turnState = TurnState.initial(nextTrump(), score, lastTurnStarter);
+
+        turnState = TurnState.initial(nextTrump(lastTurnStarter), score, lastTurnStarter);
         informOfScore();
     }
 

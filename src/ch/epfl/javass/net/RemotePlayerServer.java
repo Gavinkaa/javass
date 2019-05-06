@@ -37,9 +37,10 @@ public final class RemotePlayerServer {
      * and then enter into an infinite game loop with that connection.
      * It will listen for messages, informing its underlying player,
      * and responding with its own messages when necessary
-     *
+     * <p>
      * If some IOException gets raised during the loop,
      * this function will exit with an Unchecked wrapper around it.
+     *
      * @throws UncheckedIOException if we caught an exception in the loop
      */
     public void run() {
@@ -86,6 +87,9 @@ public final class RemotePlayerServer {
                 break;
             case WINR:
                 handleWINR(components);
+                break;
+            case CHST:
+                handleCHST(components, w);
                 break;
         }
         return true;
@@ -139,5 +143,14 @@ public final class RemotePlayerServer {
     private void handleWINR(String[] components) {
         int teamOrd = StringSerializer.deserializeInt(components[1]);
         local.setWinningTeam(TeamId.ALL.get(teamOrd));
+    }
+
+    private void handleCHST(String[] components, Writer w) throws IOException {
+        long pkHand = StringSerializer.deserializeLong(components[1]);
+        boolean canDelegate = components[2].equals("T");
+        Card.Color trump = local.chooseTrump(CardSet.ofPacked(pkHand), canDelegate);
+        w.write(StringSerializer.serializeInt(trump.ordinal()));
+        w.write('\n');
+        w.flush();
     }
 }

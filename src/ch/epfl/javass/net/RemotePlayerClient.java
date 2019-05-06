@@ -68,6 +68,24 @@ public final class RemotePlayerClient implements Player, AutoCloseable {
     }
 
     @Override
+    public Card.Color chooseTrump(CardSet hand, boolean canDelegate) {
+        String handString = StringSerializer.serializeLong(hand.packed());
+        String boolString = canDelegate ? "T" : "F";
+        writeMessage(JassCommand.CHST, handString, boolString);
+        try {
+            String resp = r.readLine();
+            int ordinal = StringSerializer.deserializeInt(resp);
+            if (ordinal >= 4) {
+                return null;
+            } else {
+                return Card.Color.ALL.get(StringSerializer.deserializeInt(resp));
+            }
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+
+    @Override
     public void setPlayers(PlayerId ownId, Map<PlayerId, String> playerNames) {
         String idString = StringSerializer.serializeInt(ownId.ordinal());
         String[] names = new String[PlayerId.COUNT];
