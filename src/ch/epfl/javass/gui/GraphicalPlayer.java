@@ -195,7 +195,7 @@ public class GraphicalPlayer {
                     throw new RuntimeException(ex);
                 }
             });
-            box.getChildren().add(box);
+            box.getChildren().add(trumpView);
         }
         return box;
     }
