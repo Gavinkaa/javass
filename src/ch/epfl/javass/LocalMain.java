@@ -40,12 +40,12 @@ public final class LocalMain extends Application {
             rng = new Random();
         }
         long jassGameSeed = rng.nextLong();
-        try (PlayerBuilder pb = new PlayerBuilder()) {
-            for (int i = 0; i < 4; ++i) {
-                String msg = pb.nextPlayer(rng.nextLong(), args.get(i));
-                if (msg != null) fatal(msg + " : " + args.get(i));
-            }
-            Thread gameThread = new Thread(() -> {
+        Thread gameThread = new Thread(() -> {
+            try (PlayerBuilder pb = new PlayerBuilder()) {
+                for (int i = 0; i < 4; ++i) {
+                    String msg = pb.nextPlayer(rng.nextLong(), args.get(i));
+                    if (msg != null) fatal(msg + " : " + args.get(i));
+                }
                 JassGame g = new JassGame(jassGameSeed, pb.getPlayers(), pb.getNames());
                 while (!g.isGameOver()) {
                     g.advanceToEndOfNextTrick();
@@ -54,9 +54,11 @@ public final class LocalMain extends Application {
                     } catch (InterruptedException e) {
                     }
                 }
-            });
-            gameThread.setDaemon(true);
-            gameThread.start();
-        }
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+        gameThread.setDaemon(true);
+        gameThread.start();
     }
 }
