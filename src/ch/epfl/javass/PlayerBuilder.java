@@ -33,11 +33,11 @@ public final class PlayerBuilder implements AutoCloseable {
 
     public String nextPlayer(long seed, String info) {
         if (currentID == null) {
-            throw new IllegalStateException("No players to initialize");
+            throw new IllegalStateException("Pas de joueurs à initialisr");
         }
         String[] parts = info.split(":");
-        if (parts.length < 1) return "Not enough parts in player information";
-        if (parts.length > 3) return "Too many parts in player information";
+        if (parts.length < 1) return "Pas assez de parties dans l'information du joueur";
+        if (parts.length > 3) return "Trop de parties dans l'information du joueur";
         switch (parts[0]) {
             case "h":
                 return nextHuman(parts);
@@ -46,7 +46,7 @@ public final class PlayerBuilder implements AutoCloseable {
             case "r":
                 return nextRemote(parts);
             default:
-                return "Unrecognized player type";
+                return "Type de joueur inconnu";
         }
     }
 
@@ -63,7 +63,7 @@ public final class PlayerBuilder implements AutoCloseable {
     }
 
     private String nextHuman(String[] parts) {
-        if (parts.length == 3) return "Too many parts for local human player";
+        if (parts.length == 3) return "Trop de parties pour le joueur local";
         String name = parts.length == 2 ? parts[1] : "";
         Player player = new GraphicalPlayerAdapter();
         insertNext(name, player);
@@ -76,10 +76,10 @@ public final class PlayerBuilder implements AutoCloseable {
             try {
                 iterations = Integer.parseInt(parts[2]);
                 if (iterations < 9) {
-                    return "MCTS iterations must be at least 9";
+                    return "Le nombre d'itérations de MCTS doit être >= 9";
                 }
             } catch (NumberFormatException e) {
-                return "Invalid iteration number for MCTS";
+                return "Nombre d'iterations invalide pour MCTS";
             }
         }
         String name = parts.length >= 2 ? parts[1] : "";
@@ -91,7 +91,7 @@ public final class PlayerBuilder implements AutoCloseable {
     private String nextRemote(String[] parts) {
         if (parts.length == 3) {
             if (!parts[2].matches("[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}")) {
-                return "Invalid IPV4 address";
+                return "Adresse IPV4 invalide";
             }
         }
         String name = parts.length >= 2 ? parts[1] : "";
@@ -102,7 +102,7 @@ public final class PlayerBuilder implements AutoCloseable {
             remotes.add(remote);
             player = remote;
         } catch (IOException e) {
-            return "Failed to connect to " + hostname + " : " + e.toString();
+            return "Connexion échouée " + hostname + " : " + e.toString();
         }
         insertNext(name, player);
         return null;
