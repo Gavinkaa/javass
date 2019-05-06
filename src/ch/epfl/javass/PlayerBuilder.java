@@ -2,6 +2,7 @@ package ch.epfl.javass;
 
 import ch.epfl.javass.gui.GraphicalPlayerAdapter;
 import ch.epfl.javass.jass.MctsPlayer;
+import ch.epfl.javass.jass.PacedPlayer;
 import ch.epfl.javass.jass.Player;
 import ch.epfl.javass.jass.PlayerId;
 import ch.epfl.javass.net.RemotePlayerClient;
@@ -83,7 +84,7 @@ public final class PlayerBuilder implements AutoCloseable {
         }
         String name = parts.length >= 2 ? parts[1] : "";
         Player player = new MctsPlayer(currentID, seed, iterations);
-        insertNext(name, player);
+        insertNext(name, new PacedPlayer(player, 2));
         return null;
     }
 

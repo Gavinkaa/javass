@@ -1,5 +1,6 @@
 package ch.epfl.javass;
 
+import ch.epfl.javass.jass.JassGame;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
@@ -44,6 +45,18 @@ public final class LocalMain extends Application {
                 String msg = pb.nextPlayer(rng.nextLong(), args.get(i));
                 if (msg != null) fatal(msg + " : " + args.get(i));
             }
+            Thread gameThread = new Thread(() -> {
+                JassGame g = new JassGame(jassGameSeed, pb.getPlayers(), pb.getNames());
+                while (!g.isGameOver()) {
+                    g.advanceToEndOfNextTrick();
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                    }
+                }
+            });
+            gameThread.setDaemon(true);
+            gameThread.start();
         }
     }
 }
