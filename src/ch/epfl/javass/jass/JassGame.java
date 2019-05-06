@@ -36,7 +36,11 @@ public final class JassGame {
     }
 
     private Card.Color nextTrump(PlayerId chooser) {
-        Card.Color trump = players.get(chooser).chooseTrump(playerHands.get(chooser), false);
+        Card.Color trump = players.get(chooser).chooseTrump(playerHands.get(chooser), true);
+        if (trump == null) {
+            PlayerId mate = PlayerId.ALL.get((chooser.ordinal() + 2) % 4);
+            trump = players.get(mate).chooseTrump(playerHands.get(mate), false);
+        }
         for (Player player : players.values()) {
             player.setTrump(trump);
         }

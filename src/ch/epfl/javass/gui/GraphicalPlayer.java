@@ -36,9 +36,9 @@ import java.util.concurrent.BlockingQueue;
 public class GraphicalPlayer {
     private final Scene mainScene;
     private final BlockingQueue<Card> cardQ;
-    private final BlockingQueue<Card.Color> trumpQ;
+    private final BlockingQueue<Integer> trumpQ;
 
-    public GraphicalPlayer(PlayerId player, Map<PlayerId, String> names, BlockingQueue<Card> cardQ, BlockingQueue<Card.Color> trumpQ, ObservableBooleanValue mustChooseTrump, ObservableBooleanValue canDelegate, ScoreBean score, TrickBean trick, HandBean hand) {
+    public GraphicalPlayer(PlayerId player, Map<PlayerId, String> names, BlockingQueue<Card> cardQ, BlockingQueue<Integer> trumpQ, ObservableBooleanValue mustChooseTrump, ObservableBooleanValue canDelegate, ScoreBean score, TrickBean trick, HandBean hand) {
         this.cardQ = cardQ;
         this.trumpQ = trumpQ;
         BorderPane mainView = new BorderPane();
@@ -193,18 +193,28 @@ public class GraphicalPlayer {
             trumpView.setFitWidth(101);
             trumpView.setOnMouseClicked(e -> {
                 try {
-                    this.trumpQ.put(c);
+                    this.trumpQ.put(c.ordinal());
                 } catch (InterruptedException ex) {
                     throw new RuntimeException(ex);
                 }
             });
             trumps.getChildren().add(trumpView);
         }
-        Button b = new Button();
-        b.textProperty().set("Chibrer");
-        b.visibleProperty().bind(canDelegate);
+        Button delegate = new Button();
+        delegate.textProperty().set("Chibrer");
+        delegate.visibleProperty().bind(canDelegate);
+        delegate.setStyle("-fx-font-size: 20px; -fx-focus-color: transparent; -fx-faint-focus-color: transparent;");
+        delegate.setOnAction(e -> {
+            try {
+                this.trumpQ.put(100);
+            } catch (InterruptedException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
         VBox box = new VBox();
-        box.getChildren().addAll(trumps, b);
+        box.setAlignment(Pos.CENTER);
+        box.setSpacing(50);
+        box.getChildren().addAll(trumps, delegate);
         return box;
     }
 

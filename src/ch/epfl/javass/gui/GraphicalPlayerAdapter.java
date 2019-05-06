@@ -18,7 +18,7 @@ public class GraphicalPlayerAdapter implements Player {
     private PlayerId ownId;
     private GraphicalPlayer graphicalPlayer;
     private final BlockingQueue<Card> cardQueue = new ArrayBlockingQueue<>(1);
-    private final BlockingQueue<Card.Color> trumpQueue = new ArrayBlockingQueue<>(1);
+    private final BlockingQueue<Integer> trumpQueue = new ArrayBlockingQueue<>(1);
 
     @Override
     public Card cardToPlay(TurnState state, CardSet hand) {
@@ -32,9 +32,10 @@ public class GraphicalPlayerAdapter implements Player {
     @Override
     public Card.Color chooseTrump(CardSet hand, boolean canDelegate) {
         this.mustChooseTrump.setValue(true);
-        this.canDelegate.setValue(true);
+        this.canDelegate.setValue(canDelegate);
         try {
-            Card.Color trump = trumpQueue.take();
+            int trumpIndex = trumpQueue.take();
+            Card.Color trump = trumpIndex >= 4 ? null : Card.Color.ALL.get(trumpIndex);
             this.mustChooseTrump.setValue(false);
             return trump;
         } catch (InterruptedException e) {
