@@ -13,6 +13,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableMap;
 import javafx.geometry.HPos;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.Image;
@@ -175,6 +176,7 @@ public class GraphicalPlayer {
     private Pane createHandPane(HandBean hand) {
         HBox pane = new HBox();
         pane.setStyle("-fx-background-color: lightgray; -fx-spacing: 5px; -fx-padding: 5px");
+        pane.setAlignment(Pos.CENTER);
         for (int i = 0; i < 9; ++i) {
             ImageView view = new ImageView();
             ObjectBinding<Card> thisCard = Bindings.valueAt(hand.hand(), i);
