@@ -6,6 +6,7 @@ import ch.epfl.javass.jass.PacedPlayer;
 import ch.epfl.javass.jass.Player;
 import ch.epfl.javass.jass.PlayerId;
 import ch.epfl.javass.net.RemotePlayerClient;
+import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.*;
@@ -15,12 +16,14 @@ public final class PlayerBuilder implements AutoCloseable {
     private final Map<PlayerId, Player> players = new EnumMap<>(PlayerId.class);
     private final Map<PlayerId, String> names = new EnumMap<>(PlayerId.class);
     private final List<RemotePlayerClient> remotes = new ArrayList<>(4);
+    private final Stage stage;
 
-    public PlayerBuilder() {
+    public PlayerBuilder(Stage stage) {
         names.put(PlayerId.PLAYER_1, "Aline");
         names.put(PlayerId.PLAYER_2, "Bastien");
         names.put(PlayerId.PLAYER_3, "Colette");
         names.put(PlayerId.PLAYER_4, "David");
+        this.stage = stage;
     }
 
     public Map<PlayerId, Player> getPlayers() {
@@ -65,7 +68,7 @@ public final class PlayerBuilder implements AutoCloseable {
     private String nextHuman(String[] parts) {
         if (parts.length == 3) return "Trop de parties pour le joueur local";
         String name = parts.length == 2 ? parts[1] : "";
-        Player player = new GraphicalPlayerAdapter();
+        Player player = new GraphicalPlayerAdapter(stage);
         insertNext(name, player);
         return null;
     }

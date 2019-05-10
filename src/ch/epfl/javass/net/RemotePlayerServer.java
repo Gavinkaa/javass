@@ -149,7 +149,8 @@ public final class RemotePlayerServer {
         long pkHand = StringSerializer.deserializeLong(components[1]);
         boolean canDelegate = components[2].equals("T");
         Card.Color trump = local.chooseTrump(CardSet.ofPacked(pkHand), canDelegate);
-        w.write(StringSerializer.serializeInt(trump.ordinal()));
+        int ordinal = trump == null ? 5 : trump.ordinal();
+        w.write(StringSerializer.serializeInt(ordinal));
         w.write('\n');
         w.flush();
     }

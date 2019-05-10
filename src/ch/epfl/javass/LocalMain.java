@@ -1,7 +1,6 @@
 package ch.epfl.javass;
 
 import ch.epfl.javass.jass.JassGame;
-import ch.epfl.javass.net.StringSerializer;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
@@ -9,6 +8,8 @@ import java.util.List;
 import java.util.Random;
 
 public final class LocalMain extends Application {
+    private List<String> args = null;
+
     private static String makeUsage() {
         StringBuilder sb = new StringBuilder();
         sb.append("Utilisation: java ch.epfl.javass.LocalMain <j1>..<j4> [graine] où :\n");
@@ -19,6 +20,7 @@ public final class LocalMain extends Application {
         sb.append(" [graine] si donné va rendre l'aléatoire du jeu déterministe, avec cette graine comme incipit\n");
         return sb.toString();
     }
+
     private final static String USAGE = makeUsage();
 
     private void fatal(String message) {
@@ -39,9 +41,15 @@ public final class LocalMain extends Application {
         launch(args);
     }
 
+    public LocalMain(List<String> args) {
+        this.args = args;
+    }
+
     @Override
-    public void start(Stage primaryStage) throws Exception {
-        List<String> args = getParameters().getRaw();
+    public void start(Stage primaryStage){
+        if (args == null) {
+            args = getParameters().getRaw();
+        }
         int size = args.size();
         if (size != 4 && size != 5) {
             System.out.println(USAGE);
@@ -55,7 +63,7 @@ public final class LocalMain extends Application {
         }
         long jassGameSeed = rng.nextLong();
         Thread gameThread = new Thread(() -> {
-            try (PlayerBuilder pb = new PlayerBuilder()) {
+            try (PlayerBuilder pb = new PlayerBuilder(primaryStage)) {
                 for (int i = 0; i < 4; ++i) {
                     String msg = pb.nextPlayer(rng.nextLong(), args.get(i));
                     if (msg != null) fatal(msg + " : " + args.get(i));

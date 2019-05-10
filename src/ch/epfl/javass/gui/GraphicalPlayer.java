@@ -59,8 +59,7 @@ public class GraphicalPlayer {
         mainScene = new Scene(view);
     }
 
-    public Stage createStage() {
-        Stage stage = new Stage();
+    public Stage addToStage(Stage stage) {
         stage.setScene(mainScene);
         return stage;
     }

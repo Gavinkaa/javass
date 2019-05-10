@@ -13,7 +13,7 @@ public final class RemoteMain extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        Player player = new GraphicalPlayerAdapter();
+        Player player = new GraphicalPlayerAdapter(primaryStage);
         Thread serverThread = new Thread(() -> {
             RemotePlayerServer server = new RemotePlayerServer(player);
             server.run();

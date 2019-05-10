@@ -3,6 +3,7 @@ package ch.epfl.javass.gui;
 import ch.epfl.javass.jass.*;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.stage.Stage;
 
 import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -19,6 +20,11 @@ public class GraphicalPlayerAdapter implements Player {
     private GraphicalPlayer graphicalPlayer;
     private final BlockingQueue<Card> cardQueue = new ArrayBlockingQueue<>(1);
     private final BlockingQueue<Integer> trumpQueue = new ArrayBlockingQueue<>(1);
+    private final Stage stage;
+
+    public GraphicalPlayerAdapter(Stage stage) {
+        this.stage = stage;
+    }
 
     @Override
     public Card cardToPlay(TurnState state, CardSet hand) {
@@ -47,7 +53,7 @@ public class GraphicalPlayerAdapter implements Player {
     public void setPlayers(PlayerId ownId, Map<PlayerId, String> playerNames) {
         this.ownId = ownId;
         this.graphicalPlayer = new GraphicalPlayer(ownId, playerNames, cardQueue, trumpQueue, mustChooseTrump, canDelegate, score, trick, hand);
-        Platform.runLater(() -> this.graphicalPlayer.createStage().show());
+        Platform.runLater(() -> this.graphicalPlayer.addToStage(stage).show());
     }
 
     @Override
