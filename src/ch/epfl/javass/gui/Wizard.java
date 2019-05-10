@@ -4,9 +4,11 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
@@ -17,7 +19,7 @@ public class Wizard {
         REMOTE;
     }
 
-    private ObjectProperty<View> currentView = new SimpleObjectProperty<>(View.LOCAL);
+    private ObjectProperty<View> currentView = new SimpleObjectProperty<>(View.CHOICE);
     private Scene mainScene;
 
 
@@ -35,9 +37,21 @@ public class Wizard {
     }
 
     private Pane createChoicePane(){
-        Text t = new Text();
-        t.setText("choice");
-        return new HBox(t);
+        Button localButton = new Button();
+        Button remoteButton = new Button();
+
+        localButton.textProperty().set("Créer une nouvelle partie");
+        localButton.setStyle("-fx-font-size: 20px; -fx-focus-color: transparent; -fx-faint-focus-color: transparent;");
+        localButton.setOnAction(e -> currentView.setValue(View.LOCAL));
+
+        remoteButton.textProperty().set("Rejoindre une partie");
+        remoteButton.setStyle("-fx-font-size: 20px; -fx-focus-color: transparent; -fx-faint-focus-color: transparent;");
+        remoteButton.setOnAction(e -> currentView.setValue(View.REMOTE));
+
+        VBox vBox = new VBox(50);
+        vBox.getChildren().addAll(localButton, remoteButton);
+
+        return vBox;
     }
 
     private Pane createLocalPane(){
