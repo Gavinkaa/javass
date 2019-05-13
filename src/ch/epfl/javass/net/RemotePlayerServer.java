@@ -43,7 +43,7 @@ public final class RemotePlayerServer {
      * @throws UncheckedIOException if we caught an exception in the loop
      */
     public void run() {
-        try (ServerSocket server = new ServerSocket(5108)) {
+        try (ServerSocket server = new ServerSocket(Constants.PORT)) {
             Socket s = server.accept();
             BufferedReader r = new BufferedReader(
                     new InputStreamReader(s.getInputStream(), StandardCharsets.US_ASCII)
