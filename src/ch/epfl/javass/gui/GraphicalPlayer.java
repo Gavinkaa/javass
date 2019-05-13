@@ -28,6 +28,14 @@ import java.util.*;
 import java.util.concurrent.BlockingQueue;
 
 /**
+ * This contains the GUI for the game.
+ *
+ * The gui can be used to let the player see a representation of the events
+ * happening in the game, as well as advance the game by choosing the next card to play.
+ * Which card the player clicked on is communicated via a {@link BlockingQueue}, that is
+ * passed to the gui. Each time the player selects a new card to player, a card is pushed
+ * onto that queue.
+ *
  * @author Lúcás Críostóir Meier (300831)
  * @author Ludovic Burnier (301308)
  */
@@ -35,6 +43,22 @@ public class GraphicalPlayer {
     private final Scene mainScene;
     private final BlockingQueue<Card> queue;
 
+    /**
+     * Create a new GUI given all the information it needs.
+     *
+     * We need static information in order to display it correctly, such as
+     * information about the names of each player. We also need dynamic information,
+     * passed to us via beans, about the current state of the scores, the on-going trick,
+     * and the hands of each player. Finally, we need a queue on which to communicate
+     * which cards the player selects.
+     *
+     * @param player the id of the player this gui is for
+     * @param names a map of names for each playerID
+     * @param queue the queue to communicate card selection on
+     * @param score the score bean to keep track of the current state of the scores
+     * @param trick the trick bean to keep track of the current trick state
+     * @param hand the hand bean to keep track of the current state of the hand
+     */
     public GraphicalPlayer(PlayerId player, Map<PlayerId, String> names, BlockingQueue<Card> queue, ScoreBean score, TrickBean trick, HandBean hand) {
         this.queue = queue;
         BorderPane mainView = new BorderPane();
@@ -48,6 +72,14 @@ public class GraphicalPlayer {
         mainScene = new Scene(view);
     }
 
+    /**
+     * Create a new stage to display the contents of this GUI.
+     *
+     * After calling this method, `show` can be called on the returned
+     * stage in order to make it visible.
+     *
+     * @return the stage that has been created
+     */
     public Stage createStage() {
         Stage stage = new Stage();
         stage.setScene(mainScene);
