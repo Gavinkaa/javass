@@ -1,10 +1,7 @@
 package ch.epfl.javass;
 
 import ch.epfl.javass.gui.GraphicalPlayerAdapter;
-import ch.epfl.javass.jass.MctsPlayer;
-import ch.epfl.javass.jass.PacedPlayer;
-import ch.epfl.javass.jass.Player;
-import ch.epfl.javass.jass.PlayerId;
+import ch.epfl.javass.jass.*;
 import ch.epfl.javass.net.RemotePlayerClient;
 
 import java.io.IOException;
@@ -85,7 +82,7 @@ public final class PlayerBuilder implements AutoCloseable {
         if (parts.length == 3) {
             try {
                 iterations = Integer.parseInt(parts[2]);
-                if (iterations < 9) {
+                if (iterations < Jass.HAND_SIZE) {
                     return "Le nombre d'itérations de MCTS doit être >= 9";
                 }
             } catch (NumberFormatException e) {
