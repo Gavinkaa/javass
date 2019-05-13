@@ -13,6 +13,7 @@ import java.util.Base64;
  */
 public final class StringSerializer {
     private static final int RADIX = 16;
+
     private StringSerializer() {
     }
 
@@ -86,7 +87,7 @@ public final class StringSerializer {
      * Care must be taken to ensure that the seperator is not inside
      * any of the strings.
      *
-     * @param sep the separation character to use
+     * @param sep     the separation character to use
      * @param strings the strings to collate together
      * @return a new string containing all the strings interseperated by sep
      */
@@ -98,7 +99,7 @@ public final class StringSerializer {
      * This does the opposite of {@link #combine(char, String...)}.
      * Like that method, it also does no deserialization of Strings.
      *
-     * @param sep the seperation character between Strings
+     * @param sep      the seperation character between Strings
      * @param combined the collated Strings to split
      * @return a
      */

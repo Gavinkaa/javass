@@ -6,7 +6,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableSet;
 
-import java.util.Arrays;
 import java.util.Collections;
 
 /**
@@ -33,7 +32,6 @@ public final class HandBean {
      * Set the list of cards using a CardSet.
      * If the set contains 9 cards, the entire hand is replaced,
      * otherwise, the cards that aren't present in that set are removed.
-     *
      *
      * @param newHand the newHand to replace our list of cars with.
      * @throws IllegalArgumentException if the set contains more than 9 cards

@@ -162,6 +162,7 @@ public final class MctsPlayer implements Player {
         }
         return Card.ofPacked(PackedCardSet.get(playableHand, root.bestChild(0)));
     }
+<<<<<<< HEAD
 
     private final static int[] TRUMP_CARD_VALUES = {1, 2, 3, 4, 5, 6, 7, 8, 9};
     private final int DELEGATE_LIMIT = 10;
@@ -183,4 +184,6 @@ public final class MctsPlayer implements Player {
         }
         return Card.Color.ALL.get(rng.nextInt(Card.Color.COUNT));
     }
+=======
+>>>>>>> Etape11
 }

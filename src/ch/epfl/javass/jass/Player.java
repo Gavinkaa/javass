@@ -2,7 +2,6 @@ package ch.epfl.javass.jass;
 
 import java.util.Map;
 
-// BONUS METHODS:
 /**
  * Represents an autonomous player that can decide
  * on which card to play, given the state of the game.
@@ -20,20 +19,6 @@ public interface Player {
      * @return the card the player has decided to play
      */
     Card cardToPlay(TurnState state, CardSet hand);
-
-    // BONUS METHOD
-    /**
-     * Make this player choose a new trump color.
-     *
-     * In a true game of Jass, trumps are chosen by the player that
-     * starts that turn, instead of randomly. This augments a player with the ability
-     * to choose which trump they want for that turn.
-     *
-     * @param hand the hand the player has at that point
-     * @param canDelegate whether or not the player can delegate the choice to its teammate
-     * @return the color the player decides to be the new trump
-     */
-    Card.Color chooseTrump(CardSet hand, boolean canDelegate);
 
     /**
      * This method should be called once at the beginning of a game,
