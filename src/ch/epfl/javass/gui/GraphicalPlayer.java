@@ -46,6 +46,10 @@ public class GraphicalPlayer {
     private static final int SMALL_IMAGE_SIZE_W = 160;
     private static final int SMALL_IMAGE_SIZE_H = 240;
     private static final int TRUMP_IMAGE_SIZE = 202;
+    private static final int TRICK_PANE_GAP = 10;
+    private static final int TRICK_PANE_SPACING = 4;
+    private static final double PLAYABLE_OPACITY = 0.2;
+    private static final double UNPLAYABLE_OPACITY = 0.2;
     private final Scene mainScene;
     private final BlockingQueue<Card> queue;
 
@@ -158,8 +162,8 @@ public class GraphicalPlayer {
         List<PlayerId> players = new ArrayList<>(PlayerId.ALL);
         Collections.rotate(players, -me.ordinal());
         GridPane trickPane = new GridPane();
-        trickPane.setHgap(10);
-        trickPane.setVgap(10);
+        trickPane.setHgap(TRICK_PANE_GAP);
+        trickPane.setVgap(TRICK_PANE_GAP);
         int[] cols = {1, 2, 1, 0};
         int[] rows = {2, 0, 0, 0};
         int[] rowSpans = {1, 3, 1, 3};
@@ -167,7 +171,7 @@ public class GraphicalPlayer {
         for (int i = 0; i < PlayerId.COUNT; ++i) {
             PlayerId player = players.get(i);
             VBox pane = new VBox();
-            pane.setSpacing(4);
+            pane.setSpacing(TRICK_PANE_SPACING);
             StackPane imageLayers = new StackPane();
             ImageView v = new ImageView();
             v.setFitHeight(BIG_IMAGE_SIZE_H / 2);
@@ -229,7 +233,7 @@ public class GraphicalPlayer {
                 }
             });
             BooleanBinding isPlayable = Bindings.createBooleanBinding(() -> hand.playableCards().contains(thisCard.get()), hand.playableCards(), hand.hand());
-            view.opacityProperty().bind(Bindings.when(isPlayable).then(1.0).otherwise(0.2));
+            view.opacityProperty().bind(Bindings.when(isPlayable).then(PLAYABLE_OPACITY).otherwise(UNPLAYABLE_OPACITY));
             view.disableProperty().bind(Bindings.not(isPlayable));
             pane.getChildren().add(view);
         }
