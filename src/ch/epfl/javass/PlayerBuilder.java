@@ -11,10 +11,11 @@ import java.io.IOException;
 import java.util.*;
 
 public final class PlayerBuilder implements AutoCloseable {
+    private final int DEFAULT_ITERATIONS = 10000;
     private PlayerId currentID = PlayerId.PLAYER_1;
     private final Map<PlayerId, Player> players = new EnumMap<>(PlayerId.class);
     private final Map<PlayerId, String> names = new EnumMap<>(PlayerId.class);
-    private final List<RemotePlayerClient> remotes = new ArrayList<>(4);
+    private final List<RemotePlayerClient> remotes = new ArrayList<>(PlayerId.COUNT);
 
     public PlayerBuilder() {
         names.put(PlayerId.PLAYER_1, "Aline");
@@ -71,7 +72,7 @@ public final class PlayerBuilder implements AutoCloseable {
     }
 
     private String nextSimulated(long seed, String[] parts) {
-        int iterations = 10000;
+        int iterations = DEFAULT_ITERATIONS;
         if (parts.length == 3) {
             try {
                 iterations = Integer.parseInt(parts[2]);
