@@ -32,6 +32,11 @@ import java.util.concurrent.BlockingQueue;
  * @author Ludovic Burnier (301308)
  */
 public class GraphicalPlayer {
+    private static final int BIG_IMAGE_SIZE_W = 240;
+    private static final int BIG_IMAGE_SIZE_H = 360;
+    private static final int SMALL_IMAGE_SIZE_W = 160;
+    private static final int SMALL_IMAGE_SIZE_H = 240;
+    private static final int TRUMP_IMAGE_SIZE = 202;
     private final Scene mainScene;
     private final BlockingQueue<Card> queue;
 
@@ -97,7 +102,7 @@ public class GraphicalPlayer {
     }
 
     private static Image getCardImage(Card card, boolean big) {
-        int size = big ? 240 : 160;
+        int size = big ? BIG_IMAGE_SIZE_W : SMALL_IMAGE_SIZE_W;
         String s = String.format("/card_%d_%d_%d.png", card.color().ordinal(), card.rank().ordinal(), size);
         return new Image(s);
     }
@@ -132,13 +137,13 @@ public class GraphicalPlayer {
             pane.setSpacing(4);
             StackPane imageLayers = new StackPane();
             ImageView v = new ImageView();
-            v.setFitHeight(180);
-            v.setFitWidth(120);
+            v.setFitHeight(BIG_IMAGE_SIZE_H / 2);
+            v.setFitWidth(BIG_IMAGE_SIZE_W / 2);
             ObjectBinding<Image> image = Bindings.valueAt(bigCardImages, Bindings.valueAt(trick.trick(), player));
             v.imageProperty().bind(image);
             Rectangle r = new Rectangle();
-            r.setHeight(180);
-            r.setWidth(120);
+            r.setHeight(BIG_IMAGE_SIZE_H / 2);
+            r.setWidth(BIG_IMAGE_SIZE_W / 2);
             r.setStyle("-fx-arc-width: 20; -fx-arc-height: 20; -fx-fill: transparent; -fx-stroke: lightpink; -fx-stroke-width: 5; -fx-opacity: 0.5;");
             r.setEffect(new GaussianBlur(4));
             r.setVisible(true);
@@ -163,8 +168,8 @@ public class GraphicalPlayer {
         ObjectBinding<Image> trumpImage = Bindings.valueAt(trumpImages, trick.trumpProperty());
         ImageView trumpView = new ImageView();
         GridPane.setHalignment(trumpView, HPos.CENTER);
-        trumpView.setFitHeight(101);
-        trumpView.setFitWidth(101);
+        trumpView.setFitHeight(TRUMP_IMAGE_SIZE / 2);
+        trumpView.setFitWidth(TRUMP_IMAGE_SIZE / 2);
         trumpView.imageProperty().bind(trumpImage);
         trickPane.add(trumpView, 1, 1, 1, 1);
         trickPane.setStyle("-fx-background-color: whitesmoke; -fx-padding: 5px; -fx-border-width: 3px 0px; -fx-border-style: solid; -fx-border-color: gray; -fx-alignment: center;");
@@ -179,8 +184,8 @@ public class GraphicalPlayer {
             ImageView view = new ImageView();
             ObjectBinding<Card> thisCard = Bindings.valueAt(hand.hand(), i);
             view.imageProperty().bind(Bindings.valueAt(smallCardImages, thisCard));
-            view.setFitWidth(80);
-            view.setFitHeight(120);
+            view.setFitWidth(SMALL_IMAGE_SIZE_W / 2);
+            view.setFitHeight(SMALL_IMAGE_SIZE_H / 2);
             final int thisI = i;
             view.setOnMouseClicked(e -> {
                 Card card = hand.hand().get(thisI);
