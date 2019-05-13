@@ -9,7 +9,7 @@ import java.util.concurrent.BlockingQueue;
 
 /**
  * Represents a player that's controlled by the graphical user interface.
- *
+ * <p>
  * This wraps a graphical interface in {@link GraphicalPlayer} in order to
  * have a controllable player. This implements the Player interface completely.
  * The graphical interface will first be created when {@link Player::setPlayers} is called
