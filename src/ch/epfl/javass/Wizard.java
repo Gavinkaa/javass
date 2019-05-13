@@ -123,7 +123,7 @@ public class Wizard extends Application {
 
 
         TextField nameField = new TextField(defaultName);
-        nameField.setPrefWidth(10);
+        nameField.setMinWidth(80);
         hBox.getChildren().add(new Text("nom:"));
         hBox.getChildren().add(nameField);
 
