@@ -10,6 +10,15 @@ import ch.epfl.javass.net.RemotePlayerClient;
 import java.io.IOException;
 import java.util.*;
 
+/**
+ * This class is used to construct new players.
+ *
+ * It implements auto closeable in order to automically close
+ * the remote players it creates.
+ *
+ * The usage of this class involves creating new players by passing arguments
+ * representing the different type of players that exist.
+ */
 public final class PlayerBuilder implements AutoCloseable {
     private final int DEFAULT_ITERATIONS = 10000;
     private PlayerId currentID = PlayerId.PLAYER_1;
