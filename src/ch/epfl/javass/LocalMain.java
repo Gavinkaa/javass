@@ -7,6 +7,19 @@ import javafx.stage.Stage;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * This class is used to start a local game.
+ *
+ * When starting a local game, we hold all the logic for the game,
+ * and reach out to remote players waiting to join a game. We decide
+ * which players get what names, and what kind of player is used for each id.
+ *
+ * This class is designed to be run as the main program, and given arguments
+ * specifying how to run the game.
+ *
+ * @author Lúcás Críostóir Meier (300831)
+ * @author Ludovic Burnier (301308)
+ */
 public final class LocalMain extends Application {
     private static String makeUsage() {
         StringBuilder sb = new StringBuilder();
