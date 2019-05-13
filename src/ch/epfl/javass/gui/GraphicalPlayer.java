@@ -30,14 +30,49 @@ import java.util.*;
 import java.util.concurrent.BlockingQueue;
 
 /**
+ * This contains the GUI for the game.
+ * <p>
+ * The gui can be used to let the player see a representation of the events
+ * happening in the game, as well as advance the game by choosing the next card to play.
+ * Which card the player clicked on is communicated via a {@link BlockingQueue}, that is
+ * passed to the gui. Each time the player selects a new card to player, a card is pushed
+ * onto that queue.
+ * </p>
+ *
  * @author Lúcás Críostóir Meier (300831)
  * @author Ludovic Burnier (301308)
  */
 public class GraphicalPlayer {
+    private static final int BIG_IMAGE_SIZE_W = 240;
+    private static final int BIG_IMAGE_SIZE_H = 360;
+    private static final int SMALL_IMAGE_SIZE_W = 160;
+    private static final int SMALL_IMAGE_SIZE_H = 240;
+    private static final int TRUMP_IMAGE_SIZE = 202;
+    private static final int TRICK_PANE_GAP = 10;
+    private static final int TRICK_PANE_SPACING = 4;
+    private static final double PLAYABLE_OPACITY = 1.0;
+    private static final double UNPLAYABLE_OPACITY = 0.2;
     private final Scene mainScene;
     private final BlockingQueue<Card> cardQ;
     private final BlockingQueue<Integer> trumpQ;
 
+    /**
+     * Create a new GUI given all the information it needs.
+     * <p>
+     * We need static information in order to display it correctly, such as
+     * information about the names of each player. We also need dynamic information,
+     * passed to us via beans, about the current state of the scores, the on-going trick,
+     * and the hands of each player. Finally, we need queues to communicate player selection.
+     *
+     * @param player the id of the player this gui is for
+     * @param names  a map of names for each playerID
+     * @param cardQ  the queue to communicate card selection on
+     * @param trumpQ the queue to communicate the trump on
+     * @param canDelegate a bean telling us whether or not the player can delegate
+     * @param score  the score bean to keep track of the current state of the scores
+     * @param trick  the trick bean to keep track of the current trick state
+     * @param hand   the hand bean to keep track of the current state of the hand
+     */
     public GraphicalPlayer(PlayerId player, Map<PlayerId, String> names, BlockingQueue<Card> cardQ, BlockingQueue<Integer> trumpQ, ObservableBooleanValue mustChooseTrump, ObservableBooleanValue canDelegate, ScoreBean score, TrickBean trick, HandBean hand) {
         this.cardQ = cardQ;
         this.trumpQ = trumpQ;
@@ -59,6 +94,12 @@ public class GraphicalPlayer {
         mainScene = new Scene(view);
     }
 
+    /**
+     * In order to be able to see this GUI, we need to add its elements to a stage
+     *
+     * @param stage the stage to add this to
+     * @return the stage this graphics have been added to
+     */
     public Stage addToStage(Stage stage) {
         stage.setScene(mainScene);
         return stage;
@@ -107,7 +148,7 @@ public class GraphicalPlayer {
     }
 
     private static Image getCardImage(Card card, boolean big) {
-        int size = big ? 240 : 160;
+        int size = big ? BIG_IMAGE_SIZE_W : SMALL_IMAGE_SIZE_W;
         String s = String.format("/card_%d_%d_%d.png", card.color().ordinal(), card.rank().ordinal(), size);
         return new Image(s);
     }
@@ -130,8 +171,8 @@ public class GraphicalPlayer {
         List<PlayerId> players = new ArrayList<>(PlayerId.ALL);
         Collections.rotate(players, -me.ordinal());
         GridPane trickPane = new GridPane();
-        trickPane.setHgap(10);
-        trickPane.setVgap(10);
+        trickPane.setHgap(TRICK_PANE_GAP);
+        trickPane.setVgap(TRICK_PANE_GAP);
         int[] cols = {1, 2, 1, 0};
         int[] rows = {2, 0, 0, 0};
         int[] rowSpans = {1, 3, 1, 3};
@@ -139,16 +180,16 @@ public class GraphicalPlayer {
         for (int i = 0; i < PlayerId.COUNT; ++i) {
             PlayerId player = players.get(i);
             VBox pane = new VBox();
-            pane.setSpacing(4);
+            pane.setSpacing(TRICK_PANE_SPACING);
             StackPane imageLayers = new StackPane();
             ImageView v = new ImageView();
-            v.setFitHeight(180);
-            v.setFitWidth(120);
+            v.setFitHeight(BIG_IMAGE_SIZE_H / 2);
+            v.setFitWidth(BIG_IMAGE_SIZE_W / 2);
             ObjectBinding<Image> image = Bindings.valueAt(bigCardImages, Bindings.valueAt(trick.trick(), player));
             v.imageProperty().bind(image);
             Rectangle r = new Rectangle();
-            r.setHeight(180);
-            r.setWidth(120);
+            r.setHeight(BIG_IMAGE_SIZE_H / 2);
+            r.setWidth(BIG_IMAGE_SIZE_W / 2);
             r.setStyle("-fx-arc-width: 20; -fx-arc-height: 20; -fx-fill: transparent; -fx-stroke: lightpink; -fx-stroke-width: 5; -fx-opacity: 0.5;");
             r.setEffect(new GaussianBlur(4));
             r.setVisible(true);
@@ -173,8 +214,8 @@ public class GraphicalPlayer {
         ObjectBinding<Image> trumpImage = Bindings.valueAt(trumpImages, trick.trumpProperty());
         ImageView trumpView = new ImageView();
         GridPane.setHalignment(trumpView, HPos.CENTER);
-        trumpView.setFitHeight(101);
-        trumpView.setFitWidth(101);
+        trumpView.setFitHeight(TRUMP_IMAGE_SIZE / 2);
+        trumpView.setFitWidth(TRUMP_IMAGE_SIZE / 2);
         trumpView.imageProperty().bind(trumpImage);
         trickPane.add(trumpView, 1, 1, 1, 1);
         trickPane.setStyle("-fx-background-color: whitesmoke; -fx-padding: 5px; -fx-border-width: 3px 0px; -fx-border-style: solid; -fx-border-color: gray; -fx-alignment: center;");
@@ -225,8 +266,8 @@ public class GraphicalPlayer {
             ImageView view = new ImageView();
             ObjectBinding<Card> thisCard = Bindings.valueAt(hand.hand(), i);
             view.imageProperty().bind(Bindings.valueAt(smallCardImages, thisCard));
-            view.setFitWidth(80);
-            view.setFitHeight(120);
+            view.setFitWidth(SMALL_IMAGE_SIZE_W / 2);
+            view.setFitHeight(SMALL_IMAGE_SIZE_H / 2);
             final int thisI = i;
             view.setOnMouseClicked(e -> {
                 Card card = hand.hand().get(thisI);
@@ -237,7 +278,7 @@ public class GraphicalPlayer {
                 }
             });
             BooleanBinding isPlayable = Bindings.createBooleanBinding(() -> hand.playableCards().contains(thisCard.get()), hand.playableCards(), hand.hand());
-            view.opacityProperty().bind(Bindings.when(isPlayable).then(1.0).otherwise(0.2));
+            view.opacityProperty().bind(Bindings.when(isPlayable).then(PLAYABLE_OPACITY).otherwise(UNPLAYABLE_OPACITY));
             view.disableProperty().bind(Bindings.not(isPlayable));
             pane.getChildren().add(view);
         }

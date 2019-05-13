@@ -9,6 +9,17 @@ import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
+/**
+ * Represents a player that's controlled by the graphical user interface.
+ * <p>
+ * This wraps a graphical interface in {@link GraphicalPlayer} in order to
+ * have a controllable player. This implements the Player interface completely.
+ * The graphical interface will first be created when {@link Player::setPlayers} is called
+ * for the first time.
+ *
+ * @author Lúcás Críostóir Meier (300831)
+ * @author Ludovic Burnier (301308)
+ */
 public class GraphicalPlayerAdapter implements Player {
     private final ScoreBean score = new ScoreBean();
     private final TrickBean trick = new TrickBean();

@@ -1,17 +1,24 @@
 package ch.epfl.javass;
 
 import ch.epfl.javass.gui.GraphicalPlayerAdapter;
-import ch.epfl.javass.jass.MctsPlayer;
-import ch.epfl.javass.jass.PacedPlayer;
-import ch.epfl.javass.jass.Player;
-import ch.epfl.javass.jass.PlayerId;
+import ch.epfl.javass.jass.*;
 import ch.epfl.javass.net.RemotePlayerClient;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.*;
 
+/**
+ * This class is used to construct new players.
+ *
+ * It implements auto closeable in order to automically close
+ * the remote players it creates.
+ *
+ * The usage of this class involves creating new players by passing arguments
+ * representing the different type of players that exist.
+ */
 public final class PlayerBuilder implements AutoCloseable {
+    private final int DEFAULT_ITERATIONS = 10000;
     private PlayerId currentID = PlayerId.PLAYER_1;
     private final Map<PlayerId, Player> players = new EnumMap<>(PlayerId.class);
     private final Map<PlayerId, String> names = new EnumMap<>(PlayerId.class);
@@ -74,11 +81,11 @@ public final class PlayerBuilder implements AutoCloseable {
     }
 
     private String nextSimulated(long seed, String[] parts) {
-        int iterations = 10000;
+        int iterations = DEFAULT_ITERATIONS;
         if (parts.length == 3) {
             try {
                 iterations = Integer.parseInt(parts[2]);
-                if (iterations < 9) {
+                if (iterations < Jass.HAND_SIZE) {
                     return "Le nombre d'itérations de MCTS doit être >= 9";
                 }
             } catch (NumberFormatException e) {

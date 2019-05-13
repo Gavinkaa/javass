@@ -2,6 +2,7 @@ package ch.epfl.javass.gui;
 
 import ch.epfl.javass.jass.Card;
 import ch.epfl.javass.jass.CardSet;
+import ch.epfl.javass.jass.Jass;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableSet;
@@ -17,7 +18,7 @@ import java.util.Collections;
  */
 public final class HandBean {
     private final ObservableList<Card> hand = FXCollections.observableArrayList(
-            Collections.nCopies(9, null)
+            Collections.nCopies(Jass.HAND_SIZE, null)
     );
     private final ObservableSet<Card> playableCards = FXCollections.observableSet();
 
@@ -38,13 +39,13 @@ public final class HandBean {
      */
     public void setHand(CardSet newHand) {
         int handSize = newHand.size();
-        if (handSize > 9) throw new IllegalArgumentException("Hand too big");
-        if (handSize == 9) {
-            for (int i = 0; i < 9; ++i) {
+        if (handSize > Jass.HAND_SIZE) throw new IllegalArgumentException("Hand too big");
+        if (handSize == Jass.HAND_SIZE) {
+            for (int i = 0; i < Jass.HAND_SIZE; ++i) {
                 hand.set(i, newHand.get(i));
             }
         } else {
-            for (int i = 0; i < 9; ++i) {
+            for (int i = 0; i < Jass.HAND_SIZE; ++i) {
                 Card card = hand.get(i);
                 if (card != null && !newHand.contains(card)) {
                     hand.set(i, null);

@@ -1,27 +1,39 @@
 package ch.epfl.javass;
 
 import ch.epfl.javass.jass.JassGame;
+import ch.epfl.javass.jass.PlayerId;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
 import java.util.List;
 import java.util.Random;
 
+/**
+ * This class is used to start a local game.
+ * <p>
+ * When starting a local game, we hold all the logic for the game,
+ * and reach out to remote players waiting to join a game. We decide
+ * which players get what names, and what kind of player is used for each id.
+ * <p>
+ * This class is designed to be run as the main program, and given arguments
+ * specifying how to run the game.
+ *
+ * @author Lúcás Críostóir Meier (300831)
+ * @author Ludovic Burnier (301308)
+ */
 public final class LocalMain extends Application {
+    private final int END_TURN_SLEEPING_TIME = 1000;
+    private final int MIN_ARG_COUNT = PlayerId.COUNT;
+    private final int MAX_ARG_COUNT = MIN_ARG_COUNT + 1;
+
+    private final static String USAGE = "Utilisation: java ch.epfl.javass.LocalMain <j1>..<j4> [graine] où :\n" +
+            "  <jN> spécifie le joueur N, un de:\n" +
+            "    h:<nom> un joueur humain nommé <nom>\n" +
+            "    r:<nom>:<hôte> un joueur en ligne, nommé <nom>, connecté au réseau sur <host>\n" +
+            "    s:<nom>:<iterations> un joueur simulé par MCTS, nommé <nom>, faisant <iterations> part décision\n" +
+            " [graine] si donné va rendre l'aléatoire du jeu déterministe, avec cette graine comme incipit\n";
+
     private List<String> args = null;
-
-    private static String makeUsage() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("Utilisation: java ch.epfl.javass.LocalMain <j1>..<j4> [graine] où :\n");
-        sb.append("  <jN> spécifie le joueur N, un de:\n");
-        sb.append("    h:<nom> un joueur humain nommé <nom>\n");
-        sb.append("    r:<nom>:<hôte> un joueur en ligne, nommé <nom>, connecté au réseau sur <host>\n");
-        sb.append("    s:<nom>:<iterations> un joueur simulé par MCTS, nommé <nom>, faisant <iterations> part décision\n");
-        sb.append(" [graine] si donné va rendre l'aléatoire du jeu déterministe, avec cette graine comme incipit\n");
-        return sb.toString();
-    }
-
-    private final static String USAGE = makeUsage();
 
     private void fatal(String message) {
         System.err.println("Erreur : " + message);
@@ -41,22 +53,28 @@ public final class LocalMain extends Application {
         launch(args);
     }
 
+
     public LocalMain(List<String> args) {
         this.args = args;
     }
 
+    // This constructor is needed for Javafx
+    public LocalMain() {
+    }
+
+
     @Override
-    public void start(Stage primaryStage){
+    public void start(Stage primaryStage) {
         if (args == null) {
             args = getParameters().getRaw();
         }
         int size = args.size();
-        if (size != 4 && size != 5) {
+        if (size < MIN_ARG_COUNT || size > MAX_ARG_COUNT) {
             System.out.println(USAGE);
             System.exit(1);
         }
         Random rng;
-        if (size == 5) {
+        if (size == MAX_ARG_COUNT) {
             rng = new Random(parseNumber(args.get(4)));
         } else {
             rng = new Random();
@@ -71,10 +89,7 @@ public final class LocalMain extends Application {
                 JassGame g = new JassGame(jassGameSeed, pb.getPlayers(), pb.getNames());
                 while (!g.isGameOver()) {
                     g.advanceToEndOfNextTrick();
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                    }
+                    Thread.sleep(END_TURN_SLEEPING_TIME);
                 }
             } catch (Exception e) {
                 throw new RuntimeException(e);
