@@ -28,6 +28,15 @@ import java.util.*;
 import java.util.concurrent.BlockingQueue;
 
 /**
+ * This contains the GUI for the game.
+ * <p>
+ * The gui can be used to let the player see a representation of the events
+ * happening in the game, as well as advance the game by choosing the next card to play.
+ * Which card the player clicked on is communicated via a {@link BlockingQueue}, that is
+ * passed to the gui. Each time the player selects a new card to player, a card is pushed
+ * onto that queue.
+ * </p>
+ *
  * @author Lúcás Críostóir Meier (300831)
  * @author Ludovic Burnier (301308)
  */
@@ -37,9 +46,29 @@ public class GraphicalPlayer {
     private static final int SMALL_IMAGE_SIZE_W = 160;
     private static final int SMALL_IMAGE_SIZE_H = 240;
     private static final int TRUMP_IMAGE_SIZE = 202;
+    private static final int TRICK_PANE_GAP = 10;
+    private static final int TRICK_PANE_SPACING = 4;
+    private static final double PLAYABLE_OPACITY = 0.2;
+    private static final double UNPLAYABLE_OPACITY = 0.2;
     private final Scene mainScene;
     private final BlockingQueue<Card> queue;
 
+    /**
+     * Create a new GUI given all the information it needs.
+     * <p>
+     * We need static information in order to display it correctly, such as
+     * information about the names of each player. We also need dynamic information,
+     * passed to us via beans, about the current state of the scores, the on-going trick,
+     * and the hands of each player. Finally, we need a queue on which to communicate
+     * which cards the player selects.
+     *
+     * @param player the id of the player this gui is for
+     * @param names  a map of names for each playerID
+     * @param queue  the queue to communicate card selection on
+     * @param score  the score bean to keep track of the current state of the scores
+     * @param trick  the trick bean to keep track of the current trick state
+     * @param hand   the hand bean to keep track of the current state of the hand
+     */
     public GraphicalPlayer(PlayerId player, Map<PlayerId, String> names, BlockingQueue<Card> queue, ScoreBean score, TrickBean trick, HandBean hand) {
         this.queue = queue;
         BorderPane mainView = new BorderPane();
@@ -53,6 +82,14 @@ public class GraphicalPlayer {
         mainScene = new Scene(view);
     }
 
+    /**
+     * Create a new stage to display the contents of this GUI.
+     * <p>
+     * After calling this method, `show` can be called on the returned
+     * stage in order to make it visible.
+     *
+     * @return the stage that has been created
+     */
     public Stage createStage() {
         Stage stage = new Stage();
         stage.setScene(mainScene);
@@ -125,8 +162,8 @@ public class GraphicalPlayer {
         List<PlayerId> players = new ArrayList<>(PlayerId.ALL);
         Collections.rotate(players, -me.ordinal());
         GridPane trickPane = new GridPane();
-        trickPane.setHgap(10);
-        trickPane.setVgap(10);
+        trickPane.setHgap(TRICK_PANE_GAP);
+        trickPane.setVgap(TRICK_PANE_GAP);
         int[] cols = {1, 2, 1, 0};
         int[] rows = {2, 0, 0, 0};
         int[] rowSpans = {1, 3, 1, 3};
@@ -134,7 +171,7 @@ public class GraphicalPlayer {
         for (int i = 0; i < PlayerId.COUNT; ++i) {
             PlayerId player = players.get(i);
             VBox pane = new VBox();
-            pane.setSpacing(4);
+            pane.setSpacing(TRICK_PANE_SPACING);
             StackPane imageLayers = new StackPane();
             ImageView v = new ImageView();
             v.setFitHeight(BIG_IMAGE_SIZE_H / 2);
@@ -196,7 +233,7 @@ public class GraphicalPlayer {
                 }
             });
             BooleanBinding isPlayable = Bindings.createBooleanBinding(() -> hand.playableCards().contains(thisCard.get()), hand.playableCards(), hand.hand());
-            view.opacityProperty().bind(Bindings.when(isPlayable).then(1.0).otherwise(0.2));
+            view.opacityProperty().bind(Bindings.when(isPlayable).then(PLAYABLE_OPACITY).otherwise(UNPLAYABLE_OPACITY));
             view.disableProperty().bind(Bindings.not(isPlayable));
             pane.getChildren().add(view);
         }
