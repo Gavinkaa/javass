@@ -10,11 +10,11 @@ import java.util.Random;
 
 /**
  * This class is used to start a local game.
- *
+ * <p>
  * When starting a local game, we hold all the logic for the game,
  * and reach out to remote players waiting to join a game. We decide
  * which players get what names, and what kind of player is used for each id.
- *
+ * <p>
  * This class is designed to be run as the main program, and given arguments
  * specifying how to run the game.
  *
@@ -26,18 +26,12 @@ public final class LocalMain extends Application {
     private final int MIN_ARG_COUNT = PlayerId.COUNT;
     private final int MAX_ARG_COUNT = MIN_ARG_COUNT + 1;
 
-    private static String makeUsage() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("Utilisation: java ch.epfl.javass.LocalMain <j1>..<j4> [graine] où :\n");
-        sb.append("  <jN> spécifie le joueur N, un de:\n");
-        sb.append("    h:<nom> un joueur humain nommé <nom>\n");
-        sb.append("    r:<nom>:<hôte> un joueur en ligne, nommé <nom>, connecté au réseau sur <host>\n");
-        sb.append("    s:<nom>:<iterations> un joueur simulé par MCTS, nommé <nom>, faisant <iterations> part décision\n");
-        sb.append(" [graine] si donné va rendre l'aléatoire du jeu déterministe, avec cette graine comme incipit\n");
-        return sb.toString();
-    }
-
-    private final static String USAGE = makeUsage();
+    private final static String USAGE = "Utilisation: java ch.epfl.javass.LocalMain <j1>..<j4> [graine] où :\n" +
+            "  <jN> spécifie le joueur N, un de:\n" +
+            "    h:<nom> un joueur humain nommé <nom>\n" +
+            "    r:<nom>:<hôte> un joueur en ligne, nommé <nom>, connecté au réseau sur <host>\n" +
+            "    s:<nom>:<iterations> un joueur simulé par MCTS, nommé <nom>, faisant <iterations> part décision\n" +
+            " [graine] si donné va rendre l'aléatoire du jeu déterministe, avec cette graine comme incipit\n";
 
     private void fatal(String message) {
         System.err.println("Erreur : " + message);
