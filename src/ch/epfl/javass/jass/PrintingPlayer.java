@@ -1,6 +1,5 @@
 package ch.epfl.javass.jass;
 
-import javax.xml.bind.SchemaOutputResolver;
 import java.util.Map;
 
 /**
@@ -21,14 +20,6 @@ public final class PrintingPlayer implements Player {
         System.out.println(c);
         return c;
     }
-
-    @Override
-    public Card.Color chooseTrump(CardSet hand, boolean canDelegate) {
-        Card.Color trump = underlyingPlayer.chooseTrump(hand, canDelegate);
-        System.out.println("C'est à moi de choiser l'atout... Je choisis : " + trump.toString());
-        return trump;
-    }
-
 
     @Override
     public void setPlayers(PlayerId ownId, Map<PlayerId, String> playerNames) {

@@ -146,11 +146,6 @@ public class PacedPlayerTest {
         }
 
         @Override
-        public Color chooseTrump(CardSet hand, boolean canDelegate) {
-            return null;
-        }
-
-        @Override
         public void setPlayers(PlayerId ownId, Map<PlayerId, String> playerNames) {
             this.setPlayersCallCount += 1;
             this.setPlayersOwnId = ownId;

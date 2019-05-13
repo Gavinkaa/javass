@@ -40,11 +40,6 @@ public final class PacedPlayer implements Player {
     }
 
     @Override
-    public Card.Color chooseTrump(CardSet hand, boolean canDelegate) {
-        return underlyingPlayer.chooseTrump(hand, canDelegate);
-    }
-
-    @Override
     public void setPlayers(PlayerId ownId, Map<PlayerId, String> playerNames) {
         underlyingPlayer.setPlayers(ownId, playerNames);
     }
