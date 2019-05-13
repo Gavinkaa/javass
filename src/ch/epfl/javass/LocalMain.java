@@ -1,6 +1,7 @@
 package ch.epfl.javass;
 
 import ch.epfl.javass.jass.JassGame;
+import ch.epfl.javass.jass.PlayerId;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
@@ -21,6 +22,10 @@ import java.util.Random;
  * @author Ludovic Burnier (301308)
  */
 public final class LocalMain extends Application {
+    private final int END_TURN_SLEEPING_TIME = 1000;
+    private final int MIN_ARG_COUNT = PlayerId.COUNT;
+    private final int MAX_ARG_COUNT = MIN_ARG_COUNT + 1;
+
     private static String makeUsage() {
         StringBuilder sb = new StringBuilder();
         sb.append("Utilisation: java ch.epfl.javass.LocalMain <j1>..<j4> [graine] où :\n");
@@ -53,15 +58,15 @@ public final class LocalMain extends Application {
     }
 
     @Override
-    public void start(Stage primaryStage) throws Exception {
+    public void start(Stage primaryStage) {
         List<String> args = getParameters().getRaw();
         int size = args.size();
-        if (size != 4 && size != 5) {
+        if (size < MIN_ARG_COUNT || size > MAX_ARG_COUNT) {
             System.out.println(USAGE);
             System.exit(1);
         }
         Random rng;
-        if (size == 5) {
+        if (size == MAX_ARG_COUNT) {
             rng = new Random(parseNumber(args.get(4)));
         } else {
             rng = new Random();
@@ -69,17 +74,14 @@ public final class LocalMain extends Application {
         long jassGameSeed = rng.nextLong();
         Thread gameThread = new Thread(() -> {
             try (PlayerBuilder pb = new PlayerBuilder()) {
-                for (int i = 0; i < 4; ++i) {
+                for (int i = 0; i < PlayerId.COUNT; ++i) {
                     String msg = pb.nextPlayer(rng.nextLong(), args.get(i));
                     if (msg != null) fatal(msg + " : " + args.get(i));
                 }
                 JassGame g = new JassGame(jassGameSeed, pb.getPlayers(), pb.getNames());
                 while (!g.isGameOver()) {
                     g.advanceToEndOfNextTrick();
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                    }
+                    Thread.sleep(END_TURN_SLEEPING_TIME);
                 }
             } catch (Exception e) {
                 throw new RuntimeException(e);
