@@ -9,6 +9,15 @@ import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 /**
+ * This represents a Player that we're playing with over a socket connection.
+ *
+ * This class should be used when we're starting a game locally, and want to include
+ * a player in our local game via a remote connection. That player will be waiting
+ * for a connection when we start our game, and this class is used to connect to them.
+ * After connecting to them, this class acts as a player by forwarding information back
+ * to that remote person, as well as asking them to decide on things like which
+ * card to play.
+ *
  * @author Lúcás Críostóir Meier (300831)
  * @author Ludovic Burnier (301308)
  */
@@ -21,7 +30,7 @@ public final class RemotePlayerClient implements Player, AutoCloseable {
 
     /**
      * Create a new RemotePlayerClient by connecting to a remote host.
-     * This should be accomponied by {@link #close()} at some point later on
+     * This should be accompanied by {@link #close()} at some point later on
      *
      * @param hostName the name of the host to try and connect
      * @throws IOException if an IOException was thrown when constructing
