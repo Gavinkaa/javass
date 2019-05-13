@@ -18,7 +18,6 @@ import javafx.scene.Scene;
 import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
@@ -27,7 +26,6 @@ import javafx.stage.Stage;
 
 import java.util.*;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.Callable;
 
 /**
  * @author Lúcás Críostóir Meier (300831)

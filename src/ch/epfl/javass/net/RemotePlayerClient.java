@@ -10,7 +10,7 @@ import java.util.Map;
 
 /**
  * This represents a Player that we're playing with over a socket connection.
- *
+ * <p>
  * This class should be used when we're starting a game locally, and want to include
  * a player in our local game via a remote connection. That player will be waiting
  * for a connection when we start our game, and this class is used to connect to them.

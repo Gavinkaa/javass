@@ -83,7 +83,7 @@ public final class ScoreBean {
     /**
      * Change the total points of a team in an observable way.
      *
-     * @param team the team to change the total points of
+     * @param team           the team to change the total points of
      * @param newTotalPoints the new value for the total points
      */
     public void setTotalPoints(TeamId team, int newTotalPoints) {

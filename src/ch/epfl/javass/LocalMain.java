@@ -1,7 +1,6 @@
 package ch.epfl.javass;
 
 import ch.epfl.javass.jass.JassGame;
-import ch.epfl.javass.net.StringSerializer;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
@@ -19,6 +18,7 @@ public final class LocalMain extends Application {
         sb.append(" [graine] si donné va rendre l'aléatoire du jeu déterministe, avec cette graine comme incipit\n");
         return sb.toString();
     }
+
     private final static String USAGE = makeUsage();
 
     private void fatal(String message) {
