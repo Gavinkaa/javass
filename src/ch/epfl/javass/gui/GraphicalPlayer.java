@@ -48,7 +48,7 @@ public class GraphicalPlayer {
     private static final int TRUMP_IMAGE_SIZE = 202;
     private static final int TRICK_PANE_GAP = 10;
     private static final int TRICK_PANE_SPACING = 4;
-    private static final double PLAYABLE_OPACITY = 0.2;
+    private static final double PLAYABLE_OPACITY = 1.0;
     private static final double UNPLAYABLE_OPACITY = 0.2;
     private final Scene mainScene;
     private final BlockingQueue<Card> queue;
