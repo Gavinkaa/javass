@@ -26,4 +26,9 @@ public final class RandomPlayer implements Player {
         CardSet playable = state.trick().playableCards(hand);
         return playable.get(rng.nextInt(playable.size()));
     }
+
+    @Override
+    public Card.Color chooseTrump(CardSet hand, boolean canDelegate) {
+        return Card.Color.ALL.get(rng.nextInt(Card.Color.COUNT));
+    }
 }

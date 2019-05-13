@@ -9,12 +9,14 @@ import javafx.beans.binding.ObjectBinding;
 import javafx.beans.property.ReadOnlyIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.beans.value.ObservableBooleanValue;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableMap;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -33,13 +35,22 @@ import java.util.concurrent.BlockingQueue;
  */
 public class GraphicalPlayer {
     private final Scene mainScene;
-    private final BlockingQueue<Card> queue;
+    private final BlockingQueue<Card> cardQ;
+    private final BlockingQueue<Integer> trumpQ;
 
-    public GraphicalPlayer(PlayerId player, Map<PlayerId, String> names, BlockingQueue<Card> queue, ScoreBean score, TrickBean trick, HandBean hand) {
-        this.queue = queue;
+    public GraphicalPlayer(PlayerId player, Map<PlayerId, String> names, BlockingQueue<Card> cardQ, BlockingQueue<Integer> trumpQ, ObservableBooleanValue mustChooseTrump, ObservableBooleanValue canDelegate, ScoreBean score, TrickBean trick, HandBean hand) {
+        this.cardQ = cardQ;
+        this.trumpQ = trumpQ;
         BorderPane mainView = new BorderPane();
         mainView.setTop(createScorePane(names, score));
-        mainView.setCenter(createTrickPane(player, names, trick));
+        StackPane center = new StackPane();
+        Pane trickPane = createTrickPane(player, names, trick);
+        trickPane.visibleProperty().bind(Bindings.not(mustChooseTrump));
+        Pane trumpPane = createTrumpPane(canDelegate);
+        trumpPane.visibleProperty().bind(mustChooseTrump);
+        trumpPane.disableProperty().bind(Bindings.not(mustChooseTrump));
+        center.getChildren().addAll(trickPane, trumpPane);
+        mainView.setCenter(center);
         mainView.setBottom(createHandPane(hand));
         Pane victory = createVictoryPane(names, score);
         victory.visibleProperty().bind(Bindings.isNotNull(score.winningTeamProperty()));
@@ -170,6 +181,42 @@ public class GraphicalPlayer {
         return trickPane;
     }
 
+    private Pane createTrumpPane(ObservableBooleanValue canDelegate) {
+        HBox trumps = new HBox();
+        trumps.setAlignment(Pos.CENTER);
+        trumps.setSpacing(30);
+        for (Card.Color c : Card.Color.ALL) {
+            ImageView trumpView = new ImageView();
+            trumpView.setImage(new Image("/trump_" + c.ordinal() + ".png"));
+            trumpView.setFitHeight(101);
+            trumpView.setFitWidth(101);
+            trumpView.setOnMouseClicked(e -> {
+                try {
+                    this.trumpQ.put(c.ordinal());
+                } catch (InterruptedException ex) {
+                    throw new RuntimeException(ex);
+                }
+            });
+            trumps.getChildren().add(trumpView);
+        }
+        Button delegate = new Button();
+        delegate.textProperty().set("Chibrer");
+        delegate.visibleProperty().bind(canDelegate);
+        delegate.setStyle("-fx-font-size: 20px; -fx-focus-color: transparent; -fx-faint-focus-color: transparent;");
+        delegate.setOnAction(e -> {
+            try {
+                this.trumpQ.put(100);
+            } catch (InterruptedException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
+        VBox box = new VBox();
+        box.setAlignment(Pos.CENTER);
+        box.setSpacing(50);
+        box.getChildren().addAll(trumps, delegate);
+        return box;
+    }
+
     private Pane createHandPane(HandBean hand) {
         HBox pane = new HBox();
         pane.setStyle("-fx-background-color: lightgray; -fx-spacing: 5px; -fx-padding: 5px");
@@ -184,7 +231,7 @@ public class GraphicalPlayer {
             view.setOnMouseClicked(e -> {
                 Card card = hand.hand().get(thisI);
                 try {
-                    this.queue.put(card);
+                    this.cardQ.put(card);
                 } catch (InterruptedException ex) {
                     throw new RuntimeException(ex);
                 }

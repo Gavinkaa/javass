@@ -13,6 +13,8 @@ public class GraphicalPlayerAdapter implements Player {
     private final ScoreBean score = new ScoreBean();
     private final TrickBean trick = new TrickBean();
     private final HandBean hand = new HandBean();
+    private final SimpleBooleanProperty mustChooseTrump = new SimpleBooleanProperty(false);
+    private final SimpleBooleanProperty canDelegate = new SimpleBooleanProperty(false);
     private CardSet handSet;
     private PlayerId ownId;
     private GraphicalPlayer graphicalPlayer;
@@ -28,6 +30,20 @@ public class GraphicalPlayerAdapter implements Player {
     public Card cardToPlay(TurnState state, CardSet hand) {
         try {
             return cardQueue.take();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public Card.Color chooseTrump(CardSet hand, boolean canDelegate) {
+        this.mustChooseTrump.setValue(true);
+        this.canDelegate.setValue(canDelegate);
+        try {
+            int trumpIndex = trumpQueue.take();
+            Card.Color trump = trumpIndex >= 4 ? null : Card.Color.ALL.get(trumpIndex);
+            this.mustChooseTrump.setValue(false);
+            return trump;
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }

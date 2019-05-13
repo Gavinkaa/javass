@@ -88,6 +88,9 @@ public final class RemotePlayerServer {
             case WINR:
                 handleWINR(components);
                 break;
+            case CHST:
+                handleCHST(components, w);
+                break;
         }
         return true;
     }
