@@ -63,15 +63,15 @@ public class Wizard extends Application {
         remoteButton.setOnAction(e -> currentView.setValue(View.REMOTE));
 
         VBox vBox = new VBox(50);
-        vBox.getChildren().addAll(localButton, remoteButton);
         vBox.setAlignment(Pos.CENTER);
+        vBox.getChildren().addAll(localButton, remoteButton);
 
         return vBox;
     }
 
     private Pane createLocalPane() {
         VBox vBox = new VBox(20);
-
+        vBox.setAlignment(Pos.CENTER);
         SimpleObjectProperty<String> arg1 = new SimpleObjectProperty<>("");
         SimpleObjectProperty<String> arg2 = new SimpleObjectProperty<>("");
         SimpleObjectProperty<String> arg3 = new SimpleObjectProperty<>("");
@@ -114,6 +114,7 @@ public class Wizard extends Application {
 
     private Pane selectPlayer(ObjectProperty<String> arg, ObjectProperty<Boolean> isHuman, String defaultName) {
         HBox hBox = new HBox(10);
+        hBox.setAlignment(Pos.CENTER);
         ComboBox<String> type = new ComboBox<>();
         type.getItems().add("humain");
         type.getItems().add("distant");
