@@ -26,6 +26,11 @@ import java.util.StringJoiner;
 public class Wizard extends Application {
     private final int MENU_IMAGE_DEFAULT_H = 100;
     private final int MENU_IMAGE_DEFAULT_W = 309;
+    private final String PLAYER_1_NAME = "Aline";
+    private final String PLAYER_2_NAME = "Bastien";
+    private final String PLAYER_3_NAME = "Colette";
+    private final String PLAYER_4_NAME = "David";
+
 
     private enum View {
         CHOICE("Menu", 2.5),
@@ -112,23 +117,23 @@ public class Wizard extends Application {
         Pane player1 = selectPlayer(
                 arg1,
                 new SimpleObjectProperty<>(false),
-                "Aline"
+                PLAYER_1_NAME
         );
         Pane player2 = selectPlayer(
                 arg2,
                 new SimpleObjectProperty<>(false),
-                "Bastien"
+                PLAYER_2_NAME
         );
 
         Pane player3 = selectPlayer(
                 arg3,
                 new SimpleObjectProperty<>(false),
-                "Colette"
+                PLAYER_3_NAME
         );
         Pane player4 = selectPlayer(
                 arg4,
                 new SimpleObjectProperty<>(false),
-                "David"
+                PLAYER_4_NAME
         );
         Button okButton = new Button();
 
