@@ -112,7 +112,12 @@ public class Wizard extends Application {
             lm.start(primaryStage);
         });
 
-        vBox.getChildren().addAll(player1, player2, player3, player4, okButton);
+        Button backButton = new Button();
+        backButton.textProperty().set("retour");
+        backButton.setStyle("-fx-font-size: 20px; -fx-focus-color: transparent; -fx-faint-focus-color: transparent;");
+        backButton.setOnAction(e -> currentView.setValue(View.CHOICE));
+
+        vBox.getChildren().addAll(player1, player2, player3, player4, okButton, backButton);
         return vBox;
     }
 
