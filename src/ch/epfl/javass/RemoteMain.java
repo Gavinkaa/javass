@@ -29,6 +29,5 @@ public final class RemoteMain extends Application {
         });
         serverThread.setDaemon(true);
         serverThread.start();
-        System.out.println("La partie commencera à la connexion du client");
     }
 }
