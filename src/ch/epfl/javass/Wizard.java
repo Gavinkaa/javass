@@ -85,12 +85,8 @@ public class Wizard extends Application {
         remoteButton.setOnAction(e -> currentView.setValue(View.REMOTE));
 
         VBox vBox = new VBox(50);
-        ImageView imageMenu = new ImageView("/menu.png");
-        imageMenu.setFitHeight(250);
-        imageMenu.setFitWidth(772);
-        vBox.getChildren().add(imageMenu);
         vBox.setAlignment(Pos.CENTER);
-        vBox.getChildren().addAll(localButton, remoteButton);
+        vBox.getChildren().addAll(menuImageCreator(250, 772),localButton, remoteButton);
 
         return vBox;
     }
@@ -139,6 +135,7 @@ public class Wizard extends Application {
         backButton.setStyle("-fx-font-size: 20px; -fx-focus-color: transparent; -fx-faint-focus-color: transparent;");
         backButton.setOnAction(e -> currentView.setValue(View.CHOICE));
 
+        vBox.getChildren().add(menuImageCreator(150, 463));
         vBox.getChildren().addAll(player1, player2, player3, player4, okButton, backButton);
         return vBox;
     }
@@ -254,8 +251,16 @@ public class Wizard extends Application {
         });
 
         VBox vBox = new VBox(30);
+        vBox.getChildren().add(menuImageCreator(150, 463));
         vBox.setAlignment(Pos.CENTER);
         vBox.getChildren().addAll(t, backButton);
         return vBox;
+    }
+
+    private ImageView menuImageCreator(int height, int width){
+        ImageView imageMenu = new ImageView("/menu.png");
+        imageMenu.setFitHeight(height);
+        imageMenu.setFitWidth(width);
+        return imageMenu;
     }
 }
