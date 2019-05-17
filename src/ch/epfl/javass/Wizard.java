@@ -9,6 +9,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -84,6 +85,10 @@ public class Wizard extends Application {
         remoteButton.setOnAction(e -> currentView.setValue(View.REMOTE));
 
         VBox vBox = new VBox(50);
+        ImageView imageMenu = new ImageView("/menu.png");
+        imageMenu.setFitHeight(250);
+        imageMenu.setFitWidth(772);
+        vBox.getChildren().add(imageMenu);
         vBox.setAlignment(Pos.CENTER);
         vBox.getChildren().addAll(localButton, remoteButton);
 
