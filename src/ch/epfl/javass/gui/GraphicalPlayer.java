@@ -55,6 +55,7 @@ public class GraphicalPlayer {
     private final Scene mainScene;
     private final BlockingQueue<Card> cardQ;
     private final BlockingQueue<Integer> trumpQ;
+    private final String ownName;
 
     /**
      * Create a new GUI given all the information it needs.
@@ -76,6 +77,7 @@ public class GraphicalPlayer {
     public GraphicalPlayer(PlayerId player, Map<PlayerId, String> names, BlockingQueue<Card> cardQ, BlockingQueue<Integer> trumpQ, ObservableBooleanValue mustChooseTrump, ObservableBooleanValue canDelegate, ScoreBean score, TrickBean trick, HandBean hand) {
         this.cardQ = cardQ;
         this.trumpQ = trumpQ;
+        this.ownName = names.get(player);
         BorderPane mainView = new BorderPane();
         mainView.setTop(createScorePane(names, score));
         StackPane center = new StackPane();
@@ -103,6 +105,7 @@ public class GraphicalPlayer {
     public Stage addToStage(Stage stage) {
         stage.setScene(mainScene);
         stage.setFullScreen(true);
+        stage.titleProperty().setValue("Javass - " + ownName);
         return stage;
     }
 
