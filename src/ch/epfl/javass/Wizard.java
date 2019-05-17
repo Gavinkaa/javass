@@ -24,23 +24,29 @@ import java.util.Arrays;
 import java.util.StringJoiner;
 
 public class Wizard extends Application {
+    private final int MENU_IMAGE_DEFAULT_H = 100;
+    private final int MENU_IMAGE_DEFAULT_W = 309;
+
     private enum View {
-        CHOICE,
-        LOCAL,
-        REMOTE;
+        CHOICE("Menu", 2.5),
+        LOCAL("Créer une partie local", 1.5),
+        REMOTE("Se connecter à une partie", 1.5);
+
+        private String string;
+        private double menuImageScaleFactor;
+
+        View(String string, double menuImageScaleFactor) {
+            this.string = string;
+            this.menuImageScaleFactor = menuImageScaleFactor;
+        }
+
+        public double getMenuImageScaleFactor() {
+            return menuImageScaleFactor;
+        }
 
         @Override
         public String toString() {
-            switch (this) {
-                case CHOICE:
-                    return "Menu";
-                case LOCAL:
-                    return "Créer une partie local";
-                case REMOTE:
-                    return "Se connecter à une partie";
-                default:
-                    return "";
-            }
+            return string;
         }
     }
 
@@ -86,7 +92,10 @@ public class Wizard extends Application {
 
         VBox vBox = new VBox(50);
         vBox.setAlignment(Pos.CENTER);
-        vBox.getChildren().addAll(menuImageCreator(250, 772),localButton, remoteButton);
+        vBox.getChildren().addAll(
+                menuImageCreator((int) (MENU_IMAGE_DEFAULT_H * View.CHOICE.getMenuImageScaleFactor()), (int) (MENU_IMAGE_DEFAULT_W * View.CHOICE.getMenuImageScaleFactor())),
+                localButton,
+                remoteButton);
 
         return vBox;
     }
@@ -135,7 +144,7 @@ public class Wizard extends Application {
         backButton.setStyle("-fx-font-size: 20px; -fx-focus-color: transparent; -fx-faint-focus-color: transparent;");
         backButton.setOnAction(e -> currentView.setValue(View.CHOICE));
 
-        vBox.getChildren().add(menuImageCreator(150, 463));
+        vBox.getChildren().add(menuImageCreator((int) (MENU_IMAGE_DEFAULT_H * View.LOCAL.getMenuImageScaleFactor()), (int) (MENU_IMAGE_DEFAULT_W * View.LOCAL.getMenuImageScaleFactor())));
         vBox.getChildren().addAll(player1, player2, player3, player4, okButton, backButton);
         return vBox;
     }
@@ -251,13 +260,13 @@ public class Wizard extends Application {
         });
 
         VBox vBox = new VBox(30);
-        vBox.getChildren().add(menuImageCreator(150, 463));
+        vBox.getChildren().add(menuImageCreator((int) (MENU_IMAGE_DEFAULT_H * View.REMOTE.getMenuImageScaleFactor()), (int) (MENU_IMAGE_DEFAULT_W * View.REMOTE.getMenuImageScaleFactor())));
         vBox.setAlignment(Pos.CENTER);
         vBox.getChildren().addAll(t, backButton);
         return vBox;
     }
 
-    private ImageView menuImageCreator(int height, int width){
+    private ImageView menuImageCreator(int height, int width) {
         ImageView imageMenu = new ImageView("/menu.png");
         imageMenu.setFitHeight(height);
         imageMenu.setFitWidth(width);
