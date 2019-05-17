@@ -97,7 +97,7 @@ public final class PlayerBuilder implements AutoCloseable {
 
     private String nextRemote(String[] parts) {
         if (parts.length == 3) {
-            if (!parts[2].matches("[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}")) {
+            if (!parts[2].matches("[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}") && !parts[2].equals("localhost")) {
                 return "Adresse IPV4 invalide";
             }
         }
