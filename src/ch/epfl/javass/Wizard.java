@@ -191,7 +191,7 @@ public class Wizard extends Application {
                 sb.add(iterS);
             } else if (typeS.equals("distant")) {
                 String ipS = ipField.getText();
-                if (!ipS.matches("[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}")) {
+                if (!ipS.matches("[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}") && !ipS.equals("localhost")) {
                     arg.setValue("");
                     return;
                 }
