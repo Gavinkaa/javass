@@ -65,14 +65,14 @@ public class GraphicalPlayer {
      * passed to us via beans, about the current state of the scores, the on-going trick,
      * and the hands of each player. Finally, we need queues to communicate player selection.
      *
-     * @param player the id of the player this gui is for
-     * @param names  a map of names for each playerID
-     * @param cardQ  the queue to communicate card selection on
-     * @param trumpQ the queue to communicate the trump on
+     * @param player      the id of the player this gui is for
+     * @param names       a map of names for each playerID
+     * @param cardQ       the queue to communicate card selection on
+     * @param trumpQ      the queue to communicate the trump on
      * @param canDelegate a bean telling us whether or not the player can delegate
-     * @param score  the score bean to keep track of the current state of the scores
-     * @param trick  the trick bean to keep track of the current trick state
-     * @param hand   the hand bean to keep track of the current state of the hand
+     * @param score       the score bean to keep track of the current state of the scores
+     * @param trick       the trick bean to keep track of the current trick state
+     * @param hand        the hand bean to keep track of the current state of the hand
      */
     public GraphicalPlayer(PlayerId player, Map<PlayerId, String> names, BlockingQueue<Card> cardQ, BlockingQueue<Integer> trumpQ, ObservableBooleanValue mustChooseTrump, ObservableBooleanValue canDelegate, ScoreBean score, TrickBean trick, HandBean hand) {
         this.cardQ = cardQ;

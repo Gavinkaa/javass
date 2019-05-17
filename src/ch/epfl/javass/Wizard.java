@@ -27,19 +27,36 @@ public class Wizard extends Application {
         CHOICE,
         LOCAL,
         REMOTE;
+
+        @Override
+        public String toString() {
+            switch (this) {
+                case CHOICE:
+                    return "Menu";
+                case LOCAL:
+                    return "Créer une partie local";
+                case REMOTE:
+                    return "Se connecter à une partie";
+                default:
+                    return "";
+            }
+        }
     }
 
     public static void main(String[] args) {
         launch(args);
     }
 
-    private ObjectProperty<View> currentView = new SimpleObjectProperty<>(View.CHOICE);
+    private ObjectProperty<View> currentView = new SimpleObjectProperty<>();
     private Stage primaryStage;
 
     @Override
     public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;
         primaryStage.setFullScreen(true);
+
+        currentView.addListener(observable -> primaryStage.setTitle(currentView.get().toString()));
+        currentView.setValue(View.CHOICE);
 
         Pane choicePane = createChoicePane();
         choicePane.visibleProperty().bind(Bindings.equal(currentView, View.CHOICE));
@@ -226,7 +243,7 @@ public class Wizard extends Application {
             currentView.setValue(View.CHOICE);
             try {
                 remoteMain.stop();
-            } catch (Exception exception){
+            } catch (Exception exception) {
                 throw new IllegalStateException("Can't go back");
             }
         });
