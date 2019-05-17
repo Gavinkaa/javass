@@ -67,7 +67,7 @@ public class Wizard extends Application {
         this.primaryStage = primaryStage;
         primaryStage.setFullScreen(true);
 
-        currentView.addListener(observable -> primaryStage.setTitle(currentView.get().toString()));
+        currentView.addListener(observable -> primaryStage.setTitle("Javass - " + currentView.get().toString()));
         currentView.setValue(View.CHOICE);
 
         Pane choicePane = createChoicePane();
