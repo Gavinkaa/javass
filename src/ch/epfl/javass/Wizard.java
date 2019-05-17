@@ -203,6 +203,9 @@ public class Wizard extends Application {
     }
 
     private Pane createRemotePane() {
+        RemoteMain remoteMain = new RemoteMain();
+        remoteMain.start(primaryStage);
+
         Text t = new Text();
         t.setFont(new Font(20));
         t.setTextAlignment(TextAlignment.CENTER);
@@ -211,9 +214,21 @@ public class Wizard extends Application {
         } catch (Exception e) {
             t.setText("Adresse ip inconnue");
         }
-        new RemoteMain().start(primaryStage);
-        HBox hBox = new HBox(t);
-        hBox.setAlignment(Pos.CENTER);
-        return hBox;
+        Button backButton = new Button();
+        backButton.textProperty().set("retour");
+        backButton.setStyle("-fx-font-size: 20px; -fx-focus-color: transparent; -fx-faint-focus-color: transparent;");
+        backButton.setOnAction(e -> {
+            currentView.setValue(View.CHOICE);
+            try {
+                remoteMain.stop();
+            } catch (Exception exception){
+                throw new IllegalStateException("Can't go back");
+            }
+        });
+
+        VBox vBox = new VBox(30);
+        vBox.setAlignment(Pos.CENTER);
+        vBox.getChildren().addAll(t, backButton);
+        return vBox;
     }
 }
