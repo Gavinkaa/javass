@@ -102,6 +102,7 @@ public class GraphicalPlayer {
      */
     public Stage addToStage(Stage stage) {
         stage.setScene(mainScene);
+        stage.setFullScreen(true);
         return stage;
     }
 

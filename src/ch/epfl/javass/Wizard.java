@@ -37,6 +37,8 @@ public class Wizard extends Application {
     @Override
     public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;
+        primaryStage.setFullScreen(true);
+
         Pane choicePane = createChoicePane();
         choicePane.visibleProperty().bind(Bindings.equal(currentView, View.CHOICE));
         Pane localPane = createLocalPane();
@@ -104,7 +106,7 @@ public class Wizard extends Application {
         okButton.textProperty().set("Lancer la partie");
         okButton.setStyle("-fx-font-size: 20px; -fx-focus-color: transparent; -fx-faint-focus-color: transparent;");
         okButton.setOnAction(e -> {
-            LocalMain lm = new LocalMain(Arrays.asList(arg1.getValue(),arg2.getValue(), arg3.getValue(), arg4.getValue()));
+            LocalMain lm = new LocalMain(Arrays.asList(arg1.getValue(), arg2.getValue(), arg3.getValue(), arg4.getValue()));
             lm.start(primaryStage);
         });
 
