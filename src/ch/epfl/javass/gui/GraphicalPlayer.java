@@ -52,6 +52,7 @@ public class GraphicalPlayer {
     private static final double UNPLAYABLE_OPACITY = 0.2;
     private final Scene mainScene;
     private final BlockingQueue<Card> queue;
+    private final String ownName;
 
     /**
      * Create a new GUI given all the information it needs.
@@ -71,6 +72,7 @@ public class GraphicalPlayer {
      */
     public GraphicalPlayer(PlayerId player, Map<PlayerId, String> names, BlockingQueue<Card> queue, ScoreBean score, TrickBean trick, HandBean hand) {
         this.queue = queue;
+        this.ownName = names.get(player);
         BorderPane mainView = new BorderPane();
         mainView.setTop(createScorePane(names, score));
         mainView.setCenter(createTrickPane(player, names, trick));
@@ -93,6 +95,7 @@ public class GraphicalPlayer {
     public Stage createStage() {
         Stage stage = new Stage();
         stage.setScene(mainScene);
+        stage.titleProperty().setValue("Javass - " + ownName);
         return stage;
     }
 
