@@ -13,7 +13,9 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 
 import java.net.InetAddress;
@@ -202,12 +204,16 @@ public class Wizard extends Application {
 
     private Pane createRemotePane() {
         Text t = new Text();
+        t.setFont(new Font(20));
+        t.setTextAlignment(TextAlignment.CENTER);
         try {
             t.setText("Transmettez votre addresse ip à l'hôte de la partie:\n" + InetAddress.getLocalHost().getHostAddress());
         } catch (Exception e) {
             t.setText("Adresse ip inconnue");
         }
         new RemoteMain().start(primaryStage);
-        return new HBox(t);
+        HBox hBox = new HBox(t);
+        hBox.setAlignment(Pos.CENTER);
+        return hBox;
     }
 }
