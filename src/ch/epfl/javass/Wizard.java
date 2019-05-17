@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -63,6 +64,7 @@ public class Wizard extends Application {
 
         VBox vBox = new VBox(50);
         vBox.getChildren().addAll(localButton, remoteButton);
+        vBox.setAlignment(Pos.CENTER);
 
         return vBox;
     }
