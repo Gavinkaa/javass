@@ -220,7 +220,7 @@ public final class PackedCardSet {
     }
 
     // used for subsetOfColor
-    private static final long[] colorMasks = {
+    private static final long[] COLOR_MASKS = {
             Bits64.mask(0, COLOR_SIZE),
             Bits64.mask(COLOR_SIZE, COLOR_SIZE),
             Bits64.mask(2 * COLOR_SIZE, COLOR_SIZE),
@@ -237,7 +237,7 @@ public final class PackedCardSet {
      */
     public static long subsetOfColor(long pkCardSet, Card.Color color) {
         assert isValid(pkCardSet);
-        return pkCardSet & colorMasks[color.ordinal()];
+        return pkCardSet & COLOR_MASKS[color.ordinal()];
     }
 
     /**

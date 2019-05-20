@@ -58,49 +58,49 @@ public final class TurnState {
      * @return the packed version of the score
      */
     public long packedScore() {
-        return pkScore;
+        return this.pkScore;
     }
 
     /**
      * @return the packed version of the unplayed cards
      */
     public long packedUnplayedCards() {
-        return pkUnplayedCard;
+        return this.pkUnplayedCard;
     }
 
     /**
      * @return the packed version of the trick
      */
     public int packedTrick() {
-        return pkTrick;
+        return this.pkTrick;
     }
 
     /**
      * @return the current score for this turn
      */
     public Score score() {
-        return Score.ofPacked(pkScore);
+        return Score.ofPacked(this.pkScore);
     }
 
     /**
      * @return the set of unplayed cards of this turn
      */
     public CardSet unplayedCards() {
-        return CardSet.ofPacked(pkUnplayedCard);
+        return CardSet.ofPacked(this.pkUnplayedCard);
     }
 
     /**
      * @return the trick of this turn
      */
     public Trick trick() {
-        return Trick.ofPacked(pkTrick);
+        return Trick.ofPacked(this.pkTrick);
     }
 
     /**
      * @return true if the last trick has been played and collected
      */
     public boolean isTerminal() {
-        return pkTrick == PackedTrick.INVALID;
+        return this.pkTrick == PackedTrick.INVALID;
     }
 
     /**
@@ -110,7 +110,7 @@ public final class TurnState {
     public PlayerId nextPlayer() {
         checkTrickNotFull();
 
-        return PackedTrick.player(pkTrick, PackedTrick.size(pkTrick));
+        return PackedTrick.player(this.pkTrick, PackedTrick.size(this.pkTrick));
     }
 
     /**
@@ -125,10 +125,10 @@ public final class TurnState {
             throw new IllegalStateException("the card has already been played");
         }
 
-        long newUnplayedCards = PackedCardSet.remove(pkUnplayedCard, card.packed());
-        int newTrick = PackedTrick.withAddedCard(pkTrick, card.packed());
+        long newUnplayedCards = PackedCardSet.remove(this.pkUnplayedCard, card.packed());
+        int newTrick = PackedTrick.withAddedCard(this.pkTrick, card.packed());
 
-        return new TurnState(pkScore, newUnplayedCards, newTrick);
+        return new TurnState(this.pkScore, newUnplayedCards, newTrick);
     }
 
     /**
@@ -139,15 +139,15 @@ public final class TurnState {
      * @throws IllegalStateException if the trick isn't full
      */
     public TurnState withTrickCollected() {
-        if (!PackedTrick.isFull(pkTrick)) {
+        if (!PackedTrick.isFull(this.pkTrick)) {
             throw new IllegalStateException("the trick isn't full");
         }
-        TeamId winningTeam = PackedTrick.winningPlayer(pkTrick).team();
-        int trickPoints = PackedTrick.points(pkTrick);
-        long newPkScore = PackedScore.withAdditionalTrick(pkScore, winningTeam, trickPoints);
-        int newTrick = PackedTrick.nextEmpty(pkTrick);
+        TeamId winningTeam = PackedTrick.winningPlayer(this.pkTrick).team();
+        int trickPoints = PackedTrick.points(this.pkTrick);
+        long newPkScore = PackedScore.withAdditionalTrick(this.pkScore, winningTeam, trickPoints);
+        int newTrick = PackedTrick.nextEmpty(this.pkTrick);
 
-        return new TurnState(newPkScore, pkUnplayedCard, newTrick);
+        return new TurnState(newPkScore, this.pkUnplayedCard, newTrick);
     }
 
     /**
@@ -171,7 +171,7 @@ public final class TurnState {
     }
 
     private void checkTrickNotFull() {
-        if (PackedTrick.isFull(pkTrick)) {
+        if (PackedTrick.isFull(this.pkTrick)) {
             throw new IllegalStateException("the trick was full");
         }
     }
