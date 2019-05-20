@@ -36,6 +36,6 @@ public enum TeamId {
      * @return the team id this instance isn't
      */
     public TeamId other() {
-        return isTeam1 ? TEAM_2 : TEAM_1;
+        return this.isTeam1 ? TEAM_2 : TEAM_1;
     }
 }
