@@ -59,9 +59,9 @@ public final class PlayerBuilder implements AutoCloseable {
 
     private void insertNext(String name, Player player) {
         if (!name.isEmpty()) {
-            this.names.put(currentID, name);
+            this.names.put(this.currentID, name);
         }
-        this.players.put(currentID, player);
+        this.players.put(this.currentID, player);
         if (this.currentID == PlayerId.PLAYER_4) {
             this.currentID = null;
         } else {
@@ -90,7 +90,7 @@ public final class PlayerBuilder implements AutoCloseable {
             }
         }
         String name = parts.length >= 2 ? parts[1] : "";
-        Player player = new MctsPlayer(currentID, seed, iterations);
+        Player player = new MctsPlayer(this.currentID, seed, iterations);
         insertNext(name, new PacedPlayer(player, 2));
         return null;
     }
