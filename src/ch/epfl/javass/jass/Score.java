@@ -35,7 +35,7 @@ public final class Score {
      * @return the binary representation of this Score
      */
     public long packed() {
-        return packed;
+        return this.packed;
     }
 
     /**
@@ -44,7 +44,7 @@ public final class Score {
      * @param t the team for which to fetch the turnTricks
      */
     public int turnTricks(TeamId t) {
-        return PackedScore.turnTricks(packed, t);
+        return PackedScore.turnTricks(this.packed, t);
     }
 
     /**
@@ -53,7 +53,7 @@ public final class Score {
      * @param t the team for which to fetch the turnPoints
      */
     public int turnPoints(TeamId t) {
-        return PackedScore.turnPoints(packed, t);
+        return PackedScore.turnPoints(this.packed, t);
     }
 
     /**
@@ -62,7 +62,7 @@ public final class Score {
      * @param t the team with which the gamePoints are associated.
      */
     public int gamePoints(TeamId t) {
-        return PackedScore.gamePoints(packed, t);
+        return PackedScore.gamePoints(this.packed, t);
     }
 
     /**
@@ -72,7 +72,7 @@ public final class Score {
      * @param t the team to look at
      */
     public int totalPoints(TeamId t) {
-        return PackedScore.totalPoints(packed, t);
+        return PackedScore.totalPoints(this.packed, t);
     }
 
     /**
@@ -85,7 +85,7 @@ public final class Score {
      */
     public Score withAdditionalTrick(TeamId winningTeam, int trickPoints) {
         Preconditions.checkArgument(trickPoints >= 0);
-        return new Score(PackedScore.withAdditionalTrick(packed, winningTeam, trickPoints));
+        return new Score(PackedScore.withAdditionalTrick(this.packed, winningTeam, trickPoints));
     }
 
     /**
@@ -95,7 +95,7 @@ public final class Score {
      * @return the Score after this operation is applied
      */
     public Score nextTurn() {
-        return new Score(PackedScore.nextTurn(packed));
+        return new Score(PackedScore.nextTurn(this.packed));
     }
 
     @Override
@@ -103,16 +103,16 @@ public final class Score {
         if (this == o) return true;
         if (!(o instanceof Score)) return false;
         Score score = (Score) o;
-        return packed == score.packed;
+        return this.packed == score.packed;
     }
 
     @Override
     public int hashCode() {
-        return Long.hashCode(packed);
+        return Long.hashCode(this.packed);
     }
 
     @Override
     public String toString() {
-        return "Score(" + PackedScore.toString(packed) + ")";
+        return "Score(" + PackedScore.toString(this.packed) + ")";
     }
 }
