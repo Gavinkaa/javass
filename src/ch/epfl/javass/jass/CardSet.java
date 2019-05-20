@@ -61,21 +61,21 @@ public final class CardSet {
      * @return the binary representation of this card set
      */
     public long packed() {
-        return packed;
+        return this.packed;
     }
 
     /**
      * @return true if this is the empty set
      */
     public boolean isEmpty() {
-        return PackedCardSet.isEmpty(packed);
+        return PackedCardSet.isEmpty(this.packed);
     }
 
     /**
      * @return the number of cards contained in this set
      */
     public int size() {
-        return PackedCardSet.size(packed);
+        return PackedCardSet.size(this.packed);
     }
 
     /**
@@ -85,7 +85,7 @@ public final class CardSet {
      * @return the ith card
      */
     public Card get(int index) {
-        return Card.ofPacked(PackedCardSet.get(packed, index));
+        return Card.ofPacked(PackedCardSet.get(this.packed, index));
     }
 
     /**
@@ -95,7 +95,7 @@ public final class CardSet {
      * @return a new set containing that card and all the other cards of this set
      */
     public CardSet add(Card card) {
-        return CardSet.ofPacked(PackedCardSet.add(packed, card.packed()));
+        return CardSet.ofPacked(PackedCardSet.add(this.packed, card.packed()));
     }
 
     /**
@@ -105,7 +105,7 @@ public final class CardSet {
      * @return a new set all the other cards of this set except that card
      */
     public CardSet remove(Card card) {
-        return CardSet.ofPacked(PackedCardSet.remove(packed, card.packed()));
+        return CardSet.ofPacked(PackedCardSet.remove(this.packed, card.packed()));
     }
 
     /**
@@ -115,7 +115,7 @@ public final class CardSet {
      * @return true if the card is in the set, false otherwise
      */
     public boolean contains(Card card) {
-        return PackedCardSet.contains(packed, card.packed());
+        return PackedCardSet.contains(this.packed, card.packed());
     }
 
     /**
@@ -124,7 +124,7 @@ public final class CardSet {
      * @return the complement of this set
      */
     public CardSet complement() {
-        return CardSet.ofPacked(PackedCardSet.complement(packed));
+        return CardSet.ofPacked(PackedCardSet.complement(this.packed));
     }
 
     /**
@@ -166,7 +166,7 @@ public final class CardSet {
      * @return a new set with only cards of the given color
      */
     public CardSet subsetOfColor(Card.Color color) {
-        return CardSet.ofPacked(PackedCardSet.subsetOfColor(packed, color));
+        return CardSet.ofPacked(PackedCardSet.subsetOfColor(this.packed, color));
     }
 
     @Override
@@ -174,16 +174,16 @@ public final class CardSet {
         if (this == o) return true;
         if (!(o instanceof CardSet)) return false;
         CardSet cardSet = (CardSet) o;
-        return packed == cardSet.packed;
+        return this.packed == cardSet.packed;
     }
 
     @Override
     public int hashCode() {
-        return Long.hashCode(packed);
+        return Long.hashCode(this.packed);
     }
 
     @Override
     public String toString() {
-        return "CardSet(" + PackedCardSet.toString(packed) + ")";
+        return "CardSet(" + PackedCardSet.toString(this.packed) + ")";
     }
 }
