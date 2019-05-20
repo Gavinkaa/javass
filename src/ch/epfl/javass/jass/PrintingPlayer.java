@@ -16,14 +16,14 @@ public final class PrintingPlayer implements Player {
     @Override
     public Card cardToPlay(TurnState state, CardSet hand) {
         System.out.print("C'est à moi de jouer... Je joue : ");
-        Card c = underlyingPlayer.cardToPlay(state, hand);
+        Card c = this.underlyingPlayer.cardToPlay(state, hand);
         System.out.println(c);
         return c;
     }
 
     @Override
     public void setPlayers(PlayerId ownId, Map<PlayerId, String> playerNames) {
-        underlyingPlayer.setPlayers(ownId, playerNames);
+        this.underlyingPlayer.setPlayers(ownId, playerNames);
         System.out.println("Les joueurs sont :");
         for (PlayerId id : PlayerId.ALL) {
             System.out.println("  " + playerNames.get(id) + (ownId == id ? " (moi)" : ""));
@@ -32,31 +32,31 @@ public final class PrintingPlayer implements Player {
 
     @Override
     public void updateHand(CardSet newHand) {
-        underlyingPlayer.updateHand(newHand);
+        this.underlyingPlayer.updateHand(newHand);
         System.out.println("Ma nouvelle main : " + newHand);
     }
 
     @Override
     public void setTrump(Card.Color trump) {
-        underlyingPlayer.setTrump(trump);
+        this.underlyingPlayer.setTrump(trump);
         System.out.println("Atout : " + trump);
     }
 
     @Override
     public void updateTrick(Trick newTrick) {
-        underlyingPlayer.updateTrick(newTrick);
+        this.underlyingPlayer.updateTrick(newTrick);
         System.out.println(newTrick);
     }
 
     @Override
     public void updateScore(Score score) {
-        underlyingPlayer.updateScore(score);
+        this.underlyingPlayer.updateScore(score);
         System.out.println("Scores: " + score);
     }
 
     @Override
     public void setWinningTeam(TeamId winningTeam) {
-        underlyingPlayer.setWinningTeam(winningTeam);
+        this.underlyingPlayer.setWinningTeam(winningTeam);
         System.out.println("L'équipe " + winningTeam + " a gagné");
     }
 }
