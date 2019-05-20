@@ -18,7 +18,7 @@ import java.util.*;
  * representing the different type of players that exist.
  */
 public final class PlayerBuilder implements AutoCloseable {
-    private final int DEFAULT_ITERATIONS = 10000;
+    private static final int DEFAULT_ITERATIONS = 10000;
     private PlayerId currentID = PlayerId.PLAYER_1;
     private final Map<PlayerId, Player> players = new EnumMap<>(PlayerId.class);
     private final Map<PlayerId, String> names = new EnumMap<>(PlayerId.class);
@@ -26,23 +26,23 @@ public final class PlayerBuilder implements AutoCloseable {
     private final Stage stage;
 
     public PlayerBuilder(Stage stage) {
-        names.put(PlayerId.PLAYER_1, "Aline");
-        names.put(PlayerId.PLAYER_2, "Bastien");
-        names.put(PlayerId.PLAYER_3, "Colette");
-        names.put(PlayerId.PLAYER_4, "David");
+        this.names.put(PlayerId.PLAYER_1, "Aline");
+        this.names.put(PlayerId.PLAYER_2, "Bastien");
+        this.names.put(PlayerId.PLAYER_3, "Colette");
+        this.names.put(PlayerId.PLAYER_4, "David");
         this.stage = stage;
     }
 
     public Map<PlayerId, Player> getPlayers() {
-        return Collections.unmodifiableMap(players);
+        return Collections.unmodifiableMap(this.players);
     }
 
     public Map<PlayerId, String> getNames() {
-        return Collections.unmodifiableMap(names);
+        return Collections.unmodifiableMap(this.names);
     }
 
     public String nextPlayer(long seed, String info) {
-        if (currentID == null) {
+        if (this.currentID == null) {
             throw new IllegalStateException("Pas de joueurs à initialisr");
         }
         String[] parts = info.split(":");
@@ -62,13 +62,13 @@ public final class PlayerBuilder implements AutoCloseable {
 
     private void insertNext(String name, Player player) {
         if (!name.isEmpty()) {
-            names.put(currentID, name);
+            this.names.put(this.currentID, name);
         }
-        players.put(currentID, player);
-        if (currentID == PlayerId.PLAYER_4) {
-            currentID = null;
+        this.players.put(this.currentID, player);
+        if (this.currentID == PlayerId.PLAYER_4) {
+            this.currentID = null;
         } else {
-            currentID = PlayerId.ALL.get(currentID.ordinal() + 1);
+            this.currentID = PlayerId.ALL.get(this.currentID.ordinal() + 1);
         }
     }
 
@@ -93,7 +93,7 @@ public final class PlayerBuilder implements AutoCloseable {
             }
         }
         String name = parts.length >= 2 ? parts[1] : "";
-        Player player = new MctsPlayer(currentID, seed, iterations);
+        Player player = new MctsPlayer(this.currentID, seed, iterations);
         insertNext(name, new PacedPlayer(player, 2));
         return null;
     }
@@ -109,7 +109,7 @@ public final class PlayerBuilder implements AutoCloseable {
         Player player;
         try {
             RemotePlayerClient remote = new RemotePlayerClient(hostname);
-            remotes.add(remote);
+            this.remotes.add(remote);
             player = remote;
         } catch (IOException e) {
             return "Connexion échouée " + hostname + " : " + e.toString();
@@ -120,7 +120,7 @@ public final class PlayerBuilder implements AutoCloseable {
 
     @Override
     public void close() throws Exception {
-        for (RemotePlayerClient client : remotes) {
+        for (RemotePlayerClient client : this.remotes) {
             client.close();
         }
     }

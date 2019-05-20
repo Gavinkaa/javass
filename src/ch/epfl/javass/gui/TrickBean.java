@@ -29,7 +29,7 @@ public final class TrickBean {
      * @return a read-only property for the current trump in the trick
      */
     public ReadOnlyObjectProperty<Card.Color> trumpProperty() {
-        return trump;
+        return this.trump;
     }
 
     /**
@@ -38,14 +38,14 @@ public final class TrickBean {
      * @param newTrump the new trump color for this trick
      */
     public void setTrump(Card.Color newTrump) {
-        trump.set(newTrump);
+        this.trump.set(newTrump);
     }
 
     /**
      * @return the read-only property for the player winning this truck. null if no player is winning
      */
     public ReadOnlyObjectProperty<PlayerId> winningPlayerProperty() {
-        return winningPlayer;
+        return this.winningPlayer;
     }
 
     /**
@@ -54,7 +54,7 @@ public final class TrickBean {
      * @return a map from each Player to the card they have, or null if they don't
      */
     public ObservableMap<PlayerId, Card> trick() {
-        return FXCollections.unmodifiableObservableMap(cards);
+        return FXCollections.unmodifiableObservableMap(this.cards);
     }
 
     /**
@@ -65,9 +65,9 @@ public final class TrickBean {
      */
     public void setTrick(Trick newTrick) {
         if (newTrick.isEmpty()) {
-            winningPlayer.set(null);
+            this.winningPlayer.set(null);
         } else {
-            winningPlayer.set(newTrick.winningPlayer());
+            this.winningPlayer.set(newTrick.winningPlayer());
         }
         // We only want to commit one version of things
         Map<PlayerId, Card> tmp = new EnumMap<>(PlayerId.class);
@@ -77,6 +77,6 @@ public final class TrickBean {
         for (int i = 0; i < newTrick.size(); ++i) {
             tmp.put(newTrick.player(i), newTrick.card(i));
         }
-        cards.putAll(tmp);
+        this.cards.putAll(tmp);
     }
 }

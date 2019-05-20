@@ -37,7 +37,7 @@ public final class ScoreBean {
      * @return a property to observe changes in turn points for that team
      */
     public ReadOnlyIntegerProperty turnPointsProperty(TeamId team) {
-        return turnPoints[team.ordinal()];
+        return this.turnPoints[team.ordinal()];
     }
 
     /**
@@ -47,7 +47,7 @@ public final class ScoreBean {
      * @param newTurnPoints the new value for their turn points
      */
     public void setTurnPoints(TeamId team, int newTurnPoints) {
-        turnPoints[team.ordinal()].set(newTurnPoints);
+        this.turnPoints[team.ordinal()].set(newTurnPoints);
     }
 
     /**
@@ -57,7 +57,7 @@ public final class ScoreBean {
      * @return the property we can listen to for changes in their game points
      */
     public ReadOnlyIntegerProperty gamePointsProperty(TeamId team) {
-        return gamePoints[team.ordinal()];
+        return this.gamePoints[team.ordinal()];
     }
 
     /**
@@ -67,7 +67,7 @@ public final class ScoreBean {
      * @param newGamePoints the new value for the game points
      */
     public void setGamePoints(TeamId team, int newGamePoints) {
-        gamePoints[team.ordinal()].set(newGamePoints);
+        this.gamePoints[team.ordinal()].set(newGamePoints);
     }
 
     /**
@@ -77,7 +77,7 @@ public final class ScoreBean {
      * @return a read-only property containing their total points
      */
     public ReadOnlyIntegerProperty totalPointsProperty(TeamId team) {
-        return totalPoints[team.ordinal()];
+        return this.totalPoints[team.ordinal()];
     }
 
     /**
@@ -87,7 +87,7 @@ public final class ScoreBean {
      * @param newTotalPoints the new value for the total points
      */
     public void setTotalPoints(TeamId team, int newTotalPoints) {
-        totalPoints[team.ordinal()].set(newTotalPoints);
+        this.totalPoints[team.ordinal()].set(newTotalPoints);
     }
 
     /**
@@ -96,7 +96,7 @@ public final class ScoreBean {
      * @return the winning team, with null representing no win yet
      */
     public ReadOnlyObjectProperty<TeamId> winningTeamProperty() {
-        return winningTeam;
+        return this.winningTeam;
     }
 
     /**

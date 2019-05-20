@@ -49,7 +49,7 @@ public final class MctsPlayer implements Player {
         private double vScore(Node child, double c) {
             if (child.numberOfFinishedTurns > 0) {
                 double vScore = ((double) child.totalPoints) / child.numberOfFinishedTurns;
-                vScore += c * Math.sqrt(2 * Math.log(numberOfFinishedTurns) / child.numberOfFinishedTurns);
+                vScore += c * Math.sqrt(2 * Math.log(this.numberOfFinishedTurns) / child.numberOfFinishedTurns);
                 return vScore;
             } else {
                 return Double.POSITIVE_INFINITY;
@@ -57,13 +57,13 @@ public final class MctsPlayer implements Player {
         }
 
         private int bestChild(double c) {
-            if (children.length == 1) {
+            if (this.children.length == 1) {
                 return 0;
             }
             double bestScore = Double.NEGATIVE_INFINITY;
             int bestIndex = -1;
-            for (int i = 0; i < children.length; i++) {
-                Node child = children[i];
+            for (int i = 0; i < this.children.length; i++) {
+                Node child = this.children[i];
                 if (child != null) {
                     double vScore = vScore(child, c);
                     if (vScore > bestScore) {
@@ -127,8 +127,8 @@ public final class MctsPlayer implements Player {
 
     private Score sampleEndTurnScore(TurnState turnState, long firstHand) {
         while (!turnState.isTerminal()) {
-            long cardSet = packedNextHand(turnState, ownId, firstHand);
-            int cardToPlay = PackedCardSet.get(cardSet, rng.nextInt(PackedCardSet.size(cardSet)));
+            long cardSet = packedNextHand(turnState, this.ownId, firstHand);
+            int cardToPlay = PackedCardSet.get(cardSet, this.rng.nextInt(PackedCardSet.size(cardSet)));
             turnState = turnState.withNewCardPlayedAndTrickCollected(Card.ofPacked(cardToPlay));
         }
         return turnState.score();
@@ -143,8 +143,8 @@ public final class MctsPlayer implements Player {
             return Card.ofPacked(PackedCardSet.get(playableHand, 0));
         }
         Node root = new Node(state, playableHand);
-        for (int i = 0; i < iterations; i++) {
-            Collection<Node> path = root.addNode(packedHand, ownId);
+        for (int i = 0; i < this.iterations; i++) {
+            Collection<Node> path = root.addNode(packedHand, this.ownId);
             Iterator<Node> iter = path.iterator();
             Node nextNode = iter.next();
             Score score = sampleEndTurnScore(nextNode.turnState, packedHand);

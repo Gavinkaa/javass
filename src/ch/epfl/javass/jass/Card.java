@@ -40,7 +40,7 @@ public final class Card {
 
         @Override
         public String toString() {
-            return symbol;
+            return this.symbol;
         }
     }
 
@@ -77,7 +77,7 @@ public final class Card {
 
         @Override
         public String toString() {
-            return repr;
+            return this.repr;
         }
 
         /**
@@ -88,7 +88,7 @@ public final class Card {
          * @return the special ordinal for the trump color
          */
         public int trumpOrdinal() {
-            return trumpOrdinal;
+            return this.trumpOrdinal;
         }
     }
 
@@ -127,21 +127,21 @@ public final class Card {
      * @return the packed representation of this card
      */
     public int packed() {
-        return packed;
+        return this.packed;
     }
 
     /**
      * @return the color of this card
      */
     public Color color() {
-        return PackedCard.color(packed);
+        return PackedCard.color(this.packed);
     }
 
     /**
      * @return the rank of this card
      */
     public Rank rank() {
-        return PackedCard.rank(packed);
+        return PackedCard.rank(this.packed);
     }
 
     /**
@@ -153,7 +153,7 @@ public final class Card {
      * @return true if this card beats the other. false otherwise
      */
     public boolean isBetter(Color trump, Card that) {
-        return PackedCard.isBetter(trump, packed, that.packed);
+        return PackedCard.isBetter(trump, this.packed, that.packed);
     }
 
     /**
@@ -164,7 +164,7 @@ public final class Card {
      * @return an integer tallying the points this card is worth
      */
     public int points(Color trump) {
-        return PackedCard.points(trump, packed);
+        return PackedCard.points(trump, this.packed);
     }
 
     @Override
@@ -172,16 +172,16 @@ public final class Card {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Card card = (Card) o;
-        return packed == card.packed;
+        return this.packed == card.packed;
     }
 
     @Override
     public int hashCode() {
-        return packed;
+        return this.packed;
     }
 
     @Override
     public String toString() {
-        return PackedCard.toString(packed);
+        return PackedCard.toString(this.packed);
     }
 }

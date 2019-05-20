@@ -40,7 +40,7 @@ public class GraphicalPlayerAdapter implements Player {
     @Override
     public Card cardToPlay(TurnState state, CardSet hand) {
         try {
-            return cardQueue.take();
+            return this.cardQueue.take();
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -51,7 +51,7 @@ public class GraphicalPlayerAdapter implements Player {
         this.mustChooseTrump.setValue(true);
         this.canDelegate.setValue(canDelegate);
         try {
-            int trumpIndex = trumpQueue.take();
+            int trumpIndex = this.trumpQueue.take();
             Card.Color trump = trumpIndex >= 4 ? null : Card.Color.ALL.get(trumpIndex);
             this.mustChooseTrump.setValue(false);
             return trump;
@@ -63,7 +63,7 @@ public class GraphicalPlayerAdapter implements Player {
     @Override
     public void setPlayers(PlayerId ownId, Map<PlayerId, String> playerNames) {
         this.ownId = ownId;
-        this.graphicalPlayer = new GraphicalPlayer(ownId, playerNames, cardQueue, trumpQueue, mustChooseTrump, canDelegate, score, trick, hand);
+        this.graphicalPlayer = new GraphicalPlayer(ownId, playerNames, this.cardQueue, this.trumpQueue, this.mustChooseTrump, this.canDelegate, this.score, this.trick, this.hand);
         Platform.runLater(() -> this.graphicalPlayer.addToStage(stage).show());
     }
 
@@ -85,7 +85,7 @@ public class GraphicalPlayerAdapter implements Player {
             if (!newTrick.isFull()) {
                 boolean amPlaying = newTrick.player(newTrick.size()) == this.ownId;
                 if (amPlaying) {
-                    this.hand.setPlayableCards(newTrick.playableCards(handSet));
+                    this.hand.setPlayableCards(newTrick.playableCards(this.handSet));
                 } else {
                     this.hand.setPlayableCards(CardSet.EMPTY);
                 }
