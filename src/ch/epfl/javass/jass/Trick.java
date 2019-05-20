@@ -52,7 +52,7 @@ public final class Trick {
      * @return the binary representation of this Trick
      */
     public int packed() {
-        return packed;
+        return this.packed;
     }
 
     /**
@@ -62,7 +62,7 @@ public final class Trick {
      * @return true if this Trick is empty
      */
     public boolean isEmpty() {
-        return PackedTrick.isEmpty(packed);
+        return PackedTrick.isEmpty(this.packed);
     }
 
     /**
@@ -75,7 +75,7 @@ public final class Trick {
      * @return true if every player has put down a card in this trick
      */
     public boolean isFull() {
-        return PackedTrick.isFull(packed);
+        return PackedTrick.isFull(this.packed);
     }
 
     /**
@@ -93,7 +93,7 @@ public final class Trick {
             throw new IllegalStateException("Trick must be full to call nextEmpty()");
         }
         // Invalid is normal here
-        return new Trick(PackedTrick.nextEmpty(packed));
+        return new Trick(PackedTrick.nextEmpty(this.packed));
     }
 
     /**
@@ -103,7 +103,7 @@ public final class Trick {
      * @return true if this trick is the last one in the round, based on index
      */
     public boolean isLast() {
-        return PackedTrick.isLast(packed);
+        return PackedTrick.isLast(this.packed);
     }
 
     /**
@@ -113,14 +113,14 @@ public final class Trick {
      * @return the number of cards played this turn.
      */
     public int size() {
-        return PackedTrick.size(packed);
+        return PackedTrick.size(this.packed);
     }
 
     /**
      * @return the trump color for this Trick.
      */
     public Card.Color trump() {
-        return PackedTrick.trump(packed);
+        return PackedTrick.trump(this.packed);
     }
 
     /**
@@ -130,7 +130,7 @@ public final class Trick {
      * @return the index of this trick
      */
     public int index() {
-        return PackedTrick.index(packed);
+        return PackedTrick.index(this.packed);
     }
 
     /**
@@ -142,7 +142,7 @@ public final class Trick {
      * @throws IndexOutOfBoundsException if the index is not in [0;4[
      */
     public PlayerId player(int index) {
-        return PackedTrick.player(packed, Preconditions.checkIndex(index, PlayerId.COUNT));
+        return PackedTrick.player(this.packed, Preconditions.checkIndex(index, PlayerId.COUNT));
     }
 
     /**
@@ -153,7 +153,7 @@ public final class Trick {
      * @throws IndexOutOfBoundsException if the index was outside the valid range
      */
     public Card card(int index) {
-        return Card.ofPacked(PackedTrick.card(packed, Preconditions.checkIndex(index, size())));
+        return Card.ofPacked(PackedTrick.card(this.packed, Preconditions.checkIndex(index, size())));
     }
 
     /**
@@ -168,7 +168,7 @@ public final class Trick {
         if (isFull()) {
             throw new IllegalStateException("withAddedCard called on a full Trick");
         }
-        return new Trick(PackedTrick.withAddedCard(packed, c.packed()));
+        return new Trick(PackedTrick.withAddedCard(this.packed, c.packed()));
     }
 
     /**
@@ -182,7 +182,7 @@ public final class Trick {
         if (isEmpty()) {
             throw new IllegalStateException("baseColor() called on an empty Trick");
         }
-        return PackedTrick.baseColor(packed);
+        return PackedTrick.baseColor(this.packed);
     }
 
     /**
@@ -198,7 +198,7 @@ public final class Trick {
         if (isFull()) {
             throw new IllegalStateException("playableCards() called on a full Trick");
         }
-        return CardSet.ofPacked(PackedTrick.playableCards(packed, hand.packed()));
+        return CardSet.ofPacked(PackedTrick.playableCards(this.packed, hand.packed()));
     }
 
     /**
@@ -212,7 +212,7 @@ public final class Trick {
         if (!isFull()) {
             throw new IllegalStateException("points() called on a not full Trick");
         }
-        return PackedTrick.points(packed);
+        return PackedTrick.points(this.packed);
     }
 
     /**
@@ -226,7 +226,7 @@ public final class Trick {
         if (isEmpty()) {
             throw new IllegalStateException("winningPlayer() called on empty Trick");
         }
-        return PackedTrick.winningPlayer(packed);
+        return PackedTrick.winningPlayer(this.packed);
     }
 
     @Override
@@ -234,16 +234,16 @@ public final class Trick {
         if (this == o) return true;
         if (!(o instanceof Trick)) return false;
         Trick trick = (Trick) o;
-        return packed == trick.packed;
+        return this.packed == trick.packed;
     }
 
     @Override
     public int hashCode() {
-        return packed;
+        return this.packed;
     }
 
     @Override
     public String toString() {
-        return "Trick (" + PackedTrick.toString(packed) + ")";
+        return "Trick (" + PackedTrick.toString(this.packed) + ")";
     }
 }
