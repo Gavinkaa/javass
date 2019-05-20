@@ -31,6 +31,7 @@ public class Wizard extends Application {
     private final String PLAYER_3_NAME = "Colette";
     private final String PLAYER_4_NAME = "David";
 
+    private RemoteMain remoteMain = null;
 
     private enum View {
         CHOICE("Menu", 2.5),
@@ -241,8 +242,20 @@ public class Wizard extends Application {
     }
 
     private Pane createRemotePane() {
-        RemoteMain remoteMain = new RemoteMain();
-        remoteMain.start(primaryStage);
+
+        currentView.addListener(o -> {
+            if (currentView.get().equals(View.REMOTE)) {
+                remoteMain = new RemoteMain();
+                remoteMain.start(primaryStage);
+            } else if (remoteMain != null) {
+                try {
+                    remoteMain.stop();
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+
 
         Text t = new Text();
         t.setFont(new Font(20));
@@ -257,11 +270,6 @@ public class Wizard extends Application {
         backButton.setStyle("-fx-font-size: 20px; -fx-focus-color: transparent; -fx-faint-focus-color: transparent;");
         backButton.setOnAction(e -> {
             currentView.setValue(View.CHOICE);
-            try {
-                remoteMain.stop();
-            } catch (Exception exception) {
-                throw new IllegalStateException("Can't go back");
-            }
         });
 
         VBox vBox = new VBox(30);

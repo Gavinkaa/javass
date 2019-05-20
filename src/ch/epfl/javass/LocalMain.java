@@ -92,6 +92,11 @@ public final class LocalMain extends Application {
                     Thread.sleep(END_TURN_SLEEPING_TIME);
                 }
             } catch (Exception e) {
+                try {
+                    this.stop();
+                } catch (Exception e2) {
+                    throw new RuntimeException(e2);
+                }
                 throw new RuntimeException(e);
             }
         });
