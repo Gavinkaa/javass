@@ -26,7 +26,7 @@ public final class HandBean {
      * @return a read-only observable lists of cards in this hand
      */
     public ObservableList<Card> hand() {
-        return FXCollections.unmodifiableObservableList(hand);
+        return FXCollections.unmodifiableObservableList(this.hand);
     }
 
     /**
@@ -42,13 +42,13 @@ public final class HandBean {
         if (handSize > Jass.HAND_SIZE) throw new IllegalArgumentException("Hand too big");
         if (handSize == Jass.HAND_SIZE) {
             for (int i = 0; i < Jass.HAND_SIZE; ++i) {
-                hand.set(i, newHand.get(i));
+                this.hand.set(i, newHand.get(i));
             }
         } else {
             for (int i = 0; i < Jass.HAND_SIZE; ++i) {
-                Card card = hand.get(i);
+                Card card = this.hand.get(i);
                 if (card != null && !newHand.contains(card)) {
-                    hand.set(i, null);
+                    this.hand.set(i, null);
                 }
             }
         }
@@ -58,7 +58,7 @@ public final class HandBean {
      * @return an observable set of playable cards
      */
     public ObservableSet<Card> playableCards() {
-        return FXCollections.unmodifiableObservableSet(playableCards);
+        return FXCollections.unmodifiableObservableSet(this.playableCards);
     }
 
     /**
@@ -69,9 +69,9 @@ public final class HandBean {
      * @param newPlayableCards the new set of playable cards
      */
     public void setPlayableCards(CardSet newPlayableCards) {
-        playableCards.removeIf(c -> !newPlayableCards.contains(c));
+        this.playableCards.removeIf(c -> !newPlayableCards.contains(c));
         for (int i = 0; i < newPlayableCards.size(); ++i) {
-            playableCards.add(newPlayableCards.get(i));
+            this.playableCards.add(newPlayableCards.get(i));
         }
     }
 }

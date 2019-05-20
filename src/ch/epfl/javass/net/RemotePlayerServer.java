@@ -29,7 +29,7 @@ public final class RemotePlayerServer {
      * @param player the player to make play the game
      */
     public RemotePlayerServer(Player player) {
-        local = player;
+        this.local = player;
     }
 
     /**
@@ -100,22 +100,22 @@ public final class RemotePlayerServer {
             PlayerId p = PlayerId.ALL.get(i);
             players.put(p, StringSerializer.deserializeString(names[i]));
         }
-        local.setPlayers(ownId, players);
+        this.local.setPlayers(ownId, players);
     }
 
     private void handleTRMP(String[] components) {
         int trumpOrd = StringSerializer.deserializeInt(components[1]);
-        local.setTrump(Card.Color.ALL.get(trumpOrd));
+        this.local.setTrump(Card.Color.ALL.get(trumpOrd));
     }
 
     private void handleHAND(String[] components) {
         long pkHand = StringSerializer.deserializeLong(components[1]);
-        local.updateHand(CardSet.ofPacked(pkHand));
+        this.local.updateHand(CardSet.ofPacked(pkHand));
     }
 
     private void handleTRCK(String[] components) {
         int pkTrick = StringSerializer.deserializeInt(components[1]);
-        local.updateTrick(Trick.ofPacked(pkTrick));
+        this.local.updateTrick(Trick.ofPacked(pkTrick));
     }
 
     private void handleCARD(String[] components, Writer w) throws IOException {
@@ -126,7 +126,7 @@ public final class RemotePlayerServer {
                 StringSerializer.deserializeInt(stArgs[2])
         );
         long pkHand = StringSerializer.deserializeLong(components[2]);
-        Card played = local.cardToPlay(st, CardSet.ofPacked(pkHand));
+        Card played = this.local.cardToPlay(st, CardSet.ofPacked(pkHand));
         w.write(StringSerializer.serializeInt(played.packed()));
         w.write('\n');
         w.flush();
@@ -134,11 +134,11 @@ public final class RemotePlayerServer {
 
     private void handleSCOR(String[] components) {
         long pkScore = StringSerializer.deserializeLong(components[1]);
-        local.updateScore(Score.ofPacked(pkScore));
+        this.local.updateScore(Score.ofPacked(pkScore));
     }
 
     private void handleWINR(String[] components) {
         int teamOrd = StringSerializer.deserializeInt(components[1]);
-        local.setWinningTeam(TeamId.ALL.get(teamOrd));
+        this.local.setWinningTeam(TeamId.ALL.get(teamOrd));
     }
 }

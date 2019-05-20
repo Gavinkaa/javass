@@ -22,9 +22,9 @@ import java.util.Random;
  * @author Ludovic Burnier (301308)
  */
 public final class LocalMain extends Application {
-    private final int END_TURN_SLEEPING_TIME = 1000;
-    private final int MIN_ARG_COUNT = PlayerId.COUNT;
-    private final int MAX_ARG_COUNT = MIN_ARG_COUNT + 1;
+    private static final int END_TURN_SLEEPING_TIME = 1000;
+    private static final int MIN_ARG_COUNT = PlayerId.COUNT;
+    private static final int MAX_ARG_COUNT = MIN_ARG_COUNT + 1;
 
     private final static String USAGE = "Utilisation: java ch.epfl.javass.LocalMain <j1>..<j4> [graine] où :\n" +
             "  <jN> spécifie le joueur N, un de:\n" +

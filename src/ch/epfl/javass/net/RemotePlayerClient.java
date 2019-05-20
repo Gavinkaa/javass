@@ -24,8 +24,8 @@ import java.util.Map;
 public final class RemotePlayerClient implements Player, AutoCloseable {
     private final Socket sock;
     // BufferedReader since we need readLine
-    private final BufferedReader r;
-    private final Writer w;
+    private final BufferedReader reader;
+    private final Writer writer;
 
 
     /**
@@ -36,11 +36,11 @@ public final class RemotePlayerClient implements Player, AutoCloseable {
      * @throws IOException if an IOException was thrown when constructing
      */
     public RemotePlayerClient(String hostName) throws IOException {
-        sock = new Socket(hostName, Constants.PORT);
-        r = new BufferedReader(
+        this.sock = new Socket(hostName, Constants.PORT);
+        this.reader = new BufferedReader(
                 new InputStreamReader(sock.getInputStream(), StandardCharsets.US_ASCII)
         );
-        w = new BufferedWriter(
+        this.writer = new BufferedWriter(
                 new OutputStreamWriter(sock.getOutputStream(), StandardCharsets.US_ASCII)
         );
     }
@@ -51,9 +51,9 @@ public final class RemotePlayerClient implements Player, AutoCloseable {
         System.arraycopy(components, 0, args, 1, components.length);
         args[0] = cmd.name();
         try {
-            w.write(StringSerializer.combine(' ', args));
-            w.write('\n');
-            w.flush();
+            this.writer.write(StringSerializer.combine(' ', args));
+            this.writer.write('\n');
+            this.writer.flush();
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
@@ -69,7 +69,7 @@ public final class RemotePlayerClient implements Player, AutoCloseable {
         String handString = StringSerializer.serializeLong(hand.packed());
         writeMessage(JassCommand.CARD, stateString, handString);
         try {
-            String resp = r.readLine();
+            String resp = this.reader.readLine();
             return Card.ofPacked(StringSerializer.deserializeInt(resp));
         } catch (IOException e) {
             throw new UncheckedIOException(e);
@@ -114,6 +114,6 @@ public final class RemotePlayerClient implements Player, AutoCloseable {
 
     @Override
     public void close() throws IOException {
-        sock.close();
+        this.sock.close();
     }
 }

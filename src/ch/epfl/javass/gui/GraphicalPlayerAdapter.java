@@ -30,7 +30,7 @@ public class GraphicalPlayerAdapter implements Player {
     @Override
     public Card cardToPlay(TurnState state, CardSet hand) {
         try {
-            return queue.take();
+            return this.queue.take();
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -39,7 +39,7 @@ public class GraphicalPlayerAdapter implements Player {
     @Override
     public void setPlayers(PlayerId ownId, Map<PlayerId, String> playerNames) {
         this.ownId = ownId;
-        this.graphicalPlayer = new GraphicalPlayer(ownId, playerNames, this.queue, score, trick, this.hand);
+        this.graphicalPlayer = new GraphicalPlayer(ownId, playerNames, this.queue, this.score, this.trick, this.hand);
         Platform.runLater(() -> this.graphicalPlayer.createStage().show());
     }
 
@@ -61,7 +61,7 @@ public class GraphicalPlayerAdapter implements Player {
             if (!newTrick.isFull()) {
                 boolean amPlaying = newTrick.player(newTrick.size()) == this.ownId;
                 if (amPlaying) {
-                    this.hand.setPlayableCards(newTrick.playableCards(handSet));
+                    this.hand.setPlayableCards(newTrick.playableCards(this.handSet));
                 } else {
                     this.hand.setPlayableCards(CardSet.EMPTY);
                 }

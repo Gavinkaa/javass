@@ -81,7 +81,7 @@ public class GraphicalPlayer {
         victory.visibleProperty().bind(Bindings.isNotNull(score.winningTeamProperty()));
         StackPane view = new StackPane();
         view.getChildren().addAll(mainView, victory);
-        mainScene = new Scene(view);
+        this.mainScene = new Scene(view);
     }
 
     /**
@@ -94,8 +94,8 @@ public class GraphicalPlayer {
      */
     public Stage createStage() {
         Stage stage = new Stage();
-        stage.setScene(mainScene);
-        stage.titleProperty().setValue("Javass - " + ownName);
+        stage.setScene(this.mainScene);
+        stage.titleProperty().setValue("Javass - " + this.ownName);
         return stage;
     }
 
