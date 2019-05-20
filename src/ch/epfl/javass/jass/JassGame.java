@@ -31,7 +31,6 @@ public final class JassGame {
         }
         Random rng = new Random(rngSeed);
         this.shuffleRng = new Random(rng.nextLong());
-        this.trumpRng = new Random(rng.nextLong());
     }
 
     private Card.Color nextTrump(PlayerId chooser) {
