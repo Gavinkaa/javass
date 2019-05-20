@@ -21,6 +21,7 @@ import java.util.Map;
  */
 public final class RemotePlayerServer {
     private final Player local;
+    private ServerSocket server;
 
     /**
      * Construct a new RemotePlayerServer,
@@ -30,6 +31,10 @@ public final class RemotePlayerServer {
      */
     public RemotePlayerServer(Player player) {
         local = player;
+    }
+
+    public void close() throws IOException {
+        server.close();
     }
 
     /**
@@ -43,8 +48,10 @@ public final class RemotePlayerServer {
      *
      * @throws UncheckedIOException if we caught an exception in the loop
      */
-    public void run() {
-        try (ServerSocket server = new ServerSocket(Constants.PORT)) {
+    public void run() throws IOException {
+        try {
+            System.out.println("Creating a new socket");
+            server = new ServerSocket(Constants.PORT);
             Socket s = server.accept();
             BufferedReader r = new BufferedReader(
                     new InputStreamReader(s.getInputStream(), StandardCharsets.US_ASCII)
@@ -52,10 +59,10 @@ public final class RemotePlayerServer {
             BufferedWriter w = new BufferedWriter(
                     new OutputStreamWriter(s.getOutputStream(), StandardCharsets.US_ASCII)
             );
-            while (interactWith(r, w)) {
+            while (!Thread.interrupted() && interactWith(r, w)) {
             }
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
+        } finally {
+            server.close();
         }
     }
 

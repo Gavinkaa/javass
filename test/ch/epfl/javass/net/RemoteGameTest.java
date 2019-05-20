@@ -41,7 +41,13 @@ public class RemoteGameTest {
             this.remote = new TestPlayer(PlayerId.PLAYER_1, null);
             this.server = new RemotePlayerServer(remote);
 
-            this.serverThread = new Thread(server::run);
+            this.serverThread = new Thread(() -> {
+                try {
+                    server.run();
+                } catch (IOException e) {
+                    throw new UncheckedIOException(e);
+                }
+            });
             this.serverThread.start();
             Thread.sleep(20);
             this.client = new RemotePlayerClient("localhost");

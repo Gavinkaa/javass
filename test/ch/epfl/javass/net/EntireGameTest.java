@@ -5,6 +5,7 @@ import ch.epfl.test.TestRandomizer;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.SplittableRandom;
@@ -25,15 +26,21 @@ public class EntireGameTest {
         Score normalScore = playAGameWith(players);
 
         RemotePlayerServer server = new RemotePlayerServer(new RandomPlayer(TestRandomizer.SEED));
-        Thread serverThread = new Thread(server::run);
+        Thread serverThread = new Thread(() -> {
+            try {
+                server.run();
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
+            }
+        });
         serverThread.start();
 
 
-        try(RemotePlayerClient playerClient = new RemotePlayerClient("localhost")){
+        try (RemotePlayerClient playerClient = new RemotePlayerClient("localhost")) {
             for (PlayerId id : PlayerId.ALL) {
                 if (id != PlayerId.PLAYER_1) {
                     players.put(id, new RandomPlayer(TestRandomizer.SEED));
-                }else{
+                } else {
                     players.put(id, playerClient);
                 }
             }
