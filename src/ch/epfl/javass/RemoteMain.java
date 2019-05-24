@@ -33,7 +33,7 @@ public final class RemoteMain extends Application {
             try {
                 server.run();
             } catch (IOException e) {
-                throw new UncheckedIOException(e);
+                System.out.println("IOException dans RemoteMain: " + e.toString());
             }
         });
         serverThread.setDaemon(true);

@@ -20,11 +20,12 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 
+import java.io.IOException;
+import java.net.Inet4Address;
 import java.net.InetAddress;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.StringJoiner;
+import java.net.NetworkInterface;
+import java.net.Socket;
+import java.util.*;
 
 public class Wizard extends Application {
     private final int MENU_IMAGE_DEFAULT_H = 100;
@@ -280,12 +281,11 @@ public class Wizard extends Application {
             }
         });
 
-
         Text t = new Text();
         t.setFont(new Font(20));
         t.setTextAlignment(TextAlignment.CENTER);
         try {
-            t.setText("Transmettez votre addresse ip à l'hôte de la partie:\n" + InetAddress.getLocalHost().getHostAddress());
+            t.setText("Transmettez votre addresse ip à l'hôte de la partie:\n" + getIP());
         } catch (Exception e) {
             t.setText("Adresse ip inconnue");
         }
@@ -308,5 +308,25 @@ public class Wizard extends Application {
         imageMenu.setFitHeight(height);
         imageMenu.setFitWidth(width);
         return imageMenu;
+    }
+
+    private String getIP() {
+        try {
+            Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
+            while (interfaces.hasMoreElements()) {
+                NetworkInterface current = interfaces.nextElement();
+                if (!current.isUp() || current.isLoopback() || current.isVirtual()) continue;
+                Enumeration<InetAddress> addresses = current.getInetAddresses();
+                while (addresses.hasMoreElements()) {
+                    InetAddress current_addr = addresses.nextElement();
+                    if (!current_addr.isLoopbackAddress() && current_addr instanceof Inet4Address) {
+                        return current_addr.getHostAddress();
+                    }
+                }
+            }
+        } catch (IOException e) {
+            // We want to return anyways
+        }
+        return "Addresse ip inconnue";
     }
 }
