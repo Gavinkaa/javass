@@ -82,7 +82,7 @@ public final class RemotePlayerClient implements Player, AutoCloseable {
         String boolString = canDelegate ? "T" : "F";
         writeMessage(JassCommand.CHST, handString, boolString);
         try {
-            String resp = r.readLine();
+            String resp = this.reader.readLine();
             int ordinal = StringSerializer.deserializeInt(resp);
             if (ordinal >= 4) {
                 return null;
