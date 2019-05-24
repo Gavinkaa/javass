@@ -21,6 +21,7 @@ import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 
 import java.net.InetAddress;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.StringJoiner;
@@ -111,32 +112,37 @@ public class Wizard extends Application {
     private Pane createLocalPane() {
         VBox vBox = new VBox(20);
         vBox.setAlignment(Pos.CENTER);
-        SimpleObjectProperty<String> arg1 = new SimpleObjectProperty<>("");
-        SimpleObjectProperty<String> arg2 = new SimpleObjectProperty<>("");
-        SimpleObjectProperty<String> arg3 = new SimpleObjectProperty<>("");
-        SimpleObjectProperty<String> arg4 = new SimpleObjectProperty<>("");
-
+        List<SimpleObjectProperty<String>> args = Arrays.asList(
+                new SimpleObjectProperty<>(""),
+                new SimpleObjectProperty<>(""),
+                new SimpleObjectProperty<>(""),
+                new SimpleObjectProperty<>("")
+        );
+        List<SimpleObjectProperty<Config.Item>> items = new ArrayList<>();
+        for (Config.Item item : Config.fromDefaultPath().getItems()) {
+            items.add(new SimpleObjectProperty<>(item));
+        }
 
         Pane player1 = selectPlayer(
-                arg1,
-                new SimpleObjectProperty<>(false),
-                PLAYER_1_NAME
+                args.get(0),
+                items.get(0),
+                new SimpleObjectProperty<>(false)
         );
         Pane player2 = selectPlayer(
-                arg2,
-                new SimpleObjectProperty<>(false),
-                PLAYER_2_NAME
+                args.get(1),
+                items.get(1),
+                new SimpleObjectProperty<>(false)
         );
 
         Pane player3 = selectPlayer(
-                arg3,
-                new SimpleObjectProperty<>(false),
-                PLAYER_3_NAME
+                args.get(2),
+                items.get(2),
+                new SimpleObjectProperty<>(false)
         );
         Pane player4 = selectPlayer(
-                arg4,
-                new SimpleObjectProperty<>(false),
-                PLAYER_4_NAME
+                args.get(3),
+                items.get(3),
+                new SimpleObjectProperty<>(false)
         );
 
         Text errorText = new Text();
@@ -146,15 +152,24 @@ public class Wizard extends Application {
         okButton.textProperty().set("Lancer la partie");
         okButton.setStyle("-fx-font-size: 20px; -fx-focus-color: transparent; -fx-faint-focus-color: transparent;");
         okButton.setOnAction(e -> {
-            List<String> args = Arrays.asList(arg1.getValue(), arg2.getValue(), arg3.getValue(), arg4.getValue());
             for (int i = 0; i < args.size(); ++i) {
-                String error = PlayerBuilder.validatePlayer(args.get(i));
+                String error = PlayerBuilder.validatePlayer(args.get(i).getValue());
                 if (error != null) {
                     errorText.setText("Joueur " + (i + 1) + " : " + error);
                     return;
                 }
             }
-            LocalMain lm = new LocalMain(args);
+            List<Config.Item> itemValues = new ArrayList<>(items.size());
+            for (SimpleObjectProperty<Config.Item> item : items) {
+                itemValues.add(item.getValue());
+            }
+            Config config = Config.fromItems(itemValues);
+            config.save();
+            List<String> stringArgs = new ArrayList<>(args.size());
+            for (SimpleObjectProperty<String> arg : args) {
+                stringArgs.add(arg.getValue());
+            }
+            LocalMain lm = new LocalMain(stringArgs);
             lm.start(primaryStage);
         });
 
@@ -168,33 +183,35 @@ public class Wizard extends Application {
         return vBox;
     }
 
-    private Pane selectPlayer(ObjectProperty<String> arg, ObjectProperty<Boolean> isHuman, String defaultName) {
+    private Pane selectPlayer(ObjectProperty<String> arg, ObjectProperty<Config.Item> itemProp, ObjectProperty<Boolean> isHuman) {
+        Config.Item item = itemProp.getValue();
         HBox hBox = new HBox(10);
         hBox.setAlignment(Pos.CENTER);
         ComboBox<String> type = new ComboBox<>();
         type.getItems().add("humain");
         type.getItems().add("distant");
         type.getItems().add("simulé");
+        type.setValue(item.type);
 
         isHuman.bind(Bindings.equal(type.valueProperty(), "humain"));
         hBox.getChildren().add(new Text("type de joueur:"));
         hBox.getChildren().add(type);
 
 
-        TextField nameField = new TextField(defaultName);
+        TextField nameField = new TextField(item.name);
         nameField.setMinWidth(80);
         hBox.getChildren().add(new Text("nom:"));
         hBox.getChildren().add(nameField);
 
         HBox iterations = new HBox(10);
-        TextField iterationsField = new TextField("10000");
+        TextField iterationsField = new TextField(item.iterations);
         iterationsField.setMaxWidth(80);
         nameField.setPrefWidth(60);
         iterations.getChildren().add(new Text("itérations:"));
         iterations.getChildren().add(iterationsField);
 
         HBox ip = new HBox(10);
-        TextField ipField = new TextField("XXX.XXX.XXX.XXX");
+        TextField ipField = new TextField(item.ip);
         ipField.setPrefWidth(140);
         nameField.setPrefWidth(60);
         ip.getChildren().add(new Text("ip:"));
@@ -236,6 +253,8 @@ public class Wizard extends Application {
                 sb.add(ipS);
             }
             arg.setValue(sb.toString());
+
+            itemProp.setValue(new Config.Item(typeS, nameS, iterationsField.getText(), ipField.getText()));
         };
 
         type.valueProperty().addListener(c -> runnable.run());
