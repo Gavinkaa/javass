@@ -11,10 +11,10 @@ public final class Config {
         public final String ip;
 
         public Item(String type, String name, String iterations, String ip) {
-            this.type = type == null ? "" : type;
-            this.name = name == null ? "" : name;
-            this.iterations = iterations == null ? "" : iterations;
-            this.ip = ip == null ? "" : ip;
+            this.type = type;
+            this.name = name;
+            this.iterations = iterations;
+            this.ip = ip;
         }
 
         public String serialize() {
@@ -69,6 +69,10 @@ public final class Config {
             File file = new File(path);
             if (!file.exists()) {
                 file.createNewFile();
+                FileWriter fstream = new FileWriter(file);
+                BufferedWriter out = new BufferedWriter(fstream);
+                out.write(",Aline,10000,XXX.XXX.XXX.XXX\n,Bastien,10000,XXX.XXX.XXX.XXX\n,Colette,10000,XXX.XXX.XXX.XXX\n,David,10000,XXX.XXX.XXX.XXX");
+                out.close();
             }
             BufferedReader br = new BufferedReader(new FileReader(file));
             List<Item> items = new ArrayList<>(ITEM_COUNT);
