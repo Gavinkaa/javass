@@ -14,6 +14,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
@@ -21,6 +22,7 @@ import javafx.stage.Stage;
 
 import java.net.InetAddress;
 import java.util.Arrays;
+import java.util.List;
 import java.util.StringJoiner;
 
 public class Wizard extends Application {
@@ -136,12 +138,23 @@ public class Wizard extends Application {
                 new SimpleObjectProperty<>(false),
                 PLAYER_4_NAME
         );
-        Button okButton = new Button();
 
+        Text errorText = new Text();
+        errorText.setFill(Color.RED);
+
+        Button okButton = new Button();
         okButton.textProperty().set("Lancer la partie");
         okButton.setStyle("-fx-font-size: 20px; -fx-focus-color: transparent; -fx-faint-focus-color: transparent;");
         okButton.setOnAction(e -> {
-            LocalMain lm = new LocalMain(Arrays.asList(arg1.getValue(), arg2.getValue(), arg3.getValue(), arg4.getValue()));
+            List<String> args = Arrays.asList(arg1.getValue(), arg2.getValue(), arg3.getValue(), arg4.getValue());
+            for (int i = 0; i < args.size(); ++i) {
+                String error = PlayerBuilder.validatePlayer(args.get(i));
+                if (error != null) {
+                    errorText.setText("Joueur " + (i + 1) + " : " + error);
+                    return;
+                }
+            }
+            LocalMain lm = new LocalMain(args);
             lm.start(primaryStage);
         });
 
@@ -151,7 +164,7 @@ public class Wizard extends Application {
         backButton.setOnAction(e -> currentView.setValue(View.CHOICE));
 
         vBox.getChildren().add(menuImageCreator((int) (MENU_IMAGE_DEFAULT_H * View.LOCAL.getMenuImageScaleFactor()), (int) (MENU_IMAGE_DEFAULT_W * View.LOCAL.getMenuImageScaleFactor())));
-        vBox.getChildren().addAll(player1, player2, player3, player4, okButton, backButton);
+        vBox.getChildren().addAll(player1, player2, player3, player4, errorText, okButton, backButton);
         return vBox;
     }
 
@@ -196,15 +209,16 @@ public class Wizard extends Application {
         Runnable runnable = () -> {
             StringJoiner sb = new StringJoiner(":");
             String typeS = type.getValue();
-            if (typeS.equals("humain")) {
-                sb.add("h");
-            } else if (typeS.equals("simulé")) {
-                sb.add("s");
-            } else if (typeS.equals("distant")) {
-                sb.add("r");
-            } else {
-                arg.setValue("");
-                return;
+            switch (typeS) {
+                case "humain":
+                    sb.add("h");
+                    break;
+                case "simulé":
+                    sb.add("s");
+                    break;
+                case "distant":
+                    sb.add("r");
+                    break;
             }
 
             String nameS = nameField.getText();
@@ -216,19 +230,9 @@ public class Wizard extends Application {
 
             if (typeS.equals("simulé")) {
                 String iterS = iterationsField.getText();
-                try {
-                    Integer.parseInt(iterS);
-                } catch (NumberFormatException e) {
-                    arg.setValue("");
-                    return;
-                }
                 sb.add(iterS);
             } else if (typeS.equals("distant")) {
                 String ipS = ipField.getText();
-                if (!ipS.matches("[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}") && !ipS.equals("localhost")) {
-                    arg.setValue("");
-                    return;
-                }
                 sb.add(ipS);
             }
             arg.setValue(sb.toString());
