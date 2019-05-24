@@ -256,6 +256,7 @@ public class Wizard extends Application {
 
             itemProp.setValue(new Config.Item(typeS, nameS, iterationsField.getText(), ipField.getText()));
         };
+        runnable.run();
 
         type.valueProperty().addListener(c -> runnable.run());
         nameField.textProperty().addListener(c -> runnable.run());
