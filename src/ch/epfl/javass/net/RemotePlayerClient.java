@@ -95,6 +95,19 @@ public final class RemotePlayerClient implements Player, AutoCloseable {
     }
 
     @Override
+    public CardSet announce(CardSet hand) {
+        String handString = StringSerializer.serializeLong(hand.packed());
+        writeMessage(JassCommand.ANNC, handString);
+        try {
+            String resp = this.reader.readLine();
+            long packedSet = StringSerializer.deserializeLong(resp);
+            return CardSet.ofPacked(packedSet);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+
+    @Override
     public void setPlayers(PlayerId ownId, Map<PlayerId, String> playerNames) {
         String idString = StringSerializer.serializeInt(ownId.ordinal());
         String[] names = new String[PlayerId.COUNT];
@@ -128,6 +141,17 @@ public final class RemotePlayerClient implements Player, AutoCloseable {
     @Override
     public void setWinningTeam(TeamId winningTeam) {
         writeMessage(JassCommand.WINR, StringSerializer.serializeInt(winningTeam.ordinal()));
+    }
+
+    @Override
+    public void setAnnounce(Map<PlayerId, CardSet> announces, TeamId winner) {
+        String idString = StringSerializer.serializeInt(winner.ordinal());
+        String[] announceStrings = new String[PlayerId.COUNT];
+        for (PlayerId p : PlayerId.ALL) {
+            announceStrings[p.ordinal()] = StringSerializer.serializeLong(announces.get(p).packed());
+        }
+        String nameString = StringSerializer.combine(',', announceStrings);
+        writeMessage(JassCommand.INAN, idString, nameString);
     }
 
     @Override

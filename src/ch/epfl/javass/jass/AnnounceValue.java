@@ -3,10 +3,6 @@ package ch.epfl.javass.jass;
 import java.util.*;
 
 public final class AnnounceValue implements Comparable<AnnounceValue> {
-    private final int pointsValue;
-    private final int size;
-    private final int highestOrdinal;
-
     private static List<CardSet> suites(int size) {
         List<CardSet> sets = new ArrayList<>();
         for (Card.Color color : Card.Color.ALL) {
@@ -64,6 +60,9 @@ public final class AnnounceValue implements Comparable<AnnounceValue> {
         ++i;
     }
 
+    private final int pointsValue;
+    private final int size;
+    private final int highestOrdinal;
 
     private AnnounceValue(CardSet set) {
         this.size = set.size();

@@ -15,5 +15,7 @@ public enum JassCommand {
     CARD,
     SCOR,
     WINR,
-    CHST
+    CHST,
+    ANNC,
+    INAN,
 }

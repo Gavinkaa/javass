@@ -98,6 +98,10 @@ public final class RemotePlayerServer {
             case CHST:
                 handleCHST(components, w);
                 break;
+            case ANNC:
+                handleANNC(components, w);
+            case INAN:
+                handleINAN(components);
         }
         return true;
     }
@@ -137,9 +141,7 @@ public final class RemotePlayerServer {
         );
         long pkHand = StringSerializer.deserializeLong(components[2]);
         Card played = this.local.cardToPlay(st, CardSet.ofPacked(pkHand));
-        w.write(StringSerializer.serializeInt(played.packed()));
-        w.write('\n');
-        w.flush();
+        writeFlush(w, StringSerializer.serializeInt(played.packed()));
     }
 
     private void handleSCOR(String[] components) {
@@ -157,7 +159,29 @@ public final class RemotePlayerServer {
         boolean canDelegate = components[2].equals("T");
         Card.Color trump = local.chooseTrump(CardSet.ofPacked(pkHand), canDelegate);
         int ordinal = trump == null ? 5 : trump.ordinal();
-        w.write(StringSerializer.serializeInt(ordinal));
+        writeFlush(w, StringSerializer.serializeInt(ordinal));
+    }
+
+    private void handleANNC(String[] components, Writer w) throws IOException {
+        long pkHand = StringSerializer.deserializeLong(components[0]);
+        CardSet announce = local.announce(CardSet.ofPacked(pkHand));
+        writeFlush(w, StringSerializer.serializeLong(announce.packed()));
+    }
+
+    private void handleINAN(String[] components) {
+        TeamId winningID = PlayerId.ALL.get(StringSerializer.deserializeInt(components[1]));
+        Map<PlayerId, CardSet> announces = new EnumMap<>(PlayerId.class);
+        String[] announceStrings = StringSerializer.split(',', components[2]);
+        for (int i = 0; i < PlayerId.COUNT; ++i) {
+            PlayerId p = PlayerId.ALL.get(i);
+            long packed = StringSerializer.deserializeLong(announceStrings[i]);
+            players.put(p, );
+        }
+        this.local.setAnnounce(announces, winningID);
+    }
+
+    private static void writeFlush(Writer w, String s) throws IOException {
+        w.write(s);
         w.write('\n');
         w.flush();
     }
