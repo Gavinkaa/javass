@@ -169,8 +169,8 @@ public final class CardSet {
         return CardSet.ofPacked(PackedCardSet.subsetOfColor(this.packed, color));
     }
 
-    public int announcePoints() {
-        return 0;
+    public AnnounceValue announceValue() {
+        return AnnounceValue.fromSet(this);
     }
 
     @Override

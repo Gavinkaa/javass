@@ -109,20 +109,16 @@ public final class JassGame {
     }
 
     private void handleAnnounces(Map<PlayerId, CardSet> announces, Collection<PlayerId> announceOrder) {
-        int bestPoints = -1;
+        AnnounceValue bestAnnounce = AnnounceValue.fromSet(CardSet.EMPTY);
         PlayerId bestPlayer = PlayerId.PLAYER_1;
-        boolean shouldInform = false;
         for (PlayerId playerId : announceOrder) {
-            int points = announces.get(playerId).announcePoints();
-            if (!shouldInform && points > 0) {
-                shouldInform = true;
-            }
-            if (points > bestPoints) {
-                bestPoints = points;
+            AnnounceValue announce = announces.get(playerId).announceValue();
+            if (announce.compareTo(bestAnnounce) > 0) {
+                bestAnnounce = announce;
                 bestPlayer = playerId;
             }
         }
-        if (!shouldInform) {
+        if (bestAnnounce.points() == 0) {
             return;
         }
         TeamId winning = bestPlayer.team();
