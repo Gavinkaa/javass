@@ -153,11 +153,19 @@ public class Wizard extends Application {
         okButton.textProperty().set("Lancer la partie");
         okButton.setStyle("-fx-font-size: 20px; -fx-focus-color: transparent; -fx-faint-focus-color: transparent;");
         okButton.setOnAction(e -> {
+            int humanCount = 0;
             for (int i = 0; i < args.size(); ++i) {
-                String error = PlayerBuilder.validatePlayer(args.get(i).getValue());
+                String argValue = args.get(i).getValue();
+                String error = PlayerBuilder.validatePlayer(argValue);
                 if (error != null) {
                     errorText.setText("Joueur " + (i + 1) + " : " + error);
                     return;
+                }
+                if (argValue.startsWith("h")) {
+                    if (++humanCount >= 2) {
+                        errorText.setText("Il ne peut y avoir qu'un joueur humain");
+                        return;
+                    }
                 }
             }
             List<Config.Item> itemValues = new ArrayList<>(items.size());
