@@ -169,6 +169,10 @@ public final class CardSet {
         return CardSet.ofPacked(PackedCardSet.subsetOfColor(this.packed, color));
     }
 
+    public int announcePoints() {
+        return 0;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

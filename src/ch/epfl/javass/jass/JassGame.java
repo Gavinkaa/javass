@@ -21,6 +21,9 @@ public final class JassGame {
     private final Map<PlayerId, CardSet> playerHands = new EnumMap<>(PlayerId.class);
     private PlayerId lastTurnStarter;
     private boolean gameOver;
+    // Whether or not this is the first trick of a given turn
+    // we need to keep track of this to handle announces.
+    private boolean firstTrick = false;
 
 
     public JassGame(long rngSeed, Map<PlayerId, Player> players, Map<PlayerId, String> playerNames) {
@@ -87,9 +90,10 @@ public final class JassGame {
         } else {
             this.lastTurnStarter = PlayerId.ALL.get((this.lastTurnStarter.ordinal() + 1) % PlayerId.COUNT);
         }
-        Score score = this.turnState == null ? Score.INITIAL : turnState.score().nextTurn();
-        this.turnState = TurnState.initial(nextTrump(lastTurnStarter), score, lastTurnStarter);
+        Score score = this.turnState == null ? Score.INITIAL : this.turnState.score().nextTurn();
+        this.turnState = TurnState.initial(nextTrump(this.lastTurnStarter), score, this.lastTurnStarter);
         informOfScore();
+        this.firstTrick = true;
     }
 
     private void informOfTrick() {
@@ -101,6 +105,29 @@ public final class JassGame {
     private void informOfScore() {
         for (Player player : this.players.values()) {
             player.updateScore(this.turnState.score());
+        }
+    }
+
+    private void handleAnnounces(Map<PlayerId, CardSet> announces, Collection<PlayerId> announceOrder) {
+        int bestPoints = -1;
+        PlayerId bestPlayer = PlayerId.PLAYER_1;
+        boolean shouldInform = false;
+        for (PlayerId playerId : announceOrder) {
+            int points = announces.get(playerId).announcePoints();
+            if (!shouldInform && points > 0) {
+                shouldInform = true;
+            }
+            if (points > bestPoints) {
+                bestPoints = points;
+                bestPlayer = playerId;
+            }
+        }
+        if (!shouldInform) {
+            return;
+        }
+        TeamId winning = bestPlayer.team();
+        for (Player player : this.players.values()) {
+            player.setAnnounce(announces, winning);
         }
     }
 
@@ -155,14 +182,24 @@ public final class JassGame {
             informOfTrick();
         }
 
+        List<PlayerId> announceOrder = new ArrayList<>(PlayerId.COUNT);
+        Map<PlayerId, CardSet> announces = new EnumMap<>(PlayerId.class);
         while (!this.turnState.trick().isFull()) {
             PlayerId nextId = this.turnState.nextPlayer();
             Player next = this.players.get(nextId);
             CardSet hand = this.playerHands.get(nextId);
+            if (this.firstTrick) {
+                announceOrder.add(nextId);
+                announces.put(nextId, next.announce(hand));
+            }
             Card choice = next.cardToPlay(this.turnState, hand);
             this.turnState = this.turnState.withNewCardPlayed(choice);
             setHand(nextId, hand.remove(choice));
             informOfTrick();
+        }
+        if (this.firstTrick) {
+            handleAnnounces(announces, announceOrder);
+            this.firstTrick = false;
         }
     }
 }

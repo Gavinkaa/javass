@@ -36,6 +36,19 @@ public interface Player {
     Card.Color chooseTrump(CardSet hand, boolean canDelegate);
 
     /**
+     * This method should be called at the start of a turn, to let a player make announces.
+     *
+     * An announce allows a player to attempt to gain points for their team by showing
+     * a specific set of cards to the other players.
+     *
+     * @param hand the player's hand
+     * @return a set containing the cards the player wants to announce.
+     */
+    default CardSet announce(CardSet hand) {
+        return CardSet.EMPTY;
+    }
+
+    /**
      * This method should be called once at the beginning of a game,
      * to inform the player of which role he has, and what names the
      * other players have
@@ -85,5 +98,14 @@ public interface Player {
      * @param winningTeam the team that has won the game
      */
     default void setWinningTeam(TeamId winningTeam) {
+    }
+
+    /**
+     * This is used to inform the player of a final round of announces.
+     *
+     * @param announces the announces different players have made
+     * @param winner the team that won this round of announces
+     */
+    default void setAnnounce(Map<PlayerId, CardSet> announces, TeamId winner) {
     }
 }
