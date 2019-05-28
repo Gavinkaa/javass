@@ -24,6 +24,7 @@ public class GraphicalPlayerAdapter implements Player {
     private final ScoreBean score = new ScoreBean();
     private final TrickBean trick = new TrickBean();
     private final HandBean hand = new HandBean();
+    private final AnnounceBean announce = new AnnounceBean();
     private final SimpleBooleanProperty mustChooseTrump = new SimpleBooleanProperty(false);
     private final SimpleBooleanProperty canDelegate = new SimpleBooleanProperty(false);
     private CardSet handSet;
@@ -90,6 +91,7 @@ public class GraphicalPlayerAdapter implements Player {
                     this.hand.setPlayableCards(CardSet.EMPTY);
                 }
             }
+            this.announce.setAnnouncesVisible(false);
         });
     }
 
@@ -107,5 +109,14 @@ public class GraphicalPlayerAdapter implements Player {
     @Override
     public void setWinningTeam(TeamId winningTeam) {
         Platform.runLater(() -> this.score.setWinningTeam(winningTeam));
+    }
+
+    @Override
+    public void setAnnounce(Map<PlayerId, CardSet> announces, TeamId winner) {
+        Platform.runLater(() -> {
+            this.announce.setAnnounces(announces);
+            this.announce.setWinningTeam(winner);
+            this.announce.setAnnouncesVisible(true);
+        });
     }
 }
