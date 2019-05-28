@@ -84,7 +84,7 @@ public class GraphicalPlayer {
         BorderPane mainView = new BorderPane();
         mainView.setTop(createScorePane(names, score));
         StackPane center = new StackPane();
-        Pane trickPane = createTrickPane(player, names, trick);
+        Pane trickPane = createTrickPane(player, names, trick, canAnnounce);
         trickPane.visibleProperty().bind(Bindings.not(mustChooseTrump));
         Pane trumpPane = createTrumpPane(canDelegate);
         trumpPane.visibleProperty().bind(mustChooseTrump);
@@ -174,7 +174,7 @@ public class GraphicalPlayer {
     private static ObservableMap<Card, Image> bigCardImages = makeCardImages(true);
     private static ObservableMap<Card, Image> smallCardImages = makeCardImages(false);
 
-    private static Pane createTrickPane(PlayerId me, Map<PlayerId, String> names, TrickBean trick) {
+    private static Pane createTrickPane(PlayerId me, Map<PlayerId, String> names, TrickBean trick, ObservableBooleanValue canAnnounce) {
         List<PlayerId> players = new ArrayList<>(PlayerId.ALL);
         Collections.rotate(players, -me.ordinal());
         GridPane trickPane = new GridPane();
@@ -205,7 +205,14 @@ public class GraphicalPlayer {
             Text txt = new Text(names.get(player));
             txt.setStyle("-fx-font: 14 Optima;");
             if (i == 0) {
-                pane.getChildren().addAll(imageLayers, txt);
+
+                Button annoucement = new Button("Faire une annonce");
+                annoucement.visibleProperty().bind(canAnnounce);
+                annoucement.setOnAction((actionEvent)->{
+                    System.out.println("dab");
+                });
+
+                pane.getChildren().addAll(annoucement, imageLayers, txt);
             } else {
                 pane.getChildren().addAll(txt, imageLayers);
             }
@@ -228,6 +235,38 @@ public class GraphicalPlayer {
         trickPane.setStyle("-fx-background-color: whitesmoke; -fx-padding: 5px; -fx-border-width: 3px 0px; -fx-border-style: solid; -fx-border-color: gray; -fx-alignment: center;");
         return trickPane;
     }
+
+    private Pane createChoiceAnnouncePane(HandBean hand){
+        HBox pane = new HBox();
+        pane.setStyle("-fx-background-color: lightgray; -fx-spacing: 5px; -fx-padding: 5px");
+        pane.setAlignment(Pos.CENTER);
+        for (int i = 0; i < 9; ++i) {
+            ImageView view = new ImageView();
+            ObjectBinding<Card> thisCard = Bindings.valueAt(hand.hand(), i);
+            view.imageProperty().bind(Bindings.valueAt(smallCardImages, thisCard));
+            view.setFitWidth(SMALL_IMAGE_SIZE_W / 2);
+            view.setFitHeight(SMALL_IMAGE_SIZE_H / 2);
+            final int thisI = i;
+            view.setOnMouseClicked(e -> {
+
+                Card card = hand.hand().get(thisI);
+                try {
+                    if (canAnnounce.get()) {
+                        this.announceQ.put(CardSet.EMPTY);
+                    }
+                    this.cardQ.put(card);
+                } catch (InterruptedException ex) {
+                    throw new RuntimeException(ex);
+                }
+            });
+            BooleanBinding isPlayable = Bindings.createBooleanBinding(() -> hand.playableCards().contains(thisCard.get()), hand.playableCards(), hand.hand());
+            view.opacityProperty().bind(Bindings.when(isPlayable).then(PLAYABLE_OPACITY).otherwise(UNPLAYABLE_OPACITY));
+            view.disableProperty().bind(Bindings.not(isPlayable));
+            pane.getChildren().add(view);
+        }
+        return pane;
+    }
+
 
     private Pane createTrumpPane(ObservableBooleanValue canDelegate) {
         HBox trumps = new HBox();
