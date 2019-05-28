@@ -116,7 +116,7 @@ public final class PlayerBuilder implements AutoCloseable {
         }
         String name = parts.length >= 2 ? parts[1] : "";
         Player player = new MctsPlayer(this.currentID, seed, iterations);
-        insertNext(name, new PacedPlayer(player, 2));
+        insertNext(name, new PacedPlayer(player, 0));
         return null;
     }
 

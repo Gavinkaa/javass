@@ -7,9 +7,7 @@ import ch.epfl.javass.jass.TeamId;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.binding.ObjectBinding;
-import javafx.beans.property.ReadOnlyIntegerProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.property.*;
 import javafx.beans.value.ObservableBooleanValue;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -19,9 +17,11 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.effect.GaussianBlur;
+import javafx.scene.effect.Shadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
@@ -58,7 +58,7 @@ public class GraphicalPlayer {
     private final BlockingQueue<Integer> trumpQ;
     private final BlockingQueue<CardSet> announceQ;
     private final String ownName;
-
+    private CardSet announceSet;
     /**
      * Create a new GUI given all the information it needs.
      * <p>
@@ -76,7 +76,8 @@ public class GraphicalPlayer {
      * @param trick       the trick bean to keep track of the current trick state
      * @param hand        the hand bean to keep track of the current state of the hand
      */
-    public GraphicalPlayer(PlayerId player, Map<PlayerId, String> names, BlockingQueue<Card> cardQ, BlockingQueue<Integer> trumpQ, BlockingQueue<CardSet> announceQ, ObservableBooleanValue mustChooseTrump, ObservableBooleanValue canDelegate, ObservableBooleanValue canAnnounce, ScoreBean score, TrickBean trick, HandBean hand, AnnounceBean announce) {
+    public GraphicalPlayer(PlayerId player, Map<PlayerId, String> names, BlockingQueue<Card> cardQ, BlockingQueue<Integer> trumpQ, BlockingQueue<CardSet> announceQ, ObservableBooleanValue mustChooseTrump, ObservableBooleanValue canDelegate, ObservableBooleanValue canAnnounce, ScoreBean score, TrickBean trick, HandBean hand, AnnounceBean announceBean) {
+        this.announceSet = CardSet.EMPTY;
         this.cardQ = cardQ;
         this.trumpQ = trumpQ;
         this.announceQ = announceQ;
@@ -84,7 +85,8 @@ public class GraphicalPlayer {
         BorderPane mainView = new BorderPane();
         mainView.setTop(createScorePane(names, score));
         StackPane center = new StackPane();
-        Pane trickPane = createTrickPane(player, names, trick, canAnnounce);
+        BooleanProperty announceChoicePaneProprety = new SimpleBooleanProperty(false);
+        Pane trickPane = createTrickPane(player, names, trick, canAnnounce, announceChoicePaneProprety);
         trickPane.visibleProperty().bind(Bindings.not(mustChooseTrump));
         Pane trumpPane = createTrumpPane(canDelegate);
         trumpPane.visibleProperty().bind(mustChooseTrump);
@@ -94,8 +96,13 @@ public class GraphicalPlayer {
         mainView.setBottom(createHandPane(hand, canAnnounce));
         Pane victory = createVictoryPane(names, score);
         victory.visibleProperty().bind(Bindings.isNotNull(score.winningTeamProperty()));
+        Pane announceChoicePane = createChoiceAnnouncePane(hand, announceChoicePaneProprety);
+        announceChoicePane.visibleProperty().bind(announceChoicePaneProprety);
+        Pane announceResult = createAnnounceResult(announceBean, names);
+        //announceResult.visibleProperty().bind(announceBean.announcesVisible());
+        announceResult.visibleProperty().setValue(true);
         StackPane view = new StackPane();
-        view.getChildren().addAll(mainView, victory);
+        view.getChildren().addAll(mainView, victory, announceChoicePane, announceResult);
         this.mainScene = new Scene(view);
     }
 
@@ -174,7 +181,7 @@ public class GraphicalPlayer {
     private static ObservableMap<Card, Image> bigCardImages = makeCardImages(true);
     private static ObservableMap<Card, Image> smallCardImages = makeCardImages(false);
 
-    private static Pane createTrickPane(PlayerId me, Map<PlayerId, String> names, TrickBean trick, ObservableBooleanValue canAnnounce) {
+    private static Pane createTrickPane(PlayerId me, Map<PlayerId, String> names, TrickBean trick, ObservableBooleanValue canAnnounce, BooleanProperty announceChoicePaneProprety) {
         List<PlayerId> players = new ArrayList<>(PlayerId.ALL);
         Collections.rotate(players, -me.ordinal());
         GridPane trickPane = new GridPane();
@@ -183,6 +190,7 @@ public class GraphicalPlayer {
         int[] cols = {1, 2, 1, 0};
         int[] rows = {2, 0, 0, 0};
         int[] rowSpans = {1, 3, 1, 3};
+
 
         for (int i = 0; i < PlayerId.COUNT; ++i) {
             PlayerId player = players.get(i);
@@ -206,13 +214,11 @@ public class GraphicalPlayer {
             txt.setStyle("-fx-font: 14 Optima;");
             if (i == 0) {
 
-                Button annoucement = new Button("Faire une annonce");
-                annoucement.visibleProperty().bind(canAnnounce);
-                annoucement.setOnAction((actionEvent)->{
-                    System.out.println("dab");
-                });
+                Button announceButton = new Button("Faire une annonce");
+                announceButton.visibleProperty().bind(canAnnounce);
+                announceButton.setOnAction((actionEvent)-> announceChoicePaneProprety.setValue(true));
 
-                pane.getChildren().addAll(annoucement, imageLayers, txt);
+                pane.getChildren().addAll(announceButton, imageLayers, txt);
             } else {
                 pane.getChildren().addAll(txt, imageLayers);
             }
@@ -236,34 +242,52 @@ public class GraphicalPlayer {
         return trickPane;
     }
 
-    private Pane createChoiceAnnouncePane(HandBean hand){
-        HBox pane = new HBox();
-        pane.setStyle("-fx-background-color: lightgray; -fx-spacing: 5px; -fx-padding: 5px");
-        pane.setAlignment(Pos.CENTER);
+    private Pane createChoiceAnnouncePane(HandBean hand, BooleanProperty announceChoicePaneProprety ){
+        HBox cards = new HBox();
+        cards.setStyle("-fx-background-color: lightgray");
+        cards.setAlignment(Pos.CENTER);
         for (int i = 0; i < 9; ++i) {
             ImageView view = new ImageView();
             ObjectBinding<Card> thisCard = Bindings.valueAt(hand.hand(), i);
             view.imageProperty().bind(Bindings.valueAt(smallCardImages, thisCard));
             view.setFitWidth(SMALL_IMAGE_SIZE_W / 2);
             view.setFitHeight(SMALL_IMAGE_SIZE_H / 2);
+            view.setOpacity(UNPLAYABLE_OPACITY);
+
             final int thisI = i;
             view.setOnMouseClicked(e -> {
-
                 Card card = hand.hand().get(thisI);
-                try {
-                    if (canAnnounce.get()) {
-                        this.announceQ.put(CardSet.EMPTY);
-                    }
-                    this.cardQ.put(card);
-                } catch (InterruptedException ex) {
-                    throw new RuntimeException(ex);
+                if(announceSet.contains(card)){
+                    announceSet = announceSet.remove(card);
+                    view.opacityProperty().setValue(UNPLAYABLE_OPACITY);
+                }else{
+                    announceSet = announceSet.add(card);
+                    view.opacityProperty().setValue(PLAYABLE_OPACITY);
                 }
             });
-            BooleanBinding isPlayable = Bindings.createBooleanBinding(() -> hand.playableCards().contains(thisCard.get()), hand.playableCards(), hand.hand());
-            view.opacityProperty().bind(Bindings.when(isPlayable).then(PLAYABLE_OPACITY).otherwise(UNPLAYABLE_OPACITY));
-            view.disableProperty().bind(Bindings.not(isPlayable));
-            pane.getChildren().add(view);
+            view.setOnMouseEntered((e)->{
+                view.setFitWidth(SMALL_IMAGE_SIZE_W/1.5);
+                view.setFitHeight(SMALL_IMAGE_SIZE_H/1.5);
+            });
+            view.setOnMouseExited((e)->{
+                view.setFitWidth(SMALL_IMAGE_SIZE_W/2);
+                view.setFitHeight(SMALL_IMAGE_SIZE_H/2);
+            });
+
+            HBox card = new HBox(view);
+            card.setMinHeight(SMALL_IMAGE_SIZE_H/1.5);
+            card.setMinWidth(SMALL_IMAGE_SIZE_W/1.5);
+            card.setAlignment(Pos.CENTER);
+            cards.getChildren().add(card);
         }
+
+        Button done = new Button("Valider le choix");
+        done.setOnAction((o)-> announceChoicePaneProprety.setValue(false));
+
+        VBox pane = new VBox(cards, done);
+        pane.setAlignment(Pos.CENTER);
+        pane.setStyle("-fx-background-color: lightgray; -fx-spacing: 10px; -fx-padding: 5px");
+
         return pane;
     }
 
@@ -319,10 +343,10 @@ public class GraphicalPlayer {
 
                 Card card = hand.hand().get(thisI);
                 try {
-                    if (canAnnounce.get()) {
-                        this.announceQ.put(CardSet.EMPTY);
-                    }
                     this.cardQ.put(card);
+                    if (canAnnounce.get()) {
+                        this.announceQ.put(announceSet);
+                    }
                 } catch (InterruptedException ex) {
                     throw new RuntimeException(ex);
                 }
@@ -353,6 +377,44 @@ public class GraphicalPlayer {
                 Bindings.min(score1, score2)
         ));
         pane.setCenter(txt);
+        return pane;
+    }
+
+    private Pane createAnnounceResult(AnnounceBean announceBean, Map<PlayerId, String> names){
+        VBox pane = new VBox();
+        pane.setAlignment(Pos.CENTER);
+        pane.setSpacing(10);
+
+        for (PlayerId playerId: PlayerId.ALL) {
+            announceBean.announces(playerId);
+
+            HBox announce = new HBox();
+            announce.setSpacing(10);
+            /*announceBean.announcesVisible().addListener(v->{*/
+                /*
+                for(Card card : announceBean.announces(playerId)){
+                    ImageView view = new ImageView(smallCardImages.get(card));
+                    view.setFitWidth(SMALL_IMAGE_SIZE_W / 10);
+                    view.setFitHeight(SMALL_IMAGE_SIZE_H / 10);
+                    cards.add(view);
+                }*/
+                ImageView view = new ImageView(smallCardImages.get(Card.of(Card.Color.HEART, Card.Rank.ACE)));
+                view.setFitWidth(SMALL_IMAGE_SIZE_W / 5);
+                view.setFitHeight(SMALL_IMAGE_SIZE_H / 5);
+                view.setEffect(new Shadow(1, new Color(1,0,0,0.1)));
+
+                announce.getChildren().add(view);
+            /*});*/
+
+            VBox playerInfo = new VBox();
+            Text txt = new Text(names.get(playerId));
+            txt.setStyle("-fx-font: 10 Optima;");
+
+            playerInfo.getChildren().addAll(txt, announce);
+            playerInfo.setSpacing(5);
+
+            pane.getChildren().add(playerInfo);
+        }
         return pane;
     }
 }
