@@ -27,11 +27,13 @@ public class GraphicalPlayerAdapter implements Player {
     private final AnnounceBean announce = new AnnounceBean();
     private final SimpleBooleanProperty mustChooseTrump = new SimpleBooleanProperty(false);
     private final SimpleBooleanProperty canDelegate = new SimpleBooleanProperty(false);
+    private final SimpleBooleanProperty canAnnounce = new SimpleBooleanProperty(false);
     private CardSet handSet;
     private PlayerId ownId;
     private GraphicalPlayer graphicalPlayer;
     private final BlockingQueue<Card> cardQueue = new ArrayBlockingQueue<>(1);
     private final BlockingQueue<Integer> trumpQueue = new ArrayBlockingQueue<>(1);
+    private final BlockingQueue<CardSet> announceQueue = new ArrayBlockingQueue<>(1);
     private final Stage stage;
 
     public GraphicalPlayerAdapter(Stage stage) {
@@ -62,9 +64,21 @@ public class GraphicalPlayerAdapter implements Player {
     }
 
     @Override
+    public CardSet announce(CardSet hand) {
+        this.canAnnounce.setValue(true);
+        try {
+            CardSet choice = this.announceQueue.take();
+            this.canAnnounce.setValue(false);
+            return choice;
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
     public void setPlayers(PlayerId ownId, Map<PlayerId, String> playerNames) {
         this.ownId = ownId;
-        this.graphicalPlayer = new GraphicalPlayer(ownId, playerNames, this.cardQueue, this.trumpQueue, this.mustChooseTrump, this.canDelegate, this.score, this.trick, this.hand);
+        this.graphicalPlayer = new GraphicalPlayer(ownId, playerNames, this.cardQueue, this.trumpQueue, this.announceQueue, this.mustChooseTrump, this.canDelegate, this.canAnnounce, this.score, this.trick, this.hand, this.announce);
         Platform.runLater(() -> this.graphicalPlayer.addToStage(stage).show());
     }
 

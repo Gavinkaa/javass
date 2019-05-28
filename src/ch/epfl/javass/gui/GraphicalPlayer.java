@@ -1,6 +1,7 @@
 package ch.epfl.javass.gui;
 
 import ch.epfl.javass.jass.Card;
+import ch.epfl.javass.jass.CardSet;
 import ch.epfl.javass.jass.PlayerId;
 import ch.epfl.javass.jass.TeamId;
 import javafx.beans.binding.Bindings;
@@ -55,6 +56,7 @@ public class GraphicalPlayer {
     private final Scene mainScene;
     private final BlockingQueue<Card> cardQ;
     private final BlockingQueue<Integer> trumpQ;
+    private final BlockingQueue<CardSet> announceQ;
     private final String ownName;
 
     /**
@@ -74,9 +76,10 @@ public class GraphicalPlayer {
      * @param trick       the trick bean to keep track of the current trick state
      * @param hand        the hand bean to keep track of the current state of the hand
      */
-    public GraphicalPlayer(PlayerId player, Map<PlayerId, String> names, BlockingQueue<Card> cardQ, BlockingQueue<Integer> trumpQ, ObservableBooleanValue mustChooseTrump, ObservableBooleanValue canDelegate, ScoreBean score, TrickBean trick, HandBean hand) {
+    public GraphicalPlayer(PlayerId player, Map<PlayerId, String> names, BlockingQueue<Card> cardQ, BlockingQueue<Integer> trumpQ, BlockingQueue<CardSet> announceQ, ObservableBooleanValue mustChooseTrump, ObservableBooleanValue canDelegate, ObservableBooleanValue canAnnounce, ScoreBean score, TrickBean trick, HandBean hand, AnnounceBean announce) {
         this.cardQ = cardQ;
         this.trumpQ = trumpQ;
+        this.announceQ = announceQ;
         this.ownName = names.get(player);
         BorderPane mainView = new BorderPane();
         mainView.setTop(createScorePane(names, score));
@@ -88,7 +91,7 @@ public class GraphicalPlayer {
         trumpPane.disableProperty().bind(Bindings.not(mustChooseTrump));
         center.getChildren().addAll(trickPane, trumpPane);
         mainView.setCenter(center);
-        mainView.setBottom(createHandPane(hand));
+        mainView.setBottom(createHandPane(hand, canAnnounce));
         Pane victory = createVictoryPane(names, score);
         victory.visibleProperty().bind(Bindings.isNotNull(score.winningTeamProperty()));
         StackPane view = new StackPane();
@@ -262,7 +265,7 @@ public class GraphicalPlayer {
         return box;
     }
 
-    private Pane createHandPane(HandBean hand) {
+    private Pane createHandPane(HandBean hand, ObservableBooleanValue canAnnounce) {
         HBox pane = new HBox();
         pane.setStyle("-fx-background-color: lightgray; -fx-spacing: 5px; -fx-padding: 5px");
         pane.setAlignment(Pos.CENTER);
@@ -274,8 +277,12 @@ public class GraphicalPlayer {
             view.setFitHeight(SMALL_IMAGE_SIZE_H / 2);
             final int thisI = i;
             view.setOnMouseClicked(e -> {
+
                 Card card = hand.hand().get(thisI);
                 try {
+                    if (canAnnounce.get()) {
+                        this.announceQ.put(CardSet.EMPTY);
+                    }
                     this.cardQ.put(card);
                 } catch (InterruptedException ex) {
                     throw new RuntimeException(ex);
