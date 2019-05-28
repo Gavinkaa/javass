@@ -100,8 +100,10 @@ public final class RemotePlayerServer {
                 break;
             case ANNC:
                 handleANNC(components, w);
+                break;
             case INAN:
                 handleINAN(components);
+                break;
         }
         return true;
     }
@@ -163,19 +165,19 @@ public final class RemotePlayerServer {
     }
 
     private void handleANNC(String[] components, Writer w) throws IOException {
-        long pkHand = StringSerializer.deserializeLong(components[0]);
+        long pkHand = StringSerializer.deserializeLong(components[1]);
         CardSet announce = local.announce(CardSet.ofPacked(pkHand));
         writeFlush(w, StringSerializer.serializeLong(announce.packed()));
     }
 
     private void handleINAN(String[] components) {
-        TeamId winningID = PlayerId.ALL.get(StringSerializer.deserializeInt(components[1]));
+        TeamId winningID = TeamId.ALL.get(StringSerializer.deserializeInt(components[1]));
         Map<PlayerId, CardSet> announces = new EnumMap<>(PlayerId.class);
         String[] announceStrings = StringSerializer.split(',', components[2]);
         for (int i = 0; i < PlayerId.COUNT; ++i) {
             PlayerId p = PlayerId.ALL.get(i);
             long packed = StringSerializer.deserializeLong(announceStrings[i]);
-            players.put(p, );
+            announces.put(p, CardSet.ofPacked(packed));
         }
         this.local.setAnnounce(announces, winningID);
     }
