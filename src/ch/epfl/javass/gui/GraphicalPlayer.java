@@ -57,6 +57,7 @@ public class GraphicalPlayer {
     private final BlockingQueue<CardSet> announceQ;
     private final String ownName;
     private CardSet announceSet;
+
     /**
      * Create a new GUI given all the information it needs.
      * <p>
@@ -214,7 +215,7 @@ public class GraphicalPlayer {
 
                 Button announceButton = new Button("Faire une annonce");
                 announceButton.visibleProperty().bind(canAnnounce);
-                announceButton.setOnAction((actionEvent)-> announceChoicePaneProprety.setValue(true));
+                announceButton.setOnAction((actionEvent) -> announceChoicePaneProprety.setValue(true));
 
                 pane.getChildren().addAll(announceButton, imageLayers, txt);
             } else {
@@ -240,7 +241,7 @@ public class GraphicalPlayer {
         return trickPane;
     }
 
-    private Pane createChoiceAnnouncePane(HandBean hand, BooleanProperty announceChoicePaneProprety ){
+    private Pane createChoiceAnnouncePane(HandBean hand, BooleanProperty announceChoicePaneProprety) {
         HBox cards = new HBox();
         cards.setStyle("-fx-background-color: lightgray");
         cards.setAlignment(Pos.CENTER);
@@ -255,32 +256,32 @@ public class GraphicalPlayer {
             final int thisI = i;
             view.setOnMouseClicked(e -> {
                 Card card = hand.hand().get(thisI);
-                if(announceSet.contains(card)){
+                if (announceSet.contains(card)) {
                     announceSet = announceSet.remove(card);
                     view.opacityProperty().setValue(UNPLAYABLE_OPACITY);
-                }else{
+                } else {
                     announceSet = announceSet.add(card);
                     view.opacityProperty().setValue(PLAYABLE_OPACITY);
                 }
             });
-            view.setOnMouseEntered((e)->{
-                view.setFitWidth(SMALL_IMAGE_SIZE_W/1.5);
-                view.setFitHeight(SMALL_IMAGE_SIZE_H/1.5);
+            view.setOnMouseEntered((e) -> {
+                view.setFitWidth(SMALL_IMAGE_SIZE_W / 1.5);
+                view.setFitHeight(SMALL_IMAGE_SIZE_H / 1.5);
             });
-            view.setOnMouseExited((e)->{
-                view.setFitWidth(SMALL_IMAGE_SIZE_W/2);
-                view.setFitHeight(SMALL_IMAGE_SIZE_H/2);
+            view.setOnMouseExited((e) -> {
+                view.setFitWidth(SMALL_IMAGE_SIZE_W / 2);
+                view.setFitHeight(SMALL_IMAGE_SIZE_H / 2);
             });
 
             HBox card = new HBox(view);
-            card.setMinHeight(SMALL_IMAGE_SIZE_H/1.5);
-            card.setMinWidth(SMALL_IMAGE_SIZE_W/1.5);
+            card.setMinHeight(SMALL_IMAGE_SIZE_H / 1.5);
+            card.setMinWidth(SMALL_IMAGE_SIZE_W / 1.5);
             card.setAlignment(Pos.CENTER);
             cards.getChildren().add(card);
         }
 
         Button done = new Button("Valider le choix");
-        done.setOnAction((o)-> announceChoicePaneProprety.setValue(false));
+        done.setOnAction((o) -> announceChoicePaneProprety.setValue(false));
 
         VBox pane = new VBox(cards, done);
         pane.setAlignment(Pos.CENTER);
@@ -378,19 +379,19 @@ public class GraphicalPlayer {
         return pane;
     }
 
-    private Pane createAnnounceResult(AnnounceBean announceBean, Map<PlayerId, String> names){
+    private Pane createAnnounceResult(AnnounceBean announceBean, Map<PlayerId, String> names) {
         VBox pane = new VBox();
         pane.setAlignment(Pos.CENTER);
         pane.setSpacing(10);
 
-        for (PlayerId playerId: PlayerId.ALL) {
+        for (PlayerId playerId : PlayerId.ALL) {
             announceBean.announces(playerId);
 
             HBox announce = new HBox();
             announce.setSpacing(10);
-            announceBean.announcesVisible().addListener(v->{
+            announceBean.announcesVisible().addListener(v -> {
 
-                for(Card card : announceBean.announces(playerId)){
+                for (Card card : announceBean.announces(playerId)) {
                     ImageView view = new ImageView(smallCardImages.get(card));
                     view.setFitWidth(SMALL_IMAGE_SIZE_W / 10);
                     view.setFitHeight(SMALL_IMAGE_SIZE_H / 10);
