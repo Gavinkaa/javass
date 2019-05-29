@@ -4,6 +4,7 @@ import ch.epfl.javass.jass.Card;
 import ch.epfl.javass.jass.CardSet;
 import ch.epfl.javass.jass.PlayerId;
 import ch.epfl.javass.jass.TeamId;
+import javafx.animation.FadeTransition;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.binding.ObjectBinding;
@@ -25,6 +26,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.util.*;
 import java.util.concurrent.BlockingQueue;
@@ -202,6 +204,16 @@ public class GraphicalPlayer {
             v.setFitWidth(BIG_IMAGE_SIZE_W / 2);
             ObjectBinding<Image> image = Bindings.valueAt(bigCardImages, Bindings.valueAt(trick.trick(), player));
             v.imageProperty().bind(image);
+            FadeTransition fadeTransition = new FadeTransition();
+            fadeTransition.setNode(v);
+            fadeTransition.setDuration(Duration.millis(500));
+            fadeTransition.setFromValue(0.0);
+            fadeTransition.setToValue(1.0);
+            image.addListener((obs, old, nw) -> {
+                if (old == null && nw != null) {
+                    fadeTransition.play();
+                }
+            });
             Rectangle r = new Rectangle();
             r.setHeight(BIG_IMAGE_SIZE_H / 2);
             r.setWidth(BIG_IMAGE_SIZE_W / 2);
