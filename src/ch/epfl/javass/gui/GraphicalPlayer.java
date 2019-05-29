@@ -20,6 +20,7 @@ import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
@@ -403,11 +404,19 @@ public class GraphicalPlayer {
 
             Text txt = new Text(names.get(playerId) + " (+0)");
             txt.setStyle("-fx-font: 12 Optima;");
+            txt.setFill(Color.RED);
 
             announceBean.points(playerId).addListener(o -> {
                 int points = announceBean.points(playerId).get();
                 String name = names.get(playerId);
                 txt.textProperty().setValue(name + " (+" + points + ")");
+                if (playerId.team() == announceBean.winningTeam().get()) {
+                    txt.setFill(Color.GREEN);
+                } else {
+                    txt.setFill(Color.RED);
+                }
+
+
             });
 
             playerInfo.getChildren().addAll(txt, announce);
