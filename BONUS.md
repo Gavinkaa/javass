@@ -3,6 +3,7 @@
     - Le choix de l'atout ainsi que le fait de chibrer
     - La possibilité de faire des annonces ainsi que les interfaces graphiques correspondantes
     - Enregistrement des paramètres
+    - Animations
 
 ##Interface graphique de lancement 
 L'interface graphique de lancement permet de choisir si l'on veut lancer une partie localement ou en rejoindre une.
@@ -44,3 +45,6 @@ permettant de choisir l'annonce et une autre permettant d'afficher les annonces 
 
 ##Enregistrement des paramètres
 Le programme enregistre les paramètres choisis à chaque lancement de partie, et les pré-remplis à la prochaine exectution du programme.
+
+##Animations
+Quelques animations ont étées ajoutées dans l'interface graphique.
