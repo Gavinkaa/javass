@@ -70,7 +70,18 @@ public final class PacedPlayer implements Player {
     }
 
     @Override
-    public void setWinningTeam(TeamId winningTeam) {
+    public void setWinningTeam(TeamId winningTeam)
+    {
         this.underlyingPlayer.setWinningTeam(winningTeam);
+    }
+
+    @Override
+    public CardSet announce(CardSet hand) {
+        return this.underlyingPlayer.announce(hand);
+    }
+
+    @Override
+    public void setAnnounce(Map<PlayerId, CardSet> announces, TeamId winner) {
+        this.underlyingPlayer.setAnnounce(announces, winner);
     }
 }
