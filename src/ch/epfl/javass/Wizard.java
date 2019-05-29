@@ -24,16 +24,11 @@ import java.io.IOException;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
-import java.net.Socket;
 import java.util.*;
 
 public class Wizard extends Application {
     private final int MENU_IMAGE_DEFAULT_H = 100;
     private final int MENU_IMAGE_DEFAULT_W = 309;
-    private final String PLAYER_1_NAME = "Aline";
-    private final String PLAYER_2_NAME = "Bastien";
-    private final String PLAYER_3_NAME = "Colette";
-    private final String PLAYER_4_NAME = "David";
 
     private RemoteMain remoteMain = null;
 
