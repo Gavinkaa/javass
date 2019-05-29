@@ -64,8 +64,18 @@ public final class AnnounceValue implements Comparable<AnnounceValue> {
     private final int size;
     private final int highestOrdinal;
 
-    private AnnounceValue(CardSet set) {
-        this.size = set.size();
+    private static class CardSetPair {
+        public final CardSet cardSet;
+        public final int points;
+
+        public CardSetPair(CardSet cardSet, int points) {
+            this.cardSet = cardSet;
+            this.points = points;
+        }
+    }
+
+    private static CardSetPair bestSet(CardSet set, boolean sameSize) {
+        int size = set.size();
         long packed = set.packed();
         List<Integer> applying = new ArrayList<>();
         for (int i = 0; i < announces.length; ++i) {
@@ -94,16 +104,23 @@ public final class AnnounceValue implements Comparable<AnnounceValue> {
                 pointCount += points[0];
                 s <<= 1;
             }
-            if (cont || cardCount != this.size) continue;
+            boolean badSize = sameSize && cardCount != size;
+            if (cont || badSize) continue;
             if (pointCount > bestPoints) {
                 bestPoints = pointCount;
                 bestSet = packedAcc;
             }
         }
-        this.pointsValue = bestPoints;
+        return new CardSetPair(CardSet.ofPacked(bestSet), bestPoints);
+    }
+
+    private AnnounceValue(CardSet set) {
+        this.size = set.size();
+        CardSetPair pair = bestSet(set, true);
+        this.pointsValue = pair.points;
         int maxOrdinal = 0;
-        for (int i = 0; i < PackedCardSet.size(bestSet); ++i) {
-            int ordinal = PackedCard.rank(PackedCardSet.get(bestSet, i)).ordinal();
+        for (int i = 0; i < pair.cardSet.size(); ++i) {
+            int ordinal = pair.cardSet.get(i).rank().ordinal();
             maxOrdinal = Math.max(maxOrdinal, ordinal);
         }
         this.highestOrdinal = maxOrdinal;
@@ -111,6 +128,10 @@ public final class AnnounceValue implements Comparable<AnnounceValue> {
 
     public static AnnounceValue fromSet(CardSet set) {
         return new AnnounceValue(set);
+    }
+
+    public static CardSet bestAnnounce(CardSet set) {
+        return bestSet(set, false).cardSet;
     }
 
     public int points() {

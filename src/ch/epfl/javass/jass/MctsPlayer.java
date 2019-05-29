@@ -186,4 +186,9 @@ public final class MctsPlayer implements Player {
             return Card.Color.ALL.get(rng.nextInt(Card.Color.COUNT));
         }
     }
+
+    @Override
+    public CardSet announce(CardSet hand) {
+        return AnnounceValue.bestAnnounce(hand);
+    }
 }
