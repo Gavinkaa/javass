@@ -104,8 +104,9 @@ public class GraphicalPlayerAdapter implements Player {
                 } else {
                     this.hand.setPlayableCards(CardSet.EMPTY);
                 }
+            } else {
+                this.hand.setPlayableCards(CardSet.EMPTY);
             }
-            this.announce.setAnnouncesVisible(false);
         });
     }
 
@@ -127,6 +128,7 @@ public class GraphicalPlayerAdapter implements Player {
 
     @Override
     public void setAnnounce(Map<PlayerId, CardSet> announces, TeamId winner) {
+        System.out.println("Set announce " + announces + " " + winner);
         Platform.runLater(() -> {
             this.announce.setAnnounces(announces);
             this.announce.setWinningTeam(winner);
