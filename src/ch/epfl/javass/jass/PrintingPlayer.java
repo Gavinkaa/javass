@@ -29,6 +29,12 @@ public final class PrintingPlayer implements Player {
         return trump;
     }
 
+    @Override
+    public CardSet announce(CardSet hand) {
+        CardSet announce = this.underlyingPlayer.announce(hand);
+        System.out.println("Mon annonce: " + announce);
+        return announce;
+    }
 
     @Override
     public void setPlayers(PlayerId ownId, Map<PlayerId, String> playerNames) {
@@ -67,5 +73,12 @@ public final class PrintingPlayer implements Player {
     public void setWinningTeam(TeamId winningTeam) {
         this.underlyingPlayer.setWinningTeam(winningTeam);
         System.out.println("L'équipe " + winningTeam + " a gagné");
+    }
+
+    @Override
+    public void setAnnounce(Map<PlayerId, CardSet> announces, TeamId winner) {
+        this.underlyingPlayer.setAnnounce(announces, winner);
+        System.out.println("Des annonces ont été faites " + announces);
+        System.out.println("L'équipe gagnate est " + winner);
     }
 }
