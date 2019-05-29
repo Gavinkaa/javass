@@ -122,6 +122,7 @@ public final class JassGame {
         for (Player player : this.players.values()) {
             player.setAnnounce(announces, winning);
         }
+        this.turnState = this.turnState.withAnnounce(bestAnnounce, winning);
     }
 
     /**

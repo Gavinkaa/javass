@@ -170,11 +170,14 @@ public final class TurnState {
         return withCard;
     }
 
+    public TurnState withAnnounce(AnnounceValue value, TeamId winningTeam) {
+        long newPkScore = PackedScore.withAnnounce(this.pkScore, value, winningTeam);
+        return TurnState.ofPackedComponents(newPkScore, this.pkUnplayedCard, this.pkTrick);
+    }
+
     private void checkTrickNotFull() {
         if (PackedTrick.isFull(this.pkTrick)) {
             throw new IllegalStateException("the trick was full");
         }
     }
-
-
 }

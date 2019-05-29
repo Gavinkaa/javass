@@ -2,6 +2,7 @@ package ch.epfl.javass.jass;
 
 import ch.epfl.javass.bits.Bits32;
 import ch.epfl.javass.bits.Bits64;
+import com.sun.xml.internal.bind.v2.runtime.reflect.Lister;
 
 
 /**
@@ -162,6 +163,25 @@ public final class PackedScore {
         int points1 = PackedScore.totalPoints(pkScore, TeamId.TEAM_1);
         int points2 = PackedScore.totalPoints(pkScore, TeamId.TEAM_2);
         return PackedScore.pack(0, 0, points1, 0, 0, points2);
+    }
+
+    public static long withAnnounce(long pkScore, AnnounceValue value, TeamId winningTeam) {
+        assert PackedScore.isValid(pkScore);
+        int team1extra = 0;
+        int team2extra = 0;
+        if (winningTeam == TeamId.TEAM_1) {
+            team1extra = value.points();
+        } else {
+            team2extra = value.points();
+        }
+        return PackedScore.pack(
+                PackedScore.turnTricks(pkScore, TeamId.TEAM_1),
+                PackedScore.turnPoints(pkScore, TeamId.TEAM_1),
+                PackedScore.totalPoints(pkScore, TeamId.TEAM_1) + team1extra,
+                PackedScore.turnTricks(pkScore, TeamId.TEAM_2),
+                PackedScore.turnPoints(pkScore, TeamId.TEAM_2),
+                PackedScore.totalPoints(pkScore, TeamId.TEAM_2) + team2extra
+        );
     }
 
     /**
