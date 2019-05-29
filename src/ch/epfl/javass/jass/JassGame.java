@@ -118,12 +118,8 @@ public final class JassGame {
                 bestPlayer = playerId;
             }
         }
-        if (bestAnnounce.points() == 0) {
-            return;
-        }
         TeamId winning = bestPlayer.team();
         for (Player player : this.players.values()) {
-            System.out.println("Setting announces...");
             player.setAnnounce(announces, winning);
         }
     }
@@ -158,7 +154,6 @@ public final class JassGame {
      * This will also automatically advance turns as well.
      */
     public void advanceToEndOfNextTrick() {
-        System.out.println("First Trick " + this.firstTrick);
         if (isGameOver()) {
             return;
         }
