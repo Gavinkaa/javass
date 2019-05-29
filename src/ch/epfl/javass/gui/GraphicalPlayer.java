@@ -17,11 +17,9 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.effect.GaussianBlur;
-import javafx.scene.effect.Shadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
@@ -99,8 +97,8 @@ public class GraphicalPlayer {
         Pane announceChoicePane = createChoiceAnnouncePane(hand, announceChoicePaneProprety);
         announceChoicePane.visibleProperty().bind(announceChoicePaneProprety);
         Pane announceResult = createAnnounceResult(announceBean, names);
-        //announceResult.visibleProperty().bind(announceBean.announcesVisible());
-        announceResult.visibleProperty().setValue(true);
+        announceResult.visibleProperty().bind(announceBean.announcesVisible());
+        //announceResult.visibleProperty().setValue(true);
         StackPane view = new StackPane();
         view.getChildren().addAll(mainView, victory, announceChoicePane, announceResult);
         this.mainScene = new Scene(view);
@@ -390,21 +388,15 @@ public class GraphicalPlayer {
 
             HBox announce = new HBox();
             announce.setSpacing(10);
-            /*announceBean.announcesVisible().addListener(v->{*/
-                /*
+            announceBean.announcesVisible().addListener(v->{
+
                 for(Card card : announceBean.announces(playerId)){
                     ImageView view = new ImageView(smallCardImages.get(card));
                     view.setFitWidth(SMALL_IMAGE_SIZE_W / 10);
                     view.setFitHeight(SMALL_IMAGE_SIZE_H / 10);
-                    cards.add(view);
-                }*/
-                ImageView view = new ImageView(smallCardImages.get(Card.of(Card.Color.HEART, Card.Rank.ACE)));
-                view.setFitWidth(SMALL_IMAGE_SIZE_W / 5);
-                view.setFitHeight(SMALL_IMAGE_SIZE_H / 5);
-                view.setEffect(new Shadow(1, new Color(1,0,0,0.1)));
-
-                announce.getChildren().add(view);
-            /*});*/
+                    announce.getChildren().add(view);
+                }
+            });
 
             VBox playerInfo = new VBox();
             Text txt = new Text(names.get(playerId));
