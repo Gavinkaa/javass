@@ -23,6 +23,7 @@ import java.util.Random;
  */
 public final class LocalMain extends Application {
     private static final int END_TURN_SLEEPING_TIME = 1000;
+    private static final int ANNOUNCE_TURN_SLEEPING_TIME = 5000;
     private static final int MIN_ARG_COUNT = PlayerId.COUNT;
     private static final int MAX_ARG_COUNT = MIN_ARG_COUNT + 1;
 
@@ -88,8 +89,11 @@ public final class LocalMain extends Application {
                 }
                 JassGame g = new JassGame(jassGameSeed, pb.getPlayers(), pb.getNames());
                 while (!g.isGameOver()) {
-                    g.advanceToEndOfNextTrick();
-                    Thread.sleep(END_TURN_SLEEPING_TIME);
+                    if (g.advanceToEndOfNextTrick()) {
+                        Thread.sleep(ANNOUNCE_TURN_SLEEPING_TIME);
+                    } else {
+                        Thread.sleep(END_TURN_SLEEPING_TIME);
+                    }
                 }
             } catch (Exception e) {
                 try {

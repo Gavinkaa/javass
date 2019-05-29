@@ -152,10 +152,13 @@ public final class JassGame {
      * This can be used after first initialising the game,
      * in which case it will play out the first trick of the first turn.
      * This will also automatically advance turns as well.
+     *
+     * This will return true if this was the first turn.
+     * This is useful information in order to sleep more to display the announces longer.
      */
-    public void advanceToEndOfNextTrick() {
+    public boolean advanceToEndOfNextTrick() {
         if (isGameOver()) {
-            return;
+            return this.firstTrick;
         }
         if (this.turnState == null) {
             initializeTurnState();
@@ -167,7 +170,7 @@ public final class JassGame {
             informOfScore();
             checkWinningTeam();
             if (isGameOver()) {
-                return;
+                return this.firstTrick;
             }
             if (this.turnState.isTerminal()) {
                 initializeTurnState();
@@ -190,9 +193,11 @@ public final class JassGame {
             setHand(nextId, hand.remove(choice));
             informOfTrick();
         }
+        boolean wasFirstTrick = this.firstTrick;
         if (this.firstTrick) {
             handleAnnounces(announces, announceOrder);
             this.firstTrick = false;
         }
+        return wasFirstTrick;
     }
 }
