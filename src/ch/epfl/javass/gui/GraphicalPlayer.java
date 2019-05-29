@@ -400,8 +400,15 @@ public class GraphicalPlayer {
             });
 
             VBox playerInfo = new VBox();
+
             Text txt = new Text(names.get(playerId));
             txt.setStyle("-fx-font: 10 Optima;");
+
+            announceBean.points(playerId).addListener(o->{
+                int points = announceBean.points(playerId).get();
+                String name = names.get(playerId);
+                txt.textProperty().setValue(points > 0 ? name + " (+" + points + ")" : name);
+            });
 
             playerInfo.getChildren().addAll(txt, announce);
             playerInfo.setSpacing(5);
