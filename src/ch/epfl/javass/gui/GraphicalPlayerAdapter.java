@@ -130,8 +130,8 @@ public class GraphicalPlayerAdapter implements Player {
     @Override
     public void setAnnounce(Map<PlayerId, CardSet> announces, TeamId winner) {
         Platform.runLater(() -> {
-            this.announce.setAnnounces(announces);
             this.announce.setWinningTeam(winner);
+            this.announce.setAnnounces(announces);
             this.announce.setAnnouncesVisible(true);
         });
     }
