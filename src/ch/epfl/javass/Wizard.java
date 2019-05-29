@@ -7,6 +7,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
@@ -144,11 +145,26 @@ public class Wizard extends Application {
         Text errorText = new Text();
         errorText.setFill(Color.RED);
 
+        CheckBox wantSeed = new CheckBox("choisir un seed");
+        TextField seed = new TextField();
+        seed.setMaxWidth(100);
+        seed.visibleProperty().bind(wantSeed.selectedProperty());
+
         Button okButton = new Button();
         okButton.textProperty().set("Lancer la partie");
         okButton.setStyle("-fx-font-size: 20px; -fx-focus-color: transparent; -fx-faint-focus-color: transparent;");
         okButton.setOnAction(e -> {
             int humanCount = 0;
+            String seedString = seed.textProperty().getValue();
+            if (wantSeed.isSelected()) {
+                try {
+                    Long.parseLong(seedString);
+                } catch (NumberFormatException numberE) {
+                    errorText.setText("seed invalide");
+                    return;
+                }
+            }
+
             for (int i = 0; i < args.size(); ++i) {
                 String argValue = args.get(i).getValue();
                 String error = PlayerBuilder.validatePlayer(argValue);
@@ -173,6 +189,9 @@ public class Wizard extends Application {
             for (SimpleObjectProperty<String> arg : args) {
                 stringArgs.add(arg.getValue());
             }
+            if (wantSeed.isSelected()) {
+                stringArgs.add(seedString);
+            }
             LocalMain lm = new LocalMain(stringArgs);
             lm.start(primaryStage);
         });
@@ -183,7 +202,7 @@ public class Wizard extends Application {
         backButton.setOnAction(e -> currentView.setValue(View.CHOICE));
 
         vBox.getChildren().add(menuImageCreator((int) (MENU_IMAGE_DEFAULT_H * View.LOCAL.getMenuImageScaleFactor()), (int) (MENU_IMAGE_DEFAULT_W * View.LOCAL.getMenuImageScaleFactor())));
-        vBox.getChildren().addAll(player1, player2, player3, player4, errorText, okButton, backButton);
+        vBox.getChildren().addAll(player1, player2, player3, player4, errorText, wantSeed, seed, okButton, backButton);
         return vBox;
     }
 
