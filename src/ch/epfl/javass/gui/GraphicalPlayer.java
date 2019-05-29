@@ -393,21 +393,21 @@ public class GraphicalPlayer {
 
                 for (Card card : announceBean.announces(playerId)) {
                     ImageView view = new ImageView(smallCardImages.get(card));
-                    view.setFitWidth(SMALL_IMAGE_SIZE_W / 10);
-                    view.setFitHeight(SMALL_IMAGE_SIZE_H / 10);
+                    view.setFitWidth(SMALL_IMAGE_SIZE_W / 4);
+                    view.setFitHeight(SMALL_IMAGE_SIZE_H / 4);
                     announce.getChildren().add(view);
                 }
             });
 
             VBox playerInfo = new VBox();
 
-            Text txt = new Text(names.get(playerId));
-            txt.setStyle("-fx-font: 10 Optima;");
+            Text txt = new Text(names.get(playerId) + " (+0)");
+            txt.setStyle("-fx-font: 12 Optima;");
 
-            announceBean.points(playerId).addListener(o->{
+            announceBean.points(playerId).addListener(o -> {
                 int points = announceBean.points(playerId).get();
                 String name = names.get(playerId);
-                txt.textProperty().setValue(points > 0 ? name + " (+" + points + ")" : name);
+                txt.textProperty().setValue(name + " (+" + points + ")");
             });
 
             playerInfo.getChildren().addAll(txt, announce);
