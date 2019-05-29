@@ -340,7 +340,6 @@ public class GraphicalPlayer {
             view.setFitHeight(SMALL_IMAGE_SIZE_H / 2);
             final int thisI = i;
             view.setOnMouseClicked(e -> {
-
                 Card card = hand.hand().get(thisI);
                 try {
                     this.cardQ.put(card);

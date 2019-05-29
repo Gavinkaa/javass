@@ -1,7 +1,17 @@
 package ch.epfl.javass.jass;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
+/**
+ * Represents the worth of a given Announce.
+ * <p>
+ * It's necessary to have a wrapper class, because the worth of a given
+ * announce is more complicated than just the number of points.
+ * In fact, the number of cards in the announce as well as the highest rank
+ * played is also taken into account.
+ */
 public final class AnnounceValue implements Comparable<AnnounceValue> {
     private static List<CardSet> suites(int size) {
         List<CardSet> sets = new ArrayList<>();
@@ -126,14 +136,39 @@ public final class AnnounceValue implements Comparable<AnnounceValue> {
         this.highestOrdinal = maxOrdinal;
     }
 
+    /**
+     * Construct an announce value from a given set
+     *
+     * This calculates the worth of that set. This will calculate the
+     * value of an announce consisting of exactly that cardset.
+     * If extra cards are included that are worthless, then the entire CardSet
+     * is worth nothing.
+     *
+     * @param set the set to calculate the value of
+     * @return an announce value for that set
+     */
     public static AnnounceValue fromSet(CardSet set) {
         return new AnnounceValue(set);
     }
 
+    /**
+     * This calculates the best subset of the CardSet.
+     *
+     * This is useful to automatically calculate the best announce
+     * to make. This is also necessary because announce values require
+     * us to announce the exact amount of cards, whereas this will just find
+     * the best subset without caring about the amount.
+     *
+     * @param set the set to search for the best announce
+     * @return a cardset representing the best announce to make
+     */
     public static CardSet bestAnnounce(CardSet set) {
         return bestSet(set, false).cardSet;
     }
 
+    /**
+     * @return the number of points that this is worth
+     */
     public int points() {
         return this.pointsValue;
     }

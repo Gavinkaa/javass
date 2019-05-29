@@ -110,9 +110,11 @@ public final class JassGame {
 
     private void handleAnnounces(Map<PlayerId, CardSet> announces, Collection<PlayerId> announceOrder) {
         AnnounceValue bestAnnounce = AnnounceValue.fromSet(CardSet.EMPTY);
+        Map<PlayerId, AnnounceValue> announceValues = new EnumMap<>(PlayerId.class);
         PlayerId bestPlayer = PlayerId.PLAYER_1;
         for (PlayerId playerId : announceOrder) {
             AnnounceValue announce = announces.get(playerId).announceValue();
+            announceValues.put(playerId, announce);
             if (announce.compareTo(bestAnnounce) > 0) {
                 bestAnnounce = announce;
                 bestPlayer = playerId;
@@ -122,7 +124,11 @@ public final class JassGame {
         for (Player player : this.players.values()) {
             player.setAnnounce(announces, winning);
         }
-        this.turnState = this.turnState.withAnnounce(bestAnnounce, winning);
+        for (PlayerId player : PlayerId.ALL) {
+            if (player.team() == winning) {
+                this.turnState = this.turnState.withAnnounce(announceValues.get(player), winning);
+            }
+        }
     }
 
     /**
@@ -153,7 +159,7 @@ public final class JassGame {
      * This can be used after first initialising the game,
      * in which case it will play out the first trick of the first turn.
      * This will also automatically advance turns as well.
-     *
+     * <p>
      * This will return true if this was the first turn.
      * This is useful information in order to sleep more to display the announces longer.
      */
