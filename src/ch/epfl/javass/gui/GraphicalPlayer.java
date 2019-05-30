@@ -18,6 +18,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.effect.GaussianBlur;
+import javafx.scene.effect.Shadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
@@ -407,6 +408,9 @@ public class GraphicalPlayer {
                     ImageView view = new ImageView(smallCardImages.get(card));
                     view.setFitWidth(SMALL_IMAGE_SIZE_W / 4);
                     view.setFitHeight(SMALL_IMAGE_SIZE_H / 4);
+                    if (playerId.team() != announceBean.winningTeam().get()){
+                        view.setEffect(new Shadow(0, Color.GREY));
+                    }
                     announce.getChildren().add(view);
                 }
             });
