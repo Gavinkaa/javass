@@ -14,7 +14,7 @@ import java.util.Map;
 
 /**
  * Represents a bean holding information about announces in the game of Jass.
- *
+ * <p>
  * This is used to hold information about what player's have announced which cards,
  * as well as whether or not the announces for a given turn have finished.
  */
@@ -35,7 +35,7 @@ public final class AnnounceBean {
 
     /**
      * This bean indicates whether or not the announces should be shown.
-     *
+     * <p>
      * This exists because we only want to show the announces once we've arrived
      * at the end of the first turn.
      *
@@ -47,7 +47,7 @@ public final class AnnounceBean {
 
     /**
      * This bean holds an observable list of cards for each player.
-     *
+     * <p>
      * This is useful in order to visualize the announces different players might have made.
      *
      * @param player the player to look up the list for
@@ -59,7 +59,7 @@ public final class AnnounceBean {
 
     /**
      * This beans holds the number of points a player has made with their announce
-     *
+     * <p>
      * This is useful because we want to be able to display the points a player
      * has made with a good announce in the GUI.
      *
@@ -81,7 +81,7 @@ public final class AnnounceBean {
 
     /**
      * Change the visibility of the announces in a given direction.
-     *
+     * <p>
      * This should be set to true after setting the announces, and to false
      * when we've moved on to the start of the next trick.
      *
@@ -93,7 +93,7 @@ public final class AnnounceBean {
 
     /**
      * Update this bean with the announces players have made.
-     *
+     * <p>
      * This is the central method for this class, and sets all the appropriate things.
      *
      * @param announces the announces each player has made

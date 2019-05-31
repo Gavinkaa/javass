@@ -3,6 +3,7 @@ package ch.epfl.javass.jass;
 import java.util.Map;
 
 // BONUS METHODS:
+
 /**
  * Represents an autonomous player that can decide
  * on which card to play, given the state of the game.
@@ -22,14 +23,15 @@ public interface Player {
     Card cardToPlay(TurnState state, CardSet hand);
 
     // BONUS METHOD
+
     /**
      * Make this player choose a new trump color.
-     *
+     * <p>
      * In a true game of Jass, trumps are chosen by the player that
      * starts that turn, instead of randomly. This augments a player with the ability
      * to choose which trump they want for that turn.
      *
-     * @param hand the hand the player has at that point
+     * @param hand        the hand the player has at that point
      * @param canDelegate whether or not the player can delegate the choice to its teammate
      * @return the color the player decides to be the new trump
      */
@@ -37,7 +39,7 @@ public interface Player {
 
     /**
      * This method should be called at the start of a turn, to let a player make announces.
-     *
+     * <p>
      * An announce allows a player to attempt to gain points for their team by showing
      * a specific set of cards to the other players.
      *
@@ -104,7 +106,7 @@ public interface Player {
      * This is used to inform the player of a final round of announces.
      *
      * @param announces the announces different players have made
-     * @param winner the team that won this round of announces
+     * @param winner    the team that won this round of announces
      */
     default void setAnnounce(Map<PlayerId, CardSet> announces, TeamId winner) {
     }

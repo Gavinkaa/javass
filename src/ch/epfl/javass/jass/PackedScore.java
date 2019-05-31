@@ -2,7 +2,6 @@ package ch.epfl.javass.jass;
 
 import ch.epfl.javass.bits.Bits32;
 import ch.epfl.javass.bits.Bits64;
-import com.sun.xml.internal.bind.v2.runtime.reflect.Lister;
 
 
 /**

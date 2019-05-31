@@ -1,6 +1,5 @@
 package ch.epfl.javass.jass;
 
-import javax.xml.bind.SchemaOutputResolver;
 import java.util.Map;
 
 /**
