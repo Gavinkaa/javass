@@ -1,4 +1,9 @@
-#Voici nos différents bonus:
+# javass
+A java jass game, can be played in local network
+
+---
+
+# Voici nos différents bonus:
     - Une interface graphique permettant le lancement du jeu
     - Le choix de l'atout ainsi que le fait de chibrer
     - La possibilité de faire des annonces ainsi que les interfaces graphiques correspondantes
